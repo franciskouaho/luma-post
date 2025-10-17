@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Règles pour les comptes TikTok
+    match /accounts/{accountId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+    }
+    
+    // Règles pour les vidéos
+    match /videos/{videoId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+    }
+    
+    // Règles pour les planifications
+    match /schedules/{scheduleId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+    }
+    
+    // Règles pour les métriques (optionnel)
+    match /metrics/{metricId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Seules les Cloud Functions peuvent écrire
+    }
+  }
+}
