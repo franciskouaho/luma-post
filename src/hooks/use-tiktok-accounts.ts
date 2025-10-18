@@ -1,14 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 
-interface TikTokAccount {
-  id?: string;
+export interface TikTokAccount {
+  id: string;
   userId: string;
+  platform: 'tiktok';
   tiktokUserId: string;
+  username: string;
   displayName: string;
   avatarUrl?: string;
   accessTokenEnc: string;
   refreshTokenEnc: string;
   expiresAt: any;
+  isActive: boolean;
   createdAt: any;
   updatedAt: any;
 }

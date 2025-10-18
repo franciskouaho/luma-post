@@ -31,6 +31,23 @@ class TikTokAPIService {
     this.redirectUri = process.env.TIKTOK_REDIRECT_URI || '';
   }
 
+  getAuthorizationUrl(userId: string): string {
+    const baseUrl = 'https://www.tiktok.com/v2/auth/authorize/';
+    
+    // Nettoyer l'URI de redirection pour éviter la duplication du paramètre state
+    const cleanRedirectUri = this.redirectUri.split('?')[0];
+    
+    const params = new URLSearchParams({
+      client_key: this.clientId,
+      scope: 'user.info.basic,video.publish',
+      response_type: 'code',
+      redirect_uri: cleanRedirectUri,
+      state: userId, // Utiliser userId comme state pour CSRF
+    });
+
+    return `${baseUrl}?${params.toString()}`;
+  }
+
   async exchangeCodeForTokens(code: string): Promise<TikTokTokenResponse> {
     const tokenUrl = 'https://open.tiktokapis.com/v2/oauth/token/';
     

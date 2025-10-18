@@ -4,7 +4,7 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
 // Firebase Admin SDK (pour le backend/API routes)
-import { initializeApp as initializeAdminApp, getApps } from 'firebase-admin/app';
+import { initializeApp as initializeAdminApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { getAuth as getAdminAuth } from 'firebase-admin/auth';
@@ -32,28 +32,29 @@ export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : nul
 
 // Configuration Firebase Admin
 const firebaseAdminConfig = {
-  projectId: 'lumapost-38e61',
+  projectId: process.env.FIREBASE_PROJECT_ID || 'lumapost-38e61',
 };
 
-// Initialize Firebase Admin (éviter les doublons)
+// Configuration Firebase Admin pour la production
+console.log('🔥 Utilisation de Firebase en production');
+
 let adminApp;
 try {
-  adminApp = getApps().length === 0 ? initializeAdminApp(firebaseAdminConfig) : getApps()[0];
+  if (getApps().length === 0) {
+    adminApp = initializeAdminApp(firebaseAdminConfig);
+  } else {
+    adminApp = getApps()[0];
+  }
 } catch (error) {
   console.error('Erreur lors de l\'initialisation de Firebase Admin:', error);
-  // Pour le développement local, utiliser les credentials par défaut
-  adminApp = initializeAdminApp({
-    projectId: 'lumapost-38e61',
-    // En développement, Firebase Admin utilisera les credentials par défaut
-    // ou l'émulateur si configuré
-  });
-}
-
-// Configuration pour l'émulateur en développement
-if (process.env.NODE_ENV === 'development') {
-  // Définir les variables d'environnement pour l'émulateur
-  process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-  process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
+  try {
+    adminApp = initializeAdminApp({
+      projectId: firebaseAdminConfig.projectId,
+    });
+  } catch (retryError) {
+    console.error('Erreur lors de la réinitialisation de Firebase Admin:', retryError);
+    throw retryError;
+  }
 }
 
 // Services Firebase Admin
