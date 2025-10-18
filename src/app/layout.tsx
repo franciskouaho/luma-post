@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TikTok Crossposter",
-  description: "Planifiez et publiez vos vidéos TikTok automatiquement",
+  title: "Luma Post - Schedule your content everywhere in seconds",
+  description: "The simplest way to post and grow on all platforms. Built for creators and small teams without the ridiculous price tag.",
 };
 
 export default function RootLayout({
