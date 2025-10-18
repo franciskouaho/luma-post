@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -40,7 +40,7 @@ interface Platform {
   accountId?: string;
 }
 
-export default function CreateVideoPostPage() {
+function CreateVideoPostPageContent() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [caption, setCaption] = useState('');
@@ -1119,5 +1119,13 @@ export default function CreateVideoPostPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CreateVideoPostPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateVideoPostPageContent />
+    </Suspense>
   );
 }

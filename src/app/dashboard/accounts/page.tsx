@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useTikTokAccounts } from '@/hooks/use-tiktok-accounts';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ interface Platform {
   }>;
 }
 
-export default function AccountsPage() {
+function AccountsPageContent() {
   const { user, loading: authLoading } = useAuth();
   const { accounts, loading, error, deleteAccount } = useTikTokAccounts({ userId: user?.uid || '' });
   const [isConnecting, setIsConnecting] = useState(false);
@@ -382,5 +382,13 @@ export default function AccountsPage() {
         <span>Get help connecting your accounts</span>
       </div>
     </div>
+  );
+}
+
+export default function AccountsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AccountsPageContent />
+    </Suspense>
   );
 }

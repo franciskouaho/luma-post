@@ -39,22 +39,22 @@ export function usePosts(userId: string | null) {
         ...videosData.videos.map((video: Record<string, unknown>) => ({
           id: video.id,
           caption: video.caption,
-          postedAt: new Date(video.createdAt),
+          postedAt: new Date(video.createdAt as string | number | Date),
           status: 'posted' as const,
           platforms: video.platforms || ['tiktok'],
           userId: video.userId,
-          createdAt: new Date(video.createdAt),
+          createdAt: new Date(video.createdAt as string | number | Date),
           mediaType: 'video' as const,
           thumbnailUrl: video.thumbnailUrl
         })),
         ...schedulesData.schedules.map((schedule: Record<string, unknown>) => ({
           id: schedule.id,
           caption: schedule.caption,
-          postedAt: new Date(schedule.scheduledAt),
+          postedAt: new Date(schedule.scheduledAt as string | number | Date),
           status: 'posted' as const,
           platforms: schedule.platforms || ['tiktok'],
           userId: schedule.userId,
-          createdAt: new Date(schedule.createdAt),
+          createdAt: new Date(schedule.createdAt as string | number | Date),
           mediaType: 'video' as const,
           thumbnailUrl: schedule.thumbnailUrl
         }))
