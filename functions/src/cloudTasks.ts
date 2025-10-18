@@ -81,7 +81,7 @@ export const schedulePublishTask = onCall(
       const projectId = 'lumapost-38e61';
       const location = 'europe-west1';
       const queueName = 'publish-queue';
-      const publishEndpoint = 'https://publish-tiktok-xxxxxxxx-ew.a.run.app';
+      const publishEndpoint = 'https://us-central1-lumapost-38e61.cloudfunctions.net/publishTikTokVideo';
 
       // Chemin de la queue
       const parent = client.queuePath(projectId, location, queueName);

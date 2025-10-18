@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     console.log('Status:', status);
 
     // Récupérer les planifications
-    const schedules = await scheduleService.getByUserId(userId, status);
+    const schedules = await scheduleService.getByUserId(userId, status || undefined);
 
     console.log('Planifications trouvées:', schedules.length);
 
@@ -92,9 +92,9 @@ export async function POST(request: NextRequest) {
     console.log('Status:', status);
 
     // Validation des paramètres
-    if (!userId || !caption || !platforms || platforms.length === 0) {
+    if (!userId || !platforms || platforms.length === 0) {
       return NextResponse.json(
-        { error: 'userId, caption et platforms sont requis' },
+        { error: 'userId et platforms sont requis' },
         { status: 400 }
       );
     }
@@ -106,14 +106,41 @@ export async function POST(request: NextRequest) {
       videoUrl,
       thumbnailUrl,
       platforms,
-      scheduledAt: scheduledAt ? new Date(scheduledAt) : FieldValue.serverTimestamp(),
+      scheduledAt: scheduledAt ? FieldValue.serverTimestamp() : FieldValue.serverTimestamp(),
       status,
       mediaType,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
     });
 
     console.log('Post planifié créé avec ID:', scheduleId);
+
+    // Programmer la tâche Cloud Tasks pour la publication automatique
+    try {
+      // Utiliser l'API Cloud Tasks directement via HTTP
+      const cloudTasksResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/cloud-tasks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'scheduleTask',
+          scheduleId: scheduleId,
+          videoId: videoUrl, // Utiliser l'URL de la vidéo comme ID
+          accountId: platforms[0], // Utiliser le premier compte TikTok
+          userId: userId,
+          scheduledAt: scheduledAt || new Date().toISOString()
+        }),
+      });
+
+      if (!cloudTasksResponse.ok) {
+        throw new Error(`Erreur HTTP ${cloudTasksResponse.status}`);
+      }
+
+      const taskResult = await cloudTasksResponse.json();
+      console.log('Tâche Cloud Tasks programmée avec succès:', taskResult);
+    } catch (taskError) {
+      console.error('Erreur lors de la programmation de la tâche Cloud Tasks:', taskError);
+      // Ne pas faire échouer la création du post, juste logger l'erreur
+    }
 
     // Récupérer le post créé
     const newSchedule = await scheduleService.getById(scheduleId);
@@ -152,7 +179,6 @@ export async function PUT(request: NextRequest) {
     const { 
       userId, 
       caption, 
-      videoFile, 
       videoUrl, 
       thumbnailUrl, 
       platforms, 
@@ -161,7 +187,7 @@ export async function PUT(request: NextRequest) {
       mediaType 
     } = await request.json();
 
-    if (!userId || !caption || !platforms || !scheduledAt) {
+    if (!userId || !platforms || !scheduledAt) {
       return NextResponse.json(
         { error: 'Champs requis manquants' },
         { status: 400 }
@@ -176,14 +202,12 @@ export async function PUT(request: NextRequest) {
     await scheduleService.update(scheduleId, {
       userId,
       caption,
-      videoFile,
       videoUrl,
       thumbnailUrl,
       platforms,
-      scheduledAt: new Date(scheduledAt),
+      scheduledAt: FieldValue.serverTimestamp(),
       status,
       mediaType,
-      updatedAt: new Date()
     });
 
     // Récupérer la planification mise à jour

@@ -18,14 +18,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Extraire les données du webhook
-    const { 
-      publish_id, 
-      status, 
-      error_message, 
-      video_id,
-      share_url,
-      user_id 
-    } = body;
+    let publish_id, status, error_message, video_id, share_url, user_id;
+    
+    // TikTok envoie les données dans différents formats selon le type d'événement
+    if (body.content && typeof body.content === 'string') {
+      // Format inbox: content contient le JSON stringifié
+      try {
+        const contentData = JSON.parse(body.content);
+        publish_id = contentData.publish_id;
+        status = contentData.status || 'PROCESSING'; // Par défaut pour inbox_delivered
+        error_message = contentData.error_message;
+        video_id = contentData.video_id;
+        share_url = contentData.share_url;
+        user_id = body.user_openid;
+      } catch (parseError) {
+        console.error('❌ Erreur lors du parsing du content:', parseError);
+        return NextResponse.json(
+          { error: 'Format de contenu invalide' },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Format direct (pour les autres types d'événements)
+      publish_id = body.publish_id;
+      status = body.status;
+      error_message = body.error_message;
+      video_id = body.video_id;
+      share_url = body.share_url;
+      user_id = body.user_id || body.user_openid;
+    }
 
     if (!publish_id) {
       console.error('❌ publish_id manquant dans le webhook');
@@ -41,19 +62,84 @@ export async function POST(request: NextRequest) {
       error_message,
       video_id,
       share_url,
-      user_id
+      user_id,
+      event: body.event,
+      event_type: body.event
     });
+
+    // Gérer les différents types d'événements TikTok
+    const eventType = body.event;
+    let finalStatus = status;
+    
+    switch (eventType) {
+      case 'post.publish.inbox_delivered':
+        // La vidéo a été livrée dans la boîte de réception TikTok
+        finalStatus = 'PROCESSING';
+        console.log('📥 Vidéo livrée dans la boîte de réception TikTok');
+        break;
+      case 'post.publish.completed':
+        // La publication est terminée avec succès
+        finalStatus = 'PUBLISHED';
+        console.log('✅ Publication TikTok terminée avec succès');
+        break;
+      case 'post.publish.failed':
+        // La publication a échoué
+        finalStatus = 'FAILED';
+        console.log('❌ Publication TikTok échouée');
+        break;
+      default:
+        console.log(`📋 Événement TikTok non géré: ${eventType}`);
+    }
 
     // Mettre à jour le statut du schedule dans Firestore
     try {
       // Chercher le schedule par publishId
-      const schedules = await scheduleService.getByUserId('FGcdXcRXVoVfsSwJIciurCeuCXz1');
-      const schedule = schedules.find(s => 
-        s.publishId === publish_id ||
-        s.tiktokUrl?.includes(publish_id) || 
-        s.id === publish_id ||
-        s.videoId === publish_id
-      );
+      // D'abord essayer de trouver par publishId exact
+      let schedule = null;
+      
+      // Recherche globale par publishId (plus efficace)
+      try {
+        const allSchedules = await scheduleService.getAll();
+        schedule = allSchedules.find(s => s.publishId === publish_id);
+        
+        if (schedule) {
+          console.log('✅ Schedule trouvé par publishId exact:', schedule.id);
+        }
+      } catch (globalSearchError) {
+        console.log('⚠️ Recherche globale échouée, tentative par userId:', globalSearchError);
+        
+        // Fallback: recherche par userId si disponible
+        if (user_id) {
+          const schedules = await scheduleService.getByUserId(user_id);
+          schedule = schedules.find(s => s.publishId === publish_id);
+        }
+      }
+      
+      // Si toujours pas trouvé, essayer d'autres critères
+      if (!schedule) {
+        console.log('⚠️ Schedule non trouvé par publishId, recherche par autres critères...');
+        const allSchedules = await scheduleService.getAll();
+        
+        // Log tous les schedules pour déboguer
+        console.log('📋 Tous les schedules disponibles:', allSchedules.map(s => ({
+          id: s.id,
+          publishId: s.publishId,
+          userId: s.userId,
+          status: s.status,
+          createdAt: s.createdAt
+        })));
+        
+        schedule = allSchedules.find(s => 
+          s.tiktokUrl?.includes(publish_id) || 
+          s.id === publish_id ||
+          s.videoId === publish_id ||
+          s.publishId?.includes(publish_id.split('~')[1]) // Partie après le ~
+        );
+        
+        if (schedule) {
+          console.log('✅ Schedule trouvé par critères alternatifs:', schedule.id);
+        }
+      }
 
       if (schedule) {
         console.log('✅ Schedule trouvé:', schedule.id);
@@ -63,7 +149,7 @@ export async function POST(request: NextRequest) {
         let tiktokUrl: string | undefined;
         let lastError: string | undefined;
 
-        switch (status) {
+        switch (finalStatus) {
           case 'PUBLISHED':
             newStatus = 'published';
             tiktokUrl = share_url || `https://tiktok.com/@user/video/${video_id}`;

@@ -19,6 +19,12 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
   // Si className contient une taille spécifique (comme w-1.5 h-1.5), l'utiliser
   const hasCustomSize = className.includes('w-') && className.includes('h-');
   const finalSizeClass = hasCustomSize ? className : sizeClasses[size];
+  
+  // Extraire les classes de style (ring, border, etc.) de className
+  const styleClasses = className.split(' ').filter(cls => 
+    cls.includes('ring-') || cls.includes('border-') || cls.includes('shadow-') || 
+    cls.includes('scale-') || cls.includes('transition-') || cls.includes('opacity-')
+  ).join(' ');
 
 
 
@@ -56,7 +62,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
     switch (platform.toLowerCase()) {
       case 'tiktok':
         return (
-          <div className={`${finalSizeClass} relative aspect-square rounded-full`}>
+          <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
             {/* Cercle de fond vert */}
             <div className="w-full h-full rounded-full bg-green-500 flex items-center justify-center overflow-hidden relative">
               {getProfileImage()}
@@ -78,7 +84,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
       
       case 'instagram':
         return (
-          <div className={`${finalSizeClass} relative aspect-square rounded-full`}>
+          <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
             <div className="w-full h-full rounded-full overflow-hidden relative">
               {getProfileImage()}
               <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center hidden">
@@ -97,7 +103,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
 
       case 'facebook':
         return (
-          <div className={`${finalSizeClass} relative aspect-square rounded-full`}>
+          <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
             <div className="w-full h-full rounded-full overflow-hidden relative">
               {getProfileImage()}
               <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center hidden">
@@ -116,7 +122,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
 
       case 'linkedin':
         return (
-          <div className={`${finalSizeClass} relative aspect-square rounded-full`}>
+          <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
             <div className="w-full h-full rounded-full overflow-hidden relative">
               {getProfileImage()}
               <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center hidden">
@@ -135,7 +141,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
 
       case 'youtube':
         return (
-          <div className={`${finalSizeClass} relative aspect-square rounded-full`}>
+          <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
             <div className="w-full h-full rounded-full overflow-hidden relative">
               {getProfileImage()}
               <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center hidden">
@@ -154,7 +160,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
 
       case 'twitter':
         return (
-          <div className={`${finalSizeClass} relative aspect-square rounded-full`}>
+          <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
             <div className="w-full h-full rounded-full overflow-hidden relative">
               {getProfileImage()}
               <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center hidden">
@@ -173,7 +179,7 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
 
       default:
         return (
-          <div className={`${finalSizeClass} relative`}>
+          <div className={`${finalSizeClass} relative ${styleClasses}`}>
             <div className="w-full h-full rounded-full bg-gray-400 flex items-center justify-center">
               <div className="w-3/4 h-3/4 rounded-full bg-gray-300 flex items-center justify-center">
                 <svg className="w-2/3 h-2/3 text-gray-600" fill="currentColor" viewBox="0 0 24 24">

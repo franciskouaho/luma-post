@@ -167,10 +167,27 @@ export class ScheduleService {
     })) as Schedule[];
   }
 
+  async getAll(): Promise<Schedule[]> {
+    const q = adminDb.collection(this.collection)
+      .orderBy('createdAt', 'desc');
+
+    const querySnapshot = await q.get();
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Schedule[];
+  }
+
   async update(id: string, updates: Partial<Schedule>): Promise<void> {
     const docRef = adminDb.collection(this.collection).doc(id);
+    
+    // Filtrer les valeurs undefined pour éviter les erreurs Firestore
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([_, value]) => value !== undefined)
+    );
+    
     await docRef.update({
-      ...updates,
+      ...filteredUpdates,
       updatedAt: FieldValue.serverTimestamp(),
     });
   }
