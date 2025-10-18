@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithPopup, signOut } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebaseClient";
 import { Loader2 } from "lucide-react";
 
 interface GoogleSignInButtonProps {
-  user: any;
-  onUserChange: (user: any) => void;
+  user: unknown;
+  onUserChange: (user: unknown) => void;
 }
 
 export function GoogleSignInButton({
@@ -25,9 +25,9 @@ export function GoogleSignInButton({
       onUserChange(result.user);
       // Rediriger vers le dashboard après connexion
       window.location.href = '/dashboard';
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erreur lors de la connexion:", error);
-      setError(error.message || "Une erreur est survenue lors de la connexion");
+      setError(error instanceof Error ? error.message : "Une erreur est survenue lors de la connexion");
     } finally {
       setLoading(false);
     }

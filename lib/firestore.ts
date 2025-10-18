@@ -81,7 +81,7 @@ export class VideoService {
     return null;
   }
 
-  async getByUserId(userId: string, limitCount = 10, lastDoc?: any): Promise<Video[]> {
+  async getByUserId(userId: string, limitCount = 10, lastDoc?: Record<string, unknown>): Promise<Video[]> {
     let q = adminDb.collection(this.collection)
       .where('userId', '==', userId)
       .orderBy('createdAt', 'desc')
@@ -183,7 +183,7 @@ export class ScheduleService {
     
     // Filtrer les valeurs undefined pour éviter les erreurs Firestore
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([_, value]) => value !== undefined)
+      Object.entries(updates).filter(([, value]) => value !== undefined)
     );
     
     await docRef.update({

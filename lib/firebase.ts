@@ -1,5 +1,5 @@
 // Firebase Admin SDK (pour le backend/API routes uniquement)
-import { initializeApp as initializeAdminApp, getApps, cert } from 'firebase-admin/app';
+import { initializeApp as initializeAdminApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { getAuth as getAdminAuth } from 'firebase-admin/auth';

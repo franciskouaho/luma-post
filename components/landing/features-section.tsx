@@ -97,7 +97,7 @@ export default function FeaturesSection() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">Increase engagement by 40%</h4>
-                    <p className="text-gray-600">Our AI-powered optimal posting times help you reach your audience when they're most active.</p>
+                    <p className="text-gray-600">Our AI-powered optimal posting times help you reach your audience when they&apos;re most active.</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
@@ -116,7 +116,7 @@ export default function FeaturesSection() {
                 <div className="text-4xl font-bold text-green-600 mb-2">98%</div>
                 <div className="text-gray-700 font-semibold mb-4">Customer Satisfaction</div>
                 <div className="text-gray-600 mb-6">
-                  "Luma Post transformed how I manage my social media. I've grown my following by 300% in just 3 months!"
+                  &quot;Luma Post transformed how I manage my social media. I&apos;ve grown my following by 300% in just 3 months!&quot;
                 </div>
                 <div className="flex justify-center space-x-1 mb-2">
                   {[...Array(5)].map((_, i) => (

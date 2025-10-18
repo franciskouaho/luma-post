@@ -81,9 +81,9 @@ export default function DraftsPage() {
     })
     .sort((a, b) => {
       if (sortBy === 'newest') {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return new Date(b.createdAt as any).getTime() - new Date(a.createdAt as any).getTime();
       } else {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return new Date(a.createdAt as any).getTime() - new Date(b.createdAt as any).getTime();
       }
     });
 
@@ -282,9 +282,9 @@ export default function DraftsPage() {
                     {draft.thumbnailUrl && 
                      (typeof draft.thumbnailUrl === 'string' ? 
                        draft.thumbnailUrl.trim() !== '' : 
-                       draft.thumbnailUrl.downloadUrl && draft.thumbnailUrl.downloadUrl.trim() !== '') ? (
+                        (draft.thumbnailUrl as any).downloadUrl && (draft.thumbnailUrl as any).downloadUrl.trim() !== '') ? (
                       <Image
-                        src={typeof draft.thumbnailUrl === 'string' ? draft.thumbnailUrl : draft.thumbnailUrl.downloadUrl}
+                        src={typeof draft.thumbnailUrl === 'string' ? draft.thumbnailUrl : (draft.thumbnailUrl as any).downloadUrl}
                         alt="Draft thumbnail"
                         width={300}
                         height={160}

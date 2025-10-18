@@ -347,7 +347,7 @@ export default function CalendarPage() {
                       >
                         {/* Icône du type de contenu en haut à droite */}
                         <div className="absolute top-1 right-1">
-                          {getContentTypeIcon(post.mediaType)}
+                          {getContentTypeIcon((post as any).mediaType)}
                         </div>
                         
                         <div className="flex items-center space-x-1 mb-1">

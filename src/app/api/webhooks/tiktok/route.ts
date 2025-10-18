@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { scheduleService } from '@/lib/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -170,7 +171,7 @@ export async function POST(request: NextRequest) {
           status: newStatus,
           lastError,
           tiktokUrl,
-          updatedAt: new Date()
+          updatedAt: FieldValue.serverTimestamp()
         });
 
         console.log('✅ Schedule mis à jour:', {

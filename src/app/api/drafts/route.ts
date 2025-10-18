@@ -132,9 +132,9 @@ export async function DELETE(request: NextRequest) {
     const { storageService } = await import('@/lib/storage');
     
     console.log('🔍 Données du draft:', {
-      videoUrl: draftData.videoUrl,
-      thumbnailUrl: draftData.thumbnailUrl,
-      caption: draftData.caption
+      videoUrl: draftData?.videoUrl,
+      thumbnailUrl: draftData?.thumbnailUrl,
+      caption: draftData?.caption
     });
     
     // Supprimer la vidéo
@@ -147,14 +147,14 @@ export async function DELETE(request: NextRequest) {
         
         if (draftData.videoUrl.includes('storage.googleapis.com')) {
           const urlParts = draftData.videoUrl.split('/');
-          const bucketIndex = urlParts.findIndex(part => part.includes('firebasestorage.app'));
+          const bucketIndex = urlParts.findIndex((part: string) => part.includes('firebasestorage.app'));
           if (bucketIndex !== -1 && bucketIndex + 1 < urlParts.length) {
             const pathParts = urlParts.slice(bucketIndex + 1);
             videoStorageKey = pathParts.join('/');
           }
         } else if (draftData.videoUrl.includes('videos/')) {
           const urlParts = draftData.videoUrl.split('/');
-          const videosIndex = urlParts.findIndex(part => part === 'videos');
+          const videosIndex = urlParts.findIndex((part: string) => part === 'videos');
           if (videosIndex !== -1 && videosIndex + 1 < urlParts.length) {
             const fileName = urlParts[videosIndex + 1];
             videoStorageKey = `videos/${fileName}`;
@@ -174,9 +174,9 @@ export async function DELETE(request: NextRequest) {
       } catch (error) {
         console.error('❌ Erreur suppression vidéo:', error);
         console.error('Détails de l\'erreur vidéo:', {
-          message: error.message,
-          code: error.code,
-          videoUrl: draftData.videoUrl
+          message: error instanceof Error ? error.message : 'Unknown error',
+          code: (error as any)?.code,
+          videoUrl: draftData?.videoUrl
         });
       }
     }
@@ -192,7 +192,7 @@ export async function DELETE(request: NextRequest) {
         if (draftData.thumbnailUrl.includes('storage.googleapis.com')) {
           // URL complète Firebase Storage
           const urlParts = draftData.thumbnailUrl.split('/');
-          const bucketIndex = urlParts.findIndex(part => part.includes('firebasestorage.app'));
+          const bucketIndex = urlParts.findIndex((part: string) => part.includes('firebasestorage.app'));
           if (bucketIndex !== -1 && bucketIndex + 1 < urlParts.length) {
             const pathParts = urlParts.slice(bucketIndex + 1);
             thumbnailStorageKey = pathParts.join('/');
@@ -200,7 +200,7 @@ export async function DELETE(request: NextRequest) {
         } else if (draftData.thumbnailUrl.includes('thumbnails/')) {
           // URL avec thumbnails/
           const urlParts = draftData.thumbnailUrl.split('/');
-          const thumbnailsIndex = urlParts.findIndex(part => part === 'thumbnails');
+          const thumbnailsIndex = urlParts.findIndex((part: string) => part === 'thumbnails');
           if (thumbnailsIndex !== -1 && thumbnailsIndex + 1 < urlParts.length) {
             const fileName = urlParts[thumbnailsIndex + 1];
             thumbnailStorageKey = `thumbnails/${fileName}`;
@@ -223,9 +223,9 @@ export async function DELETE(request: NextRequest) {
       } catch (error) {
         console.error('❌ Erreur suppression thumbnail:', error);
         console.error('Détails de l\'erreur:', {
-          message: error.message,
-          code: error.code,
-          thumbnailUrl: draftData.thumbnailUrl
+          message: error instanceof Error ? error.message : 'Unknown error',
+          code: (error as any)?.code,
+          thumbnailUrl: draftData?.thumbnailUrl
         });
       }
     }

@@ -6,7 +6,7 @@ import { auth } from "@/lib/firebaseClient";
 import { GoogleSignInButton } from "@/components/auth/google-signin-button";
 
 export default function AuthPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useTikTokAccounts } from '@/hooks/use-tiktok-accounts';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Plus, ExternalLink, Trash2, RefreshCw, ChevronDown, X, HelpCircle } from 'lucide-react';
+import { RefreshCw, ChevronDown, X, HelpCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
 interface TikTokAccount {

@@ -10,10 +10,10 @@ export interface TikTokAccount {
   avatarUrl?: string;
   accessTokenEnc: string;
   refreshTokenEnc: string;
-  expiresAt: any;
+  expiresAt: Date;
   isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface UseTikTokAccountsOptions {
@@ -36,8 +36,8 @@ export function useTikTokAccounts({ userId, initialAccounts = [] }: UseTikTokAcc
       }
       const data = await response.json();
       setAccounts(data.accounts || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch accounts');
     } finally {
       setLoading(false);
     }
@@ -73,8 +73,8 @@ export function useTikTokAccounts({ userId, initialAccounts = [] }: UseTikTokAcc
       const addedAccount: TikTokAccount = await response.json();
       setAccounts(prev => [addedAccount, ...prev]);
       return addedAccount;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch accounts');
       return null;
     } finally {
       setLoading(false);
@@ -103,8 +103,8 @@ export function useTikTokAccounts({ userId, initialAccounts = [] }: UseTikTokAcc
       const updatedAccount: TikTokAccount = await response.json();
       setAccounts(prev => prev.map(acc => (acc.id === accountId ? updatedAccount : acc)));
       return updatedAccount;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch accounts');
       return null;
     } finally {
       setLoading(false);
@@ -128,8 +128,8 @@ export function useTikTokAccounts({ userId, initialAccounts = [] }: UseTikTokAcc
       }
       setAccounts(prev => prev.filter(acc => acc.id !== accountId));
       return true;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch accounts');
       return false;
     } finally {
       setLoading(false);

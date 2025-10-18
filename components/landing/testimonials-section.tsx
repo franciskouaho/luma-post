@@ -36,7 +36,7 @@ export default function TestimonialsSection() {
             <div key={index} className="bg-gray-50 rounded-xl p-8 border border-gray-100">
               <div className="mb-6">
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  "{testimonial.text}"
+                  &quot;{testimonial.text}&quot;
                 </p>
               </div>
               

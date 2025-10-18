@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { 
   Home, 
   Plus, 
-  FileText, 
   Calendar, 
   Grid3X3, 
   Clock, 

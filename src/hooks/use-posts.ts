@@ -36,7 +36,7 @@ export function usePosts(userId: string | null) {
       
       // Combiner les posts publiés
       const postedPosts: PostedPost[] = [
-        ...videosData.videos.map((video: any) => ({
+        ...videosData.videos.map((video: Record<string, unknown>) => ({
           id: video.id,
           caption: video.caption,
           postedAt: new Date(video.createdAt),
@@ -47,7 +47,7 @@ export function usePosts(userId: string | null) {
           mediaType: 'video' as const,
           thumbnailUrl: video.thumbnailUrl
         })),
-        ...schedulesData.schedules.map((schedule: any) => ({
+        ...schedulesData.schedules.map((schedule: Record<string, unknown>) => ({
           id: schedule.id,
           caption: schedule.caption,
           postedAt: new Date(schedule.scheduledAt),
