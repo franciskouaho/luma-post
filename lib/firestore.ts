@@ -1,19 +1,5 @@
-import { adminDb } from './firebase-admin';
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  getDoc, 
-  getDocs, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit,
-  startAfter,
-  Timestamp 
-} from 'firebase/firestore';
+import { adminDb } from './firebase';
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Types pour Firestore
 export interface Video {
@@ -24,9 +10,9 @@ export interface Video {
   thumbnailKey?: string;
   duration: number;
   size: number;
-  status: 'uploaded' | 'processing' | 'ready' | 'error';
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  status: 'uploaded' | 'processing' | 'ready' | 'error' | 'failed';
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
 }
 
 export interface Schedule {
@@ -37,12 +23,12 @@ export interface Schedule {
   title: string;
   description?: string;
   hashtags: string[];
-  scheduledAt: Timestamp;
+  scheduledAt: FieldValue;
   status: 'scheduled' | 'queued' | 'published' | 'failed';
   lastError?: string;
   tiktokUrl?: string;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
 }
 
 export interface TikTokAccount {
@@ -55,10 +41,10 @@ export interface TikTokAccount {
   avatarUrl?: string;
   accessTokenEnc: string;
   refreshTokenEnc: string;
-  expiresAt: Timestamp;
+  expiresAt: FieldValue;
   isActive: boolean;
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
 }
 
 // Service pour les vidéos
@@ -66,8 +52,8 @@ export class VideoService {
   private collection = 'videos';
 
   async create(video: Omit<Video, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    const now = Timestamp.now();
-    const docRef = await addDoc(collection(adminDb, this.collection), {
+    const now = FieldValue.serverTimestamp();
+    const docRef = await adminDb.collection(this.collection).add({
       ...video,
       createdAt: now,
       updatedAt: now,
@@ -76,28 +62,26 @@ export class VideoService {
   }
 
   async getById(id: string): Promise<Video | null> {
-    const docRef = doc(adminDb, this.collection, id);
-    const docSnap = await getDoc(docRef);
+    const docRef = adminDb.collection(this.collection).doc(id);
+    const docSnap = await docRef.get();
     
-    if (docSnap.exists()) {
+    if (docSnap.exists) {
       return { id: docSnap.id, ...docSnap.data() } as Video;
     }
     return null;
   }
 
   async getByUserId(userId: string, limitCount = 10, lastDoc?: any): Promise<Video[]> {
-    let q = query(
-      collection(adminDb, this.collection),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc'),
-      limit(limitCount)
-    );
+    let q = adminDb.collection(this.collection)
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .limit(limitCount);
 
     if (lastDoc) {
-      q = query(q, startAfter(lastDoc));
+      q = q.startAfter(lastDoc);
     }
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await q.get();
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -105,16 +89,16 @@ export class VideoService {
   }
 
   async update(id: string, updates: Partial<Video>): Promise<void> {
-    const docRef = doc(adminDb, this.collection, id);
-    await updateDoc(docRef, {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
       ...updates,
-      updatedAt: Timestamp.now(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   }
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(adminDb, this.collection, id);
-    await deleteDoc(docRef);
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.delete();
   }
 }
 
@@ -123,8 +107,8 @@ export class ScheduleService {
   private collection = 'schedules';
 
   async create(schedule: Omit<Schedule, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    const now = Timestamp.now();
-    const docRef = await addDoc(collection(adminDb, this.collection), {
+    const now = FieldValue.serverTimestamp();
+    const docRef = await adminDb.collection(this.collection).add({
       ...schedule,
       createdAt: now,
       updatedAt: now,
@@ -133,28 +117,26 @@ export class ScheduleService {
   }
 
   async getById(id: string): Promise<Schedule | null> {
-    const docRef = doc(adminDb, this.collection, id);
-    const docSnap = await getDoc(docRef);
+    const docRef = adminDb.collection(this.collection).doc(id);
+    const docSnap = await docRef.get();
     
-    if (docSnap.exists()) {
+    if (docSnap.exists) {
       return { id: docSnap.id, ...docSnap.data() } as Schedule;
     }
     return null;
   }
 
   async getByUserId(userId: string, status?: string, limitCount = 10): Promise<Schedule[]> {
-    let q = query(
-      collection(adminDb, this.collection),
-      where('userId', '==', userId),
-      orderBy('scheduledAt', 'desc'),
-      limit(limitCount)
-    );
+    let q = adminDb.collection(this.collection)
+      .where('userId', '==', userId)
+      .orderBy('scheduledAt', 'desc')
+      .limit(limitCount);
 
     if (status) {
-      q = query(q, where('status', '==', status));
+      q = q.where('status', '==', status);
     }
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await q.get();
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -162,15 +144,13 @@ export class ScheduleService {
   }
 
   async getScheduledForPublishing(): Promise<Schedule[]> {
-    const now = Timestamp.now();
-    const q = query(
-      collection(adminDb, this.collection),
-      where('status', '==', 'scheduled'),
-      where('scheduledAt', '<=', now),
-      orderBy('scheduledAt', 'asc')
-    );
+    const now = FieldValue.serverTimestamp();
+    const q = adminDb.collection(this.collection)
+      .where('status', '==', 'scheduled')
+      .where('scheduledAt', '<=', now)
+      .orderBy('scheduledAt', 'asc');
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await q.get();
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -178,16 +158,16 @@ export class ScheduleService {
   }
 
   async update(id: string, updates: Partial<Schedule>): Promise<void> {
-    const docRef = doc(adminDb, this.collection, id);
-    await updateDoc(docRef, {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
       ...updates,
-      updatedAt: Timestamp.now(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   }
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(adminDb, this.collection, id);
-    await deleteDoc(docRef);
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.delete();
   }
 }
 
@@ -196,8 +176,8 @@ export class TikTokAccountService {
   private collection = 'accounts';
 
   async create(account: Omit<TikTokAccount, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
-    const now = Timestamp.now();
-    const docRef = await addDoc(collection(adminDb, this.collection), {
+    const now = FieldValue.serverTimestamp();
+    const docRef = await adminDb.collection(this.collection).add({
       ...account,
       createdAt: now,
       updatedAt: now,
@@ -206,14 +186,12 @@ export class TikTokAccountService {
   }
 
   async getByUserId(userId: string): Promise<TikTokAccount[]> {
-    const q = query(
-      collection(adminDb, this.collection),
-      where('userId', '==', userId),
-      where('platform', '==', 'tiktok'),
-      where('isActive', '==', true)
-    );
+    const q = adminDb.collection(this.collection)
+      .where('userId', '==', userId)
+      .where('platform', '==', 'tiktok')
+      .where('isActive', '==', true);
 
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await q.get();
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -221,28 +199,28 @@ export class TikTokAccountService {
   }
 
   async getById(id: string): Promise<TikTokAccount | null> {
-    const docRef = doc(adminDb, this.collection, id);
-    const docSnap = await getDoc(docRef);
+    const docRef = adminDb.collection(this.collection).doc(id);
+    const docSnap = await docRef.get();
     
-    if (docSnap.exists()) {
+    if (docSnap.exists) {
       return { id: docSnap.id, ...docSnap.data() } as TikTokAccount;
     }
     return null;
   }
 
   async update(id: string, updates: Partial<TikTokAccount>): Promise<void> {
-    const docRef = doc(adminDb, this.collection, id);
-    await updateDoc(docRef, {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
       ...updates,
-      updatedAt: Timestamp.now(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   }
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(adminDb, this.collection, id);
-    await updateDoc(docRef, {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
       isActive: false,
-      updatedAt: Timestamp.now(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   }
 }

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebaseClient";
+import { useRouter } from "next/navigation";
 
 export interface User {
   uid: string;
@@ -38,15 +38,15 @@ export function useAuth() {
   const logout = async () => {
     try {
       await signOut(auth);
-      router.push('/auth');
+      router.push("/auth");
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error("Erreur lors de la déconnexion:", error);
     }
   };
 
   const requireAuth = () => {
     if (!loading && !user) {
-      router.push('/auth');
+      router.push("/auth");
     }
   };
 

@@ -1,18 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { signInWithPopup, signOut } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogIn, LogOut, Loader2 } from 'lucide-react';
+import { useState } from "react";
+import { signInWithPopup, signOut } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebaseClient";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { LogIn, LogOut, Loader2 } from "lucide-react";
 
 interface GoogleSignInButtonProps {
   user: any;
   onUserChange: (user: any) => void;
 }
 
-export function GoogleSignInButton({ user, onUserChange }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({
+  user,
+  onUserChange,
+}: GoogleSignInButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,8 +32,8 @@ export function GoogleSignInButton({ user, onUserChange }: GoogleSignInButtonPro
       const result = await signInWithPopup(auth, googleProvider);
       onUserChange(result.user);
     } catch (error: any) {
-      console.error('Erreur lors de la connexion:', error);
-      setError(error.message || 'Une erreur est survenue lors de la connexion');
+      console.error("Erreur lors de la connexion:", error);
+      setError(error.message || "Une erreur est survenue lors de la connexion");
     } finally {
       setLoading(false);
     }
@@ -35,7 +44,7 @@ export function GoogleSignInButton({ user, onUserChange }: GoogleSignInButtonPro
       await signOut(auth);
       onUserChange(null);
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error("Erreur lors de la déconnexion:", error);
     }
   };
 
@@ -47,25 +56,19 @@ export function GoogleSignInButton({ user, onUserChange }: GoogleSignInButtonPro
             <LogIn className="h-5 w-5" />
             Connecté
           </CardTitle>
-          <CardDescription>
-            Vous êtes connecté avec Google
-          </CardDescription>
+          <CardDescription>Vous êtes connecté avec Google</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center">
             <img
-              src={user.photoURL || ''}
+              src={user.photoURL || ""}
               alt="Photo de profil"
               className="w-16 h-16 rounded-full mx-auto mb-2"
             />
             <p className="font-medium">{user.displayName}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
-          <Button
-            onClick={handleSignOut}
-            variant="outline"
-            className="w-full"
-          >
+          <Button onClick={handleSignOut} variant="outline" className="w-full">
             <LogOut className="h-4 w-4 mr-2" />
             Se déconnecter
           </Button>
@@ -119,7 +122,7 @@ export function GoogleSignInButton({ user, onUserChange }: GoogleSignInButtonPro
               />
             </svg>
           )}
-          {loading ? 'Connexion...' : 'Se connecter avec Google'}
+          {loading ? "Connexion..." : "Se connecter avec Google"}
         </Button>
       </CardContent>
     </Card>

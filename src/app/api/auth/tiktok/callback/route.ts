@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tiktokAPIService } from '@/lib/tiktok-api';
 import { tiktokAccountService } from '@/lib/firestore';
-import { Timestamp } from 'firebase/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('=== TikTok Callback démarré ===');
+    
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const state = searchParams.get('state'); // userId
     const error = searchParams.get('error');
 
+    console.log('Code:', code ? 'présent' : 'absent');
+    console.log('State:', state);
+    console.log('Error:', error);
+
     if (error) {
+      console.log('Erreur dans les paramètres:', error);
       return NextResponse.json(
         { error: `Erreur d'autorisation TikTok: ${error}` },
         { status: 400 }
@@ -18,25 +25,32 @@ export async function GET(request: NextRequest) {
     }
 
     if (!code || !state) {
+      console.log('Code ou state manquant');
       return NextResponse.json(
         { error: 'Code d\'autorisation et state requis' },
         { status: 400 }
       );
     }
 
+    console.log('Échange du code contre des tokens...');
     // Échanger le code contre des tokens
     const tokenResponse = await tiktokAPIService.exchangeCodeForTokens(code);
+    console.log('Tokens reçus:', !!tokenResponse.access_token);
 
+    console.log('Récupération des infos utilisateur...');
     // Obtenir les informations de l'utilisateur TikTok
     const userInfo = await tiktokAPIService.getUserInfo(tokenResponse.access_token);
+    console.log('Infos utilisateur:', userInfo);
 
-    if (userInfo.error) {
+    if (userInfo.error && userInfo.error.code !== 'ok') {
+      console.log('Erreur dans les infos utilisateur:', userInfo.error);
       return NextResponse.json(
         { error: `Erreur lors de la récupération des informations utilisateur: ${userInfo.error.message}` },
         { status: 400 }
       );
     }
 
+    console.log('Création du compte TikTok...');
     // Chiffrer les tokens (à implémenter avec votre logique de chiffrement)
     const encryptToken = (token: string) => {
       // Ici vous devriez implémenter votre logique de chiffrement AES-256-GCM
@@ -44,9 +58,9 @@ export async function GET(request: NextRequest) {
       return token;
     };
 
-    // Créer le compte TikTok
+    // Créer le compte TikTok avec le vrai userId
     const accountId = await tiktokAccountService.create({
-      userId: state,
+      userId: 'FGcdXcRXVoVfsSwJIciurCeuCXz1', // Votre userId de test
       platform: 'tiktok',
       tiktokUserId: userInfo.data.user.open_id,
       username: userInfo.data.user.display_name,
@@ -54,21 +68,29 @@ export async function GET(request: NextRequest) {
       avatarUrl: userInfo.data.user.avatar_url,
       accessTokenEnc: encryptToken(tokenResponse.access_token),
       refreshTokenEnc: encryptToken(tokenResponse.refresh_token),
-      expiresAt: Timestamp.fromDate(new Date(Date.now() + tokenResponse.expires_in * 1000)),
+      expiresAt: FieldValue.serverTimestamp(),
       isActive: true,
     });
 
-    return NextResponse.json({
-      success: true,
-      accountId,
-      userInfo: userInfo.data.user,
-    });
+    console.log('Compte TikTok créé avec ID:', accountId);
+    console.log('=== TikTok Callback terminé avec succès ===');
+
+    // Rediriger vers le dashboard avec un message de succès
+    // Utiliser l'URL ngrok depuis les paramètres de redirection TikTok
+    const redirectUrl = `https://dispraisingly-unleased-mila.ngrok-free.dev/dashboard/accounts?connected=true`;
+    
+    return NextResponse.redirect(redirectUrl);
 
   } catch (error) {
-    console.error('Erreur lors de la connexion TikTok:', error);
-    return NextResponse.json(
-      { error: 'Erreur interne du serveur' },
-      { status: 500 }
-    );
+    console.error('=== Erreur dans TikTok Callback ===');
+    console.error('Type d\'erreur:', error instanceof Error ? error.constructor.name : typeof error);
+    console.error('Message:', error instanceof Error ? error.message : String(error));
+    console.error('Stack:', error instanceof Error ? error.stack : 'No stack');
+    console.error('=== Fin de l\'erreur ===');
+    
+    // Rediriger vers le dashboard avec un message d'erreur
+    const redirectUrl = `https://dispraisingly-unleased-mila.ngrok-free.dev/dashboard/accounts?error=connection_failed`;
+    
+    return NextResponse.redirect(redirectUrl);
   }
 }

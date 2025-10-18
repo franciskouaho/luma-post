@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { GoogleSignInButton } from '@/components/auth/google-signin-button';
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebaseClient";
+import { GoogleSignInButton } from "@/components/auth/google-signin-button";
 
 export default function AuthPage() {
   const [user, setUser] = useState<any>(null);
@@ -37,12 +37,9 @@ export default function AuthPage() {
             Planifiez et publiez vos vidéos TikTok automatiquement
           </p>
         </div>
-        
-        <GoogleSignInButton 
-          user={user} 
-          onUserChange={setUser} 
-        />
-        
+
+        <GoogleSignInButton user={user} onUserChange={setUser} />
+
         {user && (
           <div className="mt-6 text-center space-y-4">
             <p className="text-sm text-gray-600">
