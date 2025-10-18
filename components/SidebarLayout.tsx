@@ -17,7 +17,8 @@ import {
   HelpCircle,
   ChevronDown,
   User,
-  BarChart3
+  BarChart3,
+  LogOut
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -27,6 +28,20 @@ interface SidebarProps {
 export default function SidebarLayout({ children }: SidebarProps) {
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const pathname = usePathname();
+
+  const handleLogout = async () => {
+    try {
+      // Import dynamique pour éviter les erreurs côté serveur
+      const { signOut } = await import('firebase/auth');
+      const { auth } = await import('@/lib/firebaseClient');
+      
+      await signOut(auth);
+      // Rediriger vers la page de connexion
+      window.location.href = '/auth';
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  };
 
   const navigation = [
     {
@@ -126,14 +141,23 @@ export default function SidebarLayout({ children }: SidebarProps) {
 
         {/* User Profile */}
         <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center">
-            <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
-              <User className="h-5 w-5 text-gray-600" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                <User className="h-5 w-5 text-gray-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900">Francis</p>
+                <p className="text-xs text-gray-500">Pro Plan</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Francis</p>
-              <p className="text-xs text-gray-500">Pro Plan</p>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              title="Se déconnecter"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>
