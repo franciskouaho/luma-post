@@ -195,7 +195,9 @@ export default function AccountsPage() {
 
   const handleDisconnectAccount = async (platformName: string, accountId: string) => {
     if (platformName === 'TikTok') {
-      await handleRemoveAccount(accountId);
+      if (confirm('Êtes-vous sûr de vouloir déconnecter ce compte TikTok ?')) {
+        await deleteAccount(accountId);
+      }
     } else {
       // Pour les autres plateformes, afficher un message temporaire
       alert(`Déconnexion ${platformName} - Fonctionnalité à venir !`);

@@ -1,9 +1,8 @@
-import { adminStorage } from './firebase-admin';
-import { getDownloadURL, uploadBytes, deleteObject, ref } from 'firebase/storage';
+import { adminStorage } from './firebase';
 
 // Service Firebase Storage
 export class StorageService {
-  private bucket = adminStorage.bucket();
+  private bucket = adminStorage.bucket('lumapost-38e61.firebasestorage.app');
 
   // Générer une URL signée pour l'upload
   async generateSignedUploadUrl(
@@ -44,24 +43,48 @@ export class StorageService {
 
   // Upload direct d'un fichier
   async uploadFile(
-    file: Buffer | Uint8Array,
+    file: File | Buffer | Uint8Array,
     fileName: string,
-    contentType: string,
+    contentType?: string,
     metadata?: { [key: string]: string }
   ): Promise<{ storageKey: string; downloadUrl: string }> {
-    const fileRef = this.bucket.file(fileName);
+    console.log('📤 StorageService.uploadFile démarré');
+    console.log('📤 Nom de fichier:', fileName);
+    console.log('📤 Type de contenu:', contentType);
+    console.log('📤 Bucket:', this.bucket.name);
     
-    await fileRef.save(file, {
+    const fileRef = this.bucket.file(fileName);
+    console.log('📤 Référence fichier créée:', fileRef.name);
+    
+    let fileData: Buffer | Uint8Array;
+    let finalContentType = contentType;
+    
+    if (file instanceof File) {
+      console.log('📤 Conversion File vers Buffer...');
+      const arrayBuffer = await file.arrayBuffer();
+      fileData = Buffer.from(arrayBuffer);
+      finalContentType = contentType || file.type;
+      console.log('📤 Taille du fichier:', fileData.length, 'bytes');
+    } else {
+      fileData = file;
+    }
+    
+    console.log('📤 Sauvegarde du fichier...');
+    await fileRef.save(fileData, {
       metadata: {
-        contentType,
+        contentType: finalContentType,
         ...metadata,
       },
     });
+    console.log('✅ Fichier sauvegardé');
 
     // Rendre le fichier public (optionnel)
+    console.log('📤 Rendre le fichier public...');
     await fileRef.makePublic();
+    console.log('✅ Fichier rendu public');
     
     const downloadUrl = `https://storage.googleapis.com/${this.bucket.name}/${fileName}`;
+    console.log('📤 URL de téléchargement:', downloadUrl);
     
     return {
       storageKey: fileName,
@@ -71,8 +94,24 @@ export class StorageService {
 
   // Supprimer un fichier
   async deleteFile(storageKey: string): Promise<void> {
+    console.log('🗑️ StorageService.deleteFile démarré');
+    console.log('🗑️ Storage key:', storageKey);
+    console.log('🗑️ Bucket:', this.bucket.name);
+    
     const file = this.bucket.file(storageKey);
+    console.log('🗑️ Référence fichier créée:', file.name);
+    
+    // Vérifier si le fichier existe avant de le supprimer
+    const [exists] = await file.exists();
+    console.log('🗑️ Fichier existe:', exists);
+    
+    if (!exists) {
+      console.log('⚠️ Fichier n\'existe pas, pas de suppression nécessaire');
+      return;
+    }
+    
     await file.delete();
+    console.log('✅ Fichier supprimé avec succès');
   }
 
   // Obtenir les métadonnées d'un fichier
@@ -107,11 +146,18 @@ export class StorageService {
   // Valider le type de fichier
   validateFileType(contentType: string): boolean {
     const allowedTypes = [
+      // Vidéos
       'video/mp4',
       'video/quicktime',
       'video/x-msvideo',
       'video/x-ms-wmv',
       'video/webm',
+      // Images
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
     ];
     return allowedTypes.includes(contentType);
   }

@@ -18,15 +18,25 @@ export interface Video {
 export interface Schedule {
   id: string;
   userId: string;
-  videoId: string;
-  accountId: string;
-  title: string;
+  videoId?: string;
+  accountId?: string;
+  title?: string;
   description?: string;
-  hashtags: string[];
+  hashtags?: string[];
+  caption?: string;
+  videoUrl?: string;
+  thumbnailUrl?: string;
+  platforms?: string[];
+  mediaType?: string;
   scheduledAt: FieldValue;
-  status: 'scheduled' | 'queued' | 'published' | 'failed';
+  status: 'scheduled' | 'queued' | 'published' | 'failed' | 'draft';
   lastError?: string;
   tiktokUrl?: string;
+  publishId?: string; // ID de publication TikTok
+  views?: number;
+  likes?: number;
+  comments?: number;
+  shares?: number;
   createdAt: FieldValue;
   updatedAt: FieldValue;
 }

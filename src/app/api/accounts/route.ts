@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tiktokAccountService } from '@/lib/firestore';
-import { auth } from '@/lib/firebase';
+import { adminAuth } from '@/lib/firebase';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {
-        const decodedToken = await auth.verifyIdToken(token);
+        const decodedToken = await adminAuth.verifyIdToken(token);
         userId = decodedToken.uid;
       } catch (error) {
         console.error('Erreur de vérification du token:', error);

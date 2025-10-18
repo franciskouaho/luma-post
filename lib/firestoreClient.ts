@@ -1,7 +1,5 @@
-// Firebase Client SDK (pour le frontend uniquement)
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getAnalytics } from 'firebase/analytics';
+// Firebase Client SDK pour Firestore (côté client uniquement)
+import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 // Configuration Firebase Client
@@ -15,22 +13,10 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-42VQK97ZK1"
 };
 
-// Initialize Firebase Client (vérifier s'il n'est pas déjà initialisé)
-let app;
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
-}
-
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+// Initialize Firebase Client
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore Client
 export const db = getFirestore(app);
-
-// Initialize Analytics (only in browser environment)
-export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 export default app;

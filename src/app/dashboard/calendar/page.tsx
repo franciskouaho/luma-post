@@ -12,14 +12,18 @@ import {
   Edit3,
   Globe,
   Camera,
-  Info
+  Info,
+  Video,
+  Image,
+  FileText
 } from 'lucide-react';
+import { PlatformIcon } from '@/components/ui/platform-icon';
 
 interface ScheduledPost {
   id: string;
   caption: string;
   scheduledAt: Date;
-  status: 'scheduled' | 'posted' | 'draft';
+  status: 'scheduled' | 'published' | 'draft';
   platforms: string[];
   userId: string;
 }
@@ -28,7 +32,12 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
   const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [accounts, setAccounts] = useState<Array<{
+    id: string;
+    platform: string;
+    username: string;
+    avatarUrl?: string;
+  }>>([]);
 
   // Générer les jours du mois
   const getDaysInMonth = (date: Date) => {
@@ -59,9 +68,14 @@ export default function CalendarPage() {
       
       // Trouver les posts pour ce jour
       const dayPosts = scheduledPosts.filter(post => {
+        if (!post.scheduledAt) return false;
         const postDate = new Date(post.scheduledAt);
         return postDate.toDateString() === date.toDateString();
       });
+      
+      if (dayPosts.length > 0) {
+        console.log('📅 Posts trouvés pour le', date.toDateString(), ':', dayPosts);
+      }
 
       days.push({
         date,
@@ -90,20 +104,53 @@ export default function CalendarPage() {
   useEffect(() => {
     const fetchScheduledPosts = async () => {
       try {
-        setLoading(true);
         const response = await fetch('/api/schedules?userId=FGcdXcRXVoVfsSwJIciurCeuCXz1');
         if (response.ok) {
           const data = await response.json();
-          setScheduledPosts(data.schedules || []);
+          console.log('Posts récupérés:', data.schedules);
+          
+          // Convertir les dates Firestore en objets Date
+          const posts = (data.schedules || []).map((post: any) => {
+            let scheduledAt;
+            if (post.scheduledAt?._seconds) {
+              // Format Firestore avec _seconds et _nanoseconds
+              scheduledAt = new Date(post.scheduledAt._seconds * 1000);
+            } else if (post.scheduledAt?.toDate) {
+              // Format Firestore avec méthode toDate
+              scheduledAt = post.scheduledAt.toDate();
+            } else {
+              // Format string ou Date
+              scheduledAt = new Date(post.scheduledAt);
+            }
+            
+            return {
+              ...post,
+              scheduledAt
+            };
+          });
+          
+          console.log('Posts avec dates converties:', posts);
+          setScheduledPosts(posts);
         }
       } catch (error) {
         console.error('Erreur lors du chargement des posts planifiés:', error);
-      } finally {
-        setLoading(false);
+      }
+    };
+
+    const fetchAccounts = async () => {
+      try {
+        const response = await fetch('/api/accounts');
+        if (response.ok) {
+          const data = await response.json();
+          setAccounts(data.accounts || []);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des comptes:', error);
       }
     };
 
     fetchScheduledPosts();
+    fetchAccounts();
   }, []);
 
   const navigateMonth = (direction: 'prev' | 'next') => {
@@ -116,6 +163,14 @@ export default function CalendarPage() {
       }
       return newDate;
     });
+  };
+
+  const goToOctober2025 = () => {
+    setCurrentDate(new Date(2025, 9, 1)); // Octobre 2025
+  };
+
+  const goToToday = () => {
+    setCurrentDate(new Date());
   };
 
   const formatDate = (date: Date) => {
@@ -132,15 +187,49 @@ export default function CalendarPage() {
     });
   };
 
-  const getPostIcon = (platforms: string[]) => {
-    if (platforms.includes('tiktok')) {
-      return <Camera className="h-3 w-3 text-gray-600" />;
+  const getContentTypeIcon = (mediaType: string) => {
+    switch (mediaType?.toLowerCase()) {
+      case 'video':
+        return <Video className="h-3 w-3 text-blue-600" />;
+      case 'image':
+        return <Image className="h-3 w-3 text-green-600" />;
+      case 'text':
+        return <FileText className="h-3 w-3 text-gray-600" />;
+      default:
+        return <FileText className="h-3 w-3 text-gray-600" />;
     }
-    return <Globe className="h-3 w-3 text-gray-600" />;
+  };
+
+  const getPostIcon = (platforms: string[]) => {
+    // Trouver le premier compte correspondant
+    const account = accounts.find(acc => platforms.includes(acc.id));
+    
+    console.log('🔍 getPostIcon - platforms:', platforms);
+    console.log('🔍 getPostIcon - accounts:', accounts);
+    console.log('🔍 getPostIcon - found account:', account);
+    
+    if (account) {
+      return (
+        <PlatformIcon
+          platform={account.platform}
+          size="sm"
+          profileImageUrl={account.avatarUrl}
+          username={account.username}
+          className="w-5 h-5"
+        />
+      );
+    }
+    
+    // Par défaut, icône TikTok
+    return <Camera className="h-5 w-5 text-gray-600" />;
   };
 
   const days = getDaysInMonth(currentDate);
   const weekDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+  // Debug: afficher les posts récupérés
+  console.log('Posts programmés:', scheduledPosts);
+  console.log('Date actuelle du calendrier:', currentDate);
 
   return (
     <div className="h-full p-4">
@@ -171,6 +260,25 @@ export default function CalendarPage() {
                 onClick={() => navigateMonth('next')}
               >
                 <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Boutons de navigation rapide */}
+            <div className="flex items-center space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={goToToday}
+              >
+                Aujourd&apos;hui
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={goToOctober2025}
+                className="bg-blue-50 text-blue-600 hover:bg-blue-100"
+              >
+                Oct 2025
               </Button>
             </div>
 
@@ -212,7 +320,7 @@ export default function CalendarPage() {
               {days.map((day, index) => (
                 <div
                   key={index}
-                  className={`min-h-32 border-r border-b border-gray-200 p-2 ${
+                  className={`min-h-40 border-r border-b border-gray-200 p-2 ${
                     day.isCurrentMonth ? 'bg-white' : 'bg-gray-50'
                   } ${day.isToday ? 'bg-green-50' : ''}`}
                 >
@@ -232,33 +340,39 @@ export default function CalendarPage() {
 
                   {/* Posts planifiés */}
                   <div className="space-y-1">
-                    {day.posts.slice(0, 3).map((post, postIndex) => (
+                    {day.posts.slice(0, 2).map((post, postIndex) => (
                       <div
                         key={postIndex}
-                        className="flex items-center space-x-1 text-xs bg-gray-100 rounded px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                        className="bg-white border border-gray-200 rounded-md p-2 hover:shadow-sm cursor-pointer transition-all relative"
                       >
-                        <Clock className="h-2 w-2 text-gray-500" />
-                        <span className="text-gray-600">{formatTime(new Date(post.scheduledAt))}</span>
-                        {getPostIcon(post.platforms)}
-                        <span className="text-gray-700 truncate">
-                          {post.caption.substring(0, 20)}...
-                        </span>
-                        {post.status === 'draft' && (
-                          <Edit3 className="h-2 w-2 text-blue-500" />
-                        )}
+                        {/* Icône du type de contenu en haut à droite */}
+                        <div className="absolute top-1 right-1">
+                          {getContentTypeIcon(post.mediaType)}
+                        </div>
+                        
+                        <div className="flex items-center space-x-1 mb-1">
+                          <Clock className="h-3 w-3 text-gray-500" />
+                          <span className="text-xs font-medium text-gray-700">
+                            {formatTime(post.scheduledAt)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex justify-start">
+                          {getPostIcon(post.platforms)}
+                        </div>
                       </div>
                     ))}
                     
                     {/* Plus de posts */}
-                    {day.posts.length > 3 && (
-                      <div className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer">
-                        +{day.posts.length - 3} more
+                    {day.posts.length > 2 && (
+                      <div className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer font-medium">
+                        +{day.posts.length - 2} more
                       </div>
                     )}
-
+                    
                     {/* Aucun post */}
                     {day.posts.length === 0 && day.isCurrentMonth && (
-                      <div className="text-xs text-gray-400 italic">
+                      <div className="text-xs text-gray-400 italic text-center py-2">
                         No posts
                       </div>
                     )}

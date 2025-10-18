@@ -7,8 +7,6 @@ import {
   Home, 
   Plus, 
   FileText, 
-  Star, 
-  Wrench, 
   Calendar, 
   Grid3X3, 
   Clock, 
@@ -16,10 +14,10 @@ import {
   FileEdit,
   Link2, 
   Settings, 
-  Key,
   HelpCircle,
   ChevronDown,
-  User
+  User,
+  BarChart3
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -32,19 +30,17 @@ export default function SidebarLayout({ children }: SidebarProps) {
 
   const navigation = [
     {
-      name: 'Create',
+      name: 'Overview',
       items: [
-        { name: 'New post', href: '/dashboard', icon: FileText, current: pathname === '/dashboard' },
-        { name: 'Studio', href: '/dashboard/studio', icon: Star },
-        { name: 'Bulk tools', href: '/dashboard/bulk', icon: Wrench },
+        { name: 'Overview', href: '/dashboard', icon: BarChart3, current: pathname === '/dashboard' },
       ]
     },
     {
       name: 'Posts',
       items: [
-        { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
         { name: 'All', href: '/dashboard/all-posts', icon: Grid3X3 },
-        { name: 'Scheduled', href: '/dashboard/schedules', icon: Clock },
+        { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
+        { name: 'Scheduled', href: '/dashboard/schedule', icon: Clock },
         { name: 'Posted', href: '/dashboard/all-posts', icon: Send },
         { name: 'Drafts', href: '/dashboard/drafts', icon: FileEdit },
       ]
@@ -54,7 +50,6 @@ export default function SidebarLayout({ children }: SidebarProps) {
       items: [
         { name: 'Connections', href: '/dashboard/accounts', icon: Link2, current: pathname === '/dashboard/accounts' },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-        { name: 'API Keys', href: '/dashboard/api-keys', icon: Key },
       ]
     },
     {
@@ -90,10 +85,12 @@ export default function SidebarLayout({ children }: SidebarProps) {
 
         {/* Create Post Button */}
         <div className="p-4">
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors">
-            <Plus className="h-5 w-5 mr-2" />
-            Create post
-          </button>
+          <Link href="/dashboard/create-post">
+            <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors">
+              <Plus className="h-5 w-5 mr-2" />
+              Create post
+            </button>
+          </Link>
         </div>
 
         {/* Navigation */}

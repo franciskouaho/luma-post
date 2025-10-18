@@ -3,50 +3,48 @@ import { storageService } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
-    const { contentType, size, userId } = await request.json();
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    const fileName = formData.get('fileName') as string;
 
-    // Validation des paramètres
-    if (!contentType || !size || !userId) {
+    if (!file) {
       return NextResponse.json(
-        { error: 'contentType, size et userId sont requis' },
+        { error: 'Aucun fichier fourni' },
         { status: 400 }
       );
     }
 
     // Validation du type de fichier
-    if (!storageService.validateFileType(contentType)) {
+    if (!storageService.validateFileType(file.type)) {
       return NextResponse.json(
-        { error: 'Type de fichier non supporté. Formats autorisés: MP4, MOV, AVI, WMV, WebM' },
+        { error: 'Type de fichier non supporté. Formats autorisés: MP4, MOV, AVI, WMV, WebM, JPEG, PNG, GIF, WebP' },
         { status: 400 }
       );
     }
 
     // Validation de la taille
-    if (!storageService.validateFileSize(size)) {
+    if (!storageService.validateFileSize(file.size)) {
       return NextResponse.json(
         { error: 'La taille du fichier ne doit pas dépasser 200MB' },
         { status: 400 }
       );
     }
 
-    // Générer un nom de fichier unique
-    const fileName = storageService.generateFileName(userId, `video.${contentType.split('/')[1]}`);
+    // Utiliser le nom fourni ou générer un nom unique
+    const finalFileName = fileName || storageService.generateFileName('user', file.name);
 
-    // Générer l'URL signée pour l'upload
-    const { signedUrl, storageKey } = await storageService.generateSignedUploadUrl(
-      fileName,
-      contentType,
-      15 * 60 * 1000 // 15 minutes
-    );
+    // Upload direct vers Firebase Storage
+    const uploadResult = await storageService.uploadFile(file, finalFileName);
     
     return NextResponse.json({
-      signedUrl,
-      storageKey,
-      expires: Date.now() + 15 * 60 * 1000
+      downloadURL: uploadResult.downloadUrl, // Utiliser downloadUrl de l'objet retourné
+      fileName: finalFileName,
+      size: file.size,
+      type: file.type
     });
 
   } catch (error) {
-    console.error('Erreur lors de la génération de l\'URL signée:', error);
+    console.error('Erreur lors de l\'upload du fichier:', error);
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }

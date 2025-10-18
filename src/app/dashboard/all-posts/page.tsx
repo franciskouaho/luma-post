@@ -1,38 +1,130 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   Info,
   CheckCircle,
-  Camera
+  Camera,
+  Video,
+  Image as ImageIcon,
+  FileText,
+  Clock,
+  Send
 } from 'lucide-react';
-import Image from 'next/image';
-import TikTokLogo from '@/assets/logo/tiktok.png';
-import { usePosts } from '@/hooks/use-posts';
+import { PlatformIcon } from '@/components/ui/platform-icon';
 
-export default function PostedPostsPage() {
-  const { posts, loading } = usePosts('FGcdXcRXVoVfsSwJIciurCeuCXz1');
+export default function AllPostsPage() {
+  const [schedules, setSchedules] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<string>('newest');
   const [filterPlatform, setFilterPlatform] = useState<string>('all');
   const [filterTime, setFilterTime] = useState<string>('all');
   const [filterAccount, setFilterAccount] = useState<string>('all');
 
-  // Filtrer et trier les posts
-  const filteredPosts = posts
-    .filter(post => {
-      const matchesPlatform = filterPlatform === 'all' || post.platforms.includes(filterPlatform);
-      const matchesAccount = filterAccount === 'all' || post.userId === filterAccount;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Récupérer les schedules
+        const schedulesResponse = await fetch('/api/schedules?userId=FGcdXcRXVoVfsSwJIciurCeuCXz1');
+        if (schedulesResponse.ok) {
+          const schedulesData = await schedulesResponse.json();
+          
+          // Convertir les dates Firestore
+          const schedulesWithDates = (schedulesData.schedules || []).map((schedule: any) => {
+            let scheduledAt;
+            if (schedule.scheduledAt?._seconds) {
+              scheduledAt = new Date(schedule.scheduledAt._seconds * 1000);
+            } else if (schedule.scheduledAt?.toDate) {
+              scheduledAt = schedule.scheduledAt.toDate();
+            } else {
+              scheduledAt = new Date(schedule.scheduledAt);
+            }
+            
+            return {
+              ...schedule,
+              scheduledAt
+            };
+          });
+          
+          setSchedules(schedulesWithDates);
+        }
+
+        // Récupérer les comptes
+        const accountsResponse = await fetch('/api/accounts');
+        if (accountsResponse.ok) {
+          const accountsData = await accountsResponse.json();
+          setAccounts(accountsData.accounts || []);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filtrer et trier les schedules
+  const filteredSchedules = schedules
+    .filter(schedule => {
+      const matchesPlatform = filterPlatform === 'all' || 
+        schedule.platforms.some((platformId: string) => {
+          const account = accounts.find(acc => acc.id === platformId);
+          return account?.platform === filterPlatform;
+        });
+      const matchesAccount = filterAccount === 'all' || schedule.userId === filterAccount;
       return matchesPlatform && matchesAccount;
     })
     .sort((a, b) => {
       if (sortBy === 'newest') {
-        return new Date(b.postedAt || b.createdAt).getTime() - new Date(a.postedAt || a.createdAt).getTime();
+        return new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime();
       } else {
-        return new Date(a.postedAt || a.createdAt).getTime() - new Date(b.postedAt || b.createdAt).getTime();
+        return new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime();
       }
     });
+
+  const getContentTypeIcon = (mediaType: string) => {
+    switch (mediaType?.toLowerCase()) {
+      case 'video':
+        return <Video className="h-4 w-4 text-blue-600" />;
+      case 'image':
+        return <ImageIcon className="h-4 w-4 text-green-600" />;
+      case 'text':
+        return <FileText className="h-4 w-4 text-gray-600" />;
+      default:
+        return <Video className="h-4 w-4 text-blue-600" />;
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return <Clock className="h-4 w-4 text-blue-600" />;
+      case 'published':
+        return <Send className="h-4 w-4 text-green-600" />;
+      case 'draft':
+        return <FileText className="h-4 w-4 text-gray-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-blue-600" />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">scheduled</Badge>;
+      case 'published':
+        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">posted</Badge>;
+      case 'draft':
+        return <Badge variant="secondary" className="bg-gray-100 text-gray-800 text-xs">draft</Badge>;
+      default:
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">scheduled</Badge>;
+    }
+  };
 
 
   const formatDate = (date: Date) => {
@@ -70,11 +162,11 @@ export default function PostedPostsPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-2 mb-4">
-            <h1 className="text-3xl font-bold text-gray-900">Successfully Posted</h1>
+            <h1 className="text-3xl font-bold text-gray-900">All Posts</h1>
             <Info className="h-5 w-5 text-gray-400" />
           </div>
           
-          {/* Filtres comme dans le screenshot */}
+          {/* Filtres */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600">Sort by:</span>
@@ -97,8 +189,10 @@ export default function PostedPostsPage() {
               >
                 <option value="all">All Platforms</option>
                 <option value="tiktok">TikTok</option>
-                <option value="facebook">Facebook</option>
                 <option value="instagram">Instagram</option>
+                <option value="twitter">Twitter</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="youtube">YouTube</option>
               </select>
             </div>
             
@@ -130,87 +224,66 @@ export default function PostedPostsPage() {
           </div>
         </div>
 
-        {/* Grille des posts comme dans le screenshot */}
+        {/* Grille des posts */}
         <div className="grid grid-cols-3 gap-6">
-          {filteredPosts.map((post) => (
-            <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+          {filteredSchedules.map((schedule) => (
+            <Card key={schedule.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <CardContent className="p-0">
                 {/* Header avec date et heure */}
                 <div className="p-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-medium text-gray-900">
-                      {post.postedAt ? `${formatDate(post.postedAt)} ${formatTime(post.postedAt)}` : 
-                       formatDate(post.createdAt)} {formatTime(post.createdAt)}
+                      {formatDate(schedule.scheduledAt)} {formatTime(schedule.scheduledAt)}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {getContentTypeIcon(schedule.mediaType)}
+                      {getStatusIcon(schedule.status)}
                     </div>
                   </div>
                 </div>
                 
                 {/* Contenu */}
                 <div className="p-4">
-                  {/* Type de média */}
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Camera className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">video</span>
-                  </div>
-                  
                   {/* Caption */}
                   <p className="text-sm text-gray-700 mb-4 line-clamp-3">
-                    {post.caption}
+                    {schedule.caption || 'Sans titre'}
                   </p>
                   
-                  {/* Thumbnail placeholder */}
-                  <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-                    <Camera className="h-8 w-8 text-gray-400" />
+                  {/* Thumbnail */}
+                  <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
+                    {schedule.thumbnailUrl ? (
+                      <img 
+                        src={schedule.thumbnailUrl} 
+                        alt="Thumbnail" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Camera className="h-8 w-8 text-gray-400" />
+                    )}
                   </div>
                   
                   {/* Plateformes connectées */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-4">
                     <div className="flex items-center space-x-1">
-                      {post.platforms.map((platform) => (
-                        <div key={platform} className="relative">
-                          {platform === 'tiktok' ? (
-                            <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
-                              <Image
-                                src={TikTokLogo}
-                                alt="TikTok"
-                                width={12}
-                                height={12}
-                                className="w-3 h-3"
-                              />
-                            </div>
-                          ) : platform === 'twitter' ? (
-                            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-blue-600">T</span>
-                            </div>
-                          ) : platform === 'instagram' ? (
-                            <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-pink-600">I</span>
-                            </div>
-                          ) : platform === 'facebook' ? (
-                            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-blue-600">F</span>
-                            </div>
-                          ) : platform === 'youtube' ? (
-                            <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-red-600">Y</span>
-                            </div>
-                          ) : (
-                            <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-gray-600">
-                                {platform.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                      {schedule.platforms.map((platformId: string) => {
+                        const account = accounts.find(acc => acc.id === platformId);
+                        return account ? (
+                          <PlatformIcon
+                            key={platformId}
+                            platform={account.platform}
+                            size="sm"
+                            profileImageUrl={account.avatarUrl}
+                            username={account.username}
+                            className="w-6 h-6"
+                          />
+                        ) : null;
+                      })}
                     </div>
                   </div>
                   
-                  {/* Badge posted en bas à droite */}
-                  <div className="flex justify-end mt-4">
-                    <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
-                      posted
-                    </Badge>
+                  {/* Badge status en bas à droite */}
+                  <div className="flex justify-end">
+                    {getStatusBadge(schedule.status)}
                   </div>
                 </div>
               </CardContent>
@@ -219,12 +292,12 @@ export default function PostedPostsPage() {
         </div>
 
         {/* Message si aucun post */}
-        {filteredPosts.length === 0 && (
+        {filteredSchedules.length === 0 && !loading && (
           <div className="text-center py-12">
             <CheckCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun post publié</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun post trouvé</h3>
             <p className="text-gray-500">
-              Vos posts publiés apparaîtront ici une fois qu&apos;ils seront publiés.
+              Vos posts apparaîtront ici une fois qu&apos;ils seront créés.
             </p>
           </div>
         )}
