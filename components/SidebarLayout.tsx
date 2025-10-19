@@ -53,7 +53,6 @@ export default function SidebarLayout({ children }: SidebarProps) {
     {
       name: 'Posts',
       items: [
-        { name: 'All', href: '/dashboard/all-posts', icon: Grid3X3 },
         { name: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
         { name: 'Scheduled', href: '/dashboard/schedule', icon: Clock },
         { name: 'Posted', href: '/dashboard/all-posts', icon: Send },
