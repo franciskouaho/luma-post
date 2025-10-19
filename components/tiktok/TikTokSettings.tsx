@@ -170,7 +170,7 @@ export default function TikTokSettings({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <CheckCircle className="h-5 w-5 text-green-500" />
+            <CheckCircle className="h-5 w-5" style={{ color: 'var(--luma-purple)' }} />
             <span>Publication sur TikTok</span>
           </CardTitle>
           <CardDescription>

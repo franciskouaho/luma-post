@@ -41,7 +41,7 @@ export function GoogleSignInButton({
         </p>
         <a
           href="/dashboard"
-          className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+          className="inline-flex items-center px-6 py-3 text-white font-medium rounded-lg transition-colors" style={{ background: 'var(--luma-gradient-primary)' }}
         >
           Accéder au tableau de bord
         </a>

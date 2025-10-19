@@ -51,7 +51,7 @@ export default function TrustSection() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {trustElements.map((element, index) => (
             <div key={index} className="text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--luma-purple-light)', color: 'var(--luma-purple)' }}>
                 {element.icon}
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm">
@@ -74,8 +74,8 @@ export default function TrustSection() {
               <span className="font-medium">SOC 2 Type II</span>
             </div>
             <div className="flex items-center space-x-3 text-gray-600">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Lock className="w-4 h-4 text-green-600" />
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
+                <Lock className="w-4 h-4" style={{ color: 'var(--luma-purple)' }} />
               </div>
               <span className="font-medium">SSL Encrypted</span>
             </div>

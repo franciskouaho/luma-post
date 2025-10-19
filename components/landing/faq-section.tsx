@@ -86,7 +86,7 @@ export default function FAQSection() {
           </p>
           <a 
             href="mailto:support@lumapost.com" 
-            className="text-green-600 hover:text-green-700 font-semibold"
+            className="font-semibold" style={{ color: 'var(--luma-purple)' }}
           >
             Contact our support team
           </a>

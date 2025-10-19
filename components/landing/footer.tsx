@@ -53,7 +53,7 @@ export default function Footer() {
             {/* Brand section */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-2 mb-6">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--luma-gradient-primary)' }}>
                   <span className="text-white font-bold text-lg">L</span>
                 </div>
                 <span className="text-xl font-semibold">Luma Post</span>
@@ -112,9 +112,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 lg:w-80 px-4 py-3 bg-gray-800 border border-gray-700 rounded-l-lg focus:outline-none focus:border-green-500 text-white placeholder-gray-400"
+                className="flex-1 lg:w-80 px-4 py-3 bg-gray-800 border border-gray-700 rounded-l-lg focus:outline-none text-white placeholder-gray-400" style={{ '--tw-border-color': 'var(--luma-purple)' } as React.CSSProperties}
               />
-              <button className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-r-lg transition-colors">
+              <button className="px-6 py-3 text-white font-semibold rounded-r-lg transition-colors" style={{ background: 'var(--luma-gradient-primary)' }}>
                 Subscribe
               </button>
             </div>
@@ -131,7 +131,7 @@ export default function Footer() {
             {/* Trust badges */}
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2 text-sm text-gray-400">
-                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                <div className="w-4 h-4 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                 <span>99.9% Uptime</span>
               </div>
               <div className="flex items-center space-x-2 text-sm text-gray-400">

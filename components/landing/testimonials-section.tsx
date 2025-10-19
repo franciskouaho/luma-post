@@ -62,19 +62,19 @@ export default function TestimonialsSection() {
         {/* Additional Stats */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="text-3xl font-bold text-green-600 mb-2">8,166+</div>
+            <div className="text-3xl font-bold mb-2" style={{ color: 'var(--luma-purple)' }}>8,166+</div>
             <div className="text-gray-600">Active Creators</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-green-600 mb-2">50M+</div>
+            <div className="text-3xl font-bold mb-2" style={{ color: 'var(--luma-purple)' }}>50M+</div>
             <div className="text-gray-600">Posts Scheduled</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-green-600 mb-2">99.9%</div>
+            <div className="text-3xl font-bold mb-2" style={{ color: 'var(--luma-purple)' }}>99.9%</div>
             <div className="text-gray-600">Uptime</div>
           </div>
           <div>
-            <div className="text-3xl font-bold text-green-600 mb-2">4.9★</div>
+            <div className="text-3xl font-bold mb-2" style={{ color: 'var(--luma-purple)' }}>4.9★</div>
             <div className="text-gray-600">Average Rating</div>
           </div>
         </div>
