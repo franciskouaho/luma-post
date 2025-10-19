@@ -41,10 +41,18 @@ export async function PUT(
     }
 
     // Récupérer le membre à modifier
-    const member = await workspaceMemberService.getByWorkspaceAndUser(workspaceId, memberId);
+    const member = await workspaceMemberService.getById(memberId);
     if (!member) {
       return NextResponse.json(
         { error: 'Membre non trouvé' },
+        { status: 404 }
+      );
+    }
+
+    // Vérifier que le membre appartient au workspace
+    if (member.workspaceId !== workspaceId) {
+      return NextResponse.json(
+        { error: 'Membre non trouvé dans ce workspace' },
         { status: 404 }
       );
     }
@@ -114,10 +122,18 @@ export async function DELETE(
     }
 
     // Récupérer le membre à supprimer
-    const member = await workspaceMemberService.getByWorkspaceAndUser(workspaceId, memberId);
+    const member = await workspaceMemberService.getById(memberId);
     if (!member) {
       return NextResponse.json(
         { error: 'Membre non trouvé' },
+        { status: 404 }
+      );
+    }
+
+    // Vérifier que le membre appartient au workspace
+    if (member.workspaceId !== workspaceId) {
+      return NextResponse.json(
+        { error: 'Membre non trouvé dans ce workspace' },
         { status: 404 }
       );
     }

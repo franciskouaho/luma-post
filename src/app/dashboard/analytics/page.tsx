@@ -2,117 +2,196 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { 
   BarChart3, 
   TrendingUp, 
   Eye, 
   Heart, 
-  MessageCircle, 
+  MessageCircle,
   Share2,
   Calendar,
-  Filter,
+  Clock,
+  FileText,
+  X,
   Download,
-  Loader2
+  Filter,
+  Loader2,
+  Send,
+  FileEdit
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent
+} from '@/components/ui/chart';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { useAnalytics } from '@/hooks/use-analytics';
+import { useVideos } from '@/hooks/use-videos';
+import { useTikTokAccounts } from '@/hooks/use-tiktok-accounts';
+import { useWorkspaceStats } from '@/hooks/use-workspace-stats';
+import { useWorkspaceContext } from '@/contexts/workspace-context';
 
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState('7d');
   const [selectedPlatform, setSelectedPlatform] = useState('all');
+  const { selectedWorkspace } = useWorkspaceContext();
   
-  // Utiliser le hook pour récupérer les vraies données
+  // Hooks pour récupérer les données
   const { data, loading, error } = useAnalytics('FGcdXcRXVoVfsSwJIciurCeuCXz1', timeRange);
+  const { videos, loading: videosLoading } = useVideos(selectedWorkspace?.id || '');
+  const { accounts, loading: accountsLoading } = useTikTokAccounts({ userId: selectedWorkspace?.id || null });
+  const { stats: workspaceStats } = useWorkspaceStats(selectedWorkspace?.id || null);
 
-  // Données calculées à partir des vraies données Firebase
-  const stats = data ? [
+  // Statistiques de statut des posts
+  const postStatusStats = [
+    {
+      title: 'Publiés',
+      value: '0',
+      icon: Send,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
+      borderColor: 'border-purple-200'
+    },
+    {
+      title: 'Programmés',
+      value: '0',
+      icon: Calendar,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
+      borderColor: 'border-blue-200'
+    },
+    {
+      title: 'Brouillons',
+      value: '0',
+      icon: FileText,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-100',
+      borderColor: 'border-gray-200'
+    },
+    {
+      title: 'En file',
+      value: '0',
+      icon: Clock,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100',
+      borderColor: 'border-yellow-200'
+    },
+    {
+      title: 'Échecs',
+      value: '0',
+      icon: X,
+      color: 'text-red-600',
+      bgColor: 'bg-red-100',
+      borderColor: 'border-red-200'
+    }
+  ];
+
+  // Métriques d'engagement
+  const engagementStats = [
     {
       title: 'Total Posts',
-      value: data.totalPosts.toString(),
-      change: '+12%',
-      changeType: 'positive',
-      icon: BarChart3
+      value: '0',
+      change: '+0%',
+      icon: BarChart3,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       title: 'Total Views',
-      value: data.totalViews >= 1000 ? `${(data.totalViews / 1000).toFixed(1)}K` : data.totalViews.toString(),
-      change: '+8%',
-      changeType: 'positive',
-      icon: Eye
+      value: '0',
+      change: '+0%',
+      icon: Eye,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       title: 'Total Likes',
-      value: data.totalLikes >= 1000 ? `${(data.totalLikes / 1000).toFixed(1)}K` : data.totalLikes.toString(),
-      change: '+15%',
-      changeType: 'positive',
-      icon: Heart
+      value: '0',
+      change: '+0%',
+      icon: Heart,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       title: 'Total Comments',
-      value: data.totalComments.toString(),
-      change: '+5%',
-      changeType: 'positive',
-      icon: MessageCircle
+      value: '0',
+      change: '+0%',
+      icon: MessageCircle,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       title: 'Total Shares',
-      value: data.totalShares.toString(),
-      change: '+22%',
-      changeType: 'positive',
-      icon: Share2
+      value: '0',
+      change: '+0%',
+      icon: Share,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       title: 'Engagement Rate',
-      value: `${data.engagementRate}%`,
-      change: '+0.8%',
-      changeType: 'positive',
-      icon: TrendingUp
+      value: '0%',
+      change: '+0%',
+      icon: TrendingUp,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     }
-  ] : [];
+  ];
 
-  const topPosts = data?.topPosts || [];
-
-  if (loading) {
+  if (analyticsLoading || videosLoading || accountsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" style={{ color: 'var(--luma-purple)' }} />
-          <p className="text-gray-600">Chargement des analytics...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 mb-4">
-            <BarChart3 className="h-12 w-12 mx-auto mb-2" />
-            <p className="text-lg font-medium">Erreur de chargement</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-600" />
+              <p className="text-gray-600">Chargement des analytics...</p>
+            </div>
           </div>
-          <p className="text-gray-600">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+              <h1 className="text-4xl font-bold mb-2 text-purple-600">
                 Analytics
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-lg">
                 Analysez les performances de vos posts sur les réseaux sociaux
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" className="flex items-center">
+              {/* Filtres */}
+              <div className="flex items-center space-x-2">
+                <select 
+                  value={timeRange} 
+                  onChange={(e) => setTimeRange(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value="7d">7 derniers jours</option>
+                  <option value="30d">30 derniers jours</option>
+                  <option value="90d">90 derniers jours</option>
+                </select>
+                <select 
+                  value={platform} 
+                  onChange={(e) => setPlatform(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value="all">Toutes les plateformes</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="instagram">Instagram</option>
+                </select>
+              </div>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
@@ -120,64 +199,20 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="mb-8 flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4 text-gray-500" />
-            <select 
-              value={timeRange} 
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="7d">7 derniers jours</option>
-              <option value="30d">30 derniers jours</option>
-              <option value="90d">3 derniers mois</option>
-              <option value="1y">1 an</option>
-            </select>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <select 
-              value={selectedPlatform} 
-              onChange={(e) => setSelectedPlatform(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="all">Toutes les plateformes</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="twitter">Twitter</option>
-              <option value="youtube">YouTube</option>
-              <option value="instagram">Instagram</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {stats.map((stat, index) => {
+        {/* Statistiques de statut des posts */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+          {postStatusStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index}>
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">
-                        {stat.title}
-                      </p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {stat.value}
-                      </p>
+                    <div className={`w-12 h-12 ${stat.bgColor} rounded-full flex items-center justify-center`}>
+                      <Icon className={`h-6 w-6 ${stat.color}`} />
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Icon className="h-8 w-8" style={{ color: 'var(--luma-purple)' }} />
-                      <span className={`text-sm font-medium ${
-                        stat.changeType === 'positive' ? '' : 'text-red-600'
-                      }`}
-                      style={stat.changeType === 'positive' ? {
-                        color: 'var(--luma-purple)'
-                      } : {}}
-                      >
-                        {stat.change}
-                      </span>
+                    <div className="text-right">
+                      <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
+                      <p className="text-gray-600 text-sm">{stat.title}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -186,132 +221,123 @@ export default function AnalyticsPage() {
           })}
         </div>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Posts par jour */}
-          <Card>
+        {/* Métriques d'engagement */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {engagementStats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`w-10 h-10 ${stat.bgColor} rounded-full flex items-center justify-center`}>
+                      <Icon className={`h-5 w-5 ${stat.color}`} />
+                    </div>
+                    <div className="text-right">
+                      <span className="text-sm font-medium text-green-600">{stat.change}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+                    <p className="text-gray-600 text-sm">{stat.title}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Graphiques */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Graphique d'engagement par jour */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <TrendingUp className="h-5 w-5 mr-2" />
-                Posts par jour
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                Engagement par jour
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
-                {data?.postsByDay && data.postsByDay.length > 0 ? (
-                  <div className="flex items-end justify-between h-full space-x-2">
-                    {data.postsByDay.map((day, index) => {
-                      const maxCount = Math.max(...data.postsByDay.map(d => d.count));
-                      const height = maxCount > 0 ? (day.count / maxCount) * 200 : 0;
-                      
-                      return (
-                        <div key={index} className="flex flex-col items-center flex-1">
-                          <div 
-                            className="rounded-t w-full transition-all duration-300" 
-                            style={{ background: 'var(--luma-purple)', height: `${height}px` }}
-                          />
-                          <div className="mt-2 text-xs text-gray-600 text-center">
-                            <div className="font-medium">{day.date}</div>
-                            <div className="text-gray-500">{day.count}</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg">
-                    <p className="text-gray-500">Aucune donnée disponible</p>
-                  </div>
-                )}
+              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                <div className="text-center">
+                  <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">Graphique d'engagement à venir</p>
+                  <p className="text-gray-400 text-sm mt-2">Les données d'engagement seront affichées ici</p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Posts par plateforme */}
-          <Card>
+          {/* Graphique de performance par plateforme */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2" />
-                Posts par plateforme
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                Performance par plateforme
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
-                {data?.postsByPlatform && Object.keys(data.postsByPlatform).length > 0 ? (
-                  <div className="space-y-3">
-                    {Object.entries(data.postsByPlatform).map(([platform, count]) => {
-                      const total = Object.values(data.postsByPlatform).reduce((sum, c) => sum + c, 0);
-                      const percentage = total > 0 ? (count / total) * 100 : 0;
-                      
-                      return (
-                        <div key={platform} className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-3 h-3 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                            <span className="text-sm font-medium capitalize">{platform}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <div className="w-24 bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="h-2 rounded-full transition-all duration-300" 
-                                style={{ background: 'var(--luma-purple)', width: `${percentage}%` }}
-                              />
-                            </div>
-                            <span className="text-sm text-gray-600 w-8 text-right">{count}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg">
-                    <p className="text-gray-500">Aucune donnée disponible</p>
-                  </div>
-                )}
+              <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+                <div className="text-center">
+                  <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">Graphique de performance à venir</p>
+                  <p className="text-gray-400 text-sm mt-2">Les données de performance seront affichées ici</p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Top Posts */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Posts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {topPosts.map((post) => (
-                <div key={post.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900 mb-1">{post.title}</h3>
-                    <p className="text-sm text-gray-500">{post.platform}</p>
-                  </div>
-                  <div className="flex items-center space-x-6 text-sm text-gray-600">
-                    <div className="text-center">
-                      <p className="font-medium">{post.views.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Vues</p>
+        {/* Section des posts récents avec analytics */}
+        <div className="mt-8">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                Posts Récents - Performance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {videos && videos.length > 0 ? (
+                <div className="space-y-4">
+                  {videos.slice(0, 5).map((post) => (
+                    <div key={post.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <FileText className="h-6 w-6 text-gray-600" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{post.title || 'Post sans titre'}</h4>
+                          <p className="text-sm text-gray-600">Post vidéo</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-6 text-sm text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <Eye className="h-4 w-4" />
+                          <span>0</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Heart className="h-4 w-4" />
+                          <span>0</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <MessageCircle className="h-4 w-4" />
+                          <span>0</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Share className="h-4 w-4" />
+                          <span>0</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <p className="font-medium">{post.likes}</p>
-                      <p className="text-xs text-gray-500">Likes</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium">{post.comments}</p>
-                      <p className="text-xs text-gray-500">Commentaires</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium">{post.shares}</p>
-                      <p className="text-xs text-gray-500">Partages</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium" style={{ color: 'var(--luma-purple)' }}>{post.engagement}%</p>
-                      <p className="text-xs text-gray-500">Engagement</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              ) : (
+                <div className="text-center py-12">
+                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Aucun post à analyser</h4>
+                  <p className="text-gray-600">Créez des posts pour voir leurs performances ici</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

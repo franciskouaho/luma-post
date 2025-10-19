@@ -25,7 +25,11 @@ import {
   Info,
   Camera,
   Edit3,
-  Trash2
+  Trash2,
+  Clock,
+  CheckCircle,
+  TrendingUp,
+  Filter
 } from 'lucide-react';
 import { useSchedules } from '@/hooks/use-schedules';
 import { useAuth } from '@/hooks/use-auth';
@@ -173,74 +177,166 @@ export default function SchedulePage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Scheduled Posts</h1>
-            <Info className="h-4 w-4 text-gray-400" />
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            {/* Filters */}
-            <div className="flex items-center space-x-3">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </select>
-              
-              <select
-                value={platformFilter}
-                onChange={(e) => setPlatformFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Platforms</option>
-                <option value="instagram">Instagram</option>
-                <option value="facebook">Facebook</option>
-                <option value="tiktok">TikTok</option>
-                <option value="youtube">YouTube</option>
-                <option value="twitter">Twitter</option>
-                <option value="linkedin">LinkedIn</option>
-              </select>
-              
-              <select
-                value={timeFilter}
-                onChange={(e) => setTimeFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Time</option>
-                <option value="today">Today</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-              </select>
-              
-              <select
-                value={accountFilter}
-                onChange={(e) => setAccountFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All Accounts</option>
-                <option value="account1">Account 1</option>
-                <option value="account2">Account 2</option>
-              </select>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Header moderne avec statistiques */}
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div className="mb-6 lg:mb-0">
+              <div className="flex items-center space-x-3 mb-2">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-blue-600 bg-clip-text text-transparent">
+                  Posts Planifiés
+                </h1>
+                <Info className="h-6 w-6 text-gray-400" />
+              </div>
+              <p className="text-gray-600 text-lg">Gérez et planifiez vos publications à venir</p>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                Select
-              </Button>
-              <Button variant="outline" size="sm">
-                <RefreshCw className="h-4 w-4" />
+            <div className="flex items-center space-x-3">
+              <Button 
+                onClick={() => window.location.href = '/dashboard/upload'}
+                className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                style={{ background: 'var(--luma-gradient-primary)' }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Planifier un Post
               </Button>
             </div>
           </div>
-        </div>
+
+          {/* Statistiques */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-600">Total Planifiés</p>
+                    <p className="text-2xl font-bold text-blue-900">{filteredSchedules.length}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Calendar className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-green-600">Cette Semaine</p>
+                    <p className="text-2xl font-bold text-green-900">
+                      {filteredSchedules.filter(s => {
+                        const scheduleDate = new Date(s.scheduledAt);
+                        const now = new Date();
+                        const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        return scheduleDate >= now && scheduleDate <= weekFromNow;
+                      }).length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                    <Clock className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-purple-600">Aujourd'hui</p>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {filteredSchedules.filter(s => {
+                        const scheduleDate = new Date(s.scheduledAt);
+                        const today = new Date();
+                        return scheduleDate.toDateString() === today.toDateString();
+                      }).length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-orange-600">Ce Mois</p>
+                    <p className="text-2xl font-bold text-orange-900">
+                      {filteredSchedules.filter(s => {
+                        const scheduleDate = new Date(s.scheduledAt);
+                        const now = new Date();
+                        const monthFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+                        return scheduleDate >= now && scheduleDate <= monthFromNow;
+                      }).length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Filtres et contrôles modernisés */}
+          <Card className="border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Filter className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700">Filtres:</span>
+                  </div>
+                  
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
+                  >
+                    <option value="newest">Plus récents</option>
+                    <option value="oldest">Plus anciens</option>
+                  </select>
+                  
+                  <select
+                    value={platformFilter}
+                    onChange={(e) => setPlatformFilter(e.target.value)}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
+                  >
+                    <option value="all">Toutes les plateformes</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="linkedin">LinkedIn</option>
+                  </select>
+                  
+                  <select
+                    value={timeFilter}
+                    onChange={(e) => setTimeFilter(e.target.value)}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
+                  >
+                    <option value="all">Toute la période</option>
+                    <option value="today">Aujourd'hui</option>
+                    <option value="week">Cette semaine</option>
+                    <option value="month">Ce mois</option>
+                  </select>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <Button variant="outline" size="sm" className="border-blue-200 text-blue-600 hover:bg-blue-50">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Actualiser
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Main Content */}
@@ -262,24 +358,40 @@ export default function SchedulePage() {
           </div>
         )}
 
-        {/* Posts Grid */}
+        {/* Posts Grid modernisé */}
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSchedules.length === 0 ? (
               <div className="col-span-full">
-                <Card>
-                  <CardContent className="text-center py-12">
-                    <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-white">
+                  <CardContent className="text-center py-16 px-8">
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Calendar className="h-12 w-12 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">
                       Aucune publication planifiée
                     </h3>
-                    <p className="text-gray-500 mb-4">
-                      Créez votre première planification pour commencer
+                    <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                      Créez votre première planification pour automatiser vos publications sur les réseaux sociaux.
                     </p>
-                    <Button onClick={handleCreateSchedule} className="text-white transition-all duration-200 shadow-md hover:shadow-lg" style={{ background: 'var(--luma-gradient-primary)' }}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Créer une planification
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button 
+                        onClick={handleCreateSchedule} 
+                        className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" 
+                        style={{ background: 'var(--luma-gradient-primary)' }}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Planifier un post
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        onClick={() => window.location.href = '/dashboard/upload'}
+                        className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                      >
+                        <Camera className="h-4 w-4 mr-2" />
+                        Créer un post
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -287,41 +399,47 @@ export default function SchedulePage() {
               filteredSchedules.map((schedule) => {
                 const dateInfo = formatDate(schedule.scheduledAt);
                 return (
-                  <Card key={schedule.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
+                  <Card key={schedule.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white">
                     <CardContent className="p-0">
-                      {/* Header avec date et statut */}
-                      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                        <div className="flex flex-col">
-                          <div className="text-sm font-medium text-gray-900">
-                            {dateInfo.date}
+                      {/* Header avec gradient et date */}
+                      <div className="relative p-6 bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-2">
+                            <Camera className="h-4 w-4 text-blue-600" />
+                            <span className="text-sm font-medium text-blue-700 capitalize">video</span>
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {dateInfo.time}
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                            scheduled
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
+                            Planifié
                           </Badge>
-                          <div className="flex space-x-1">
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-lg font-semibold text-gray-900">
+                              {dateInfo.date}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {dateInfo.time}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
                             <Button 
                               size="sm" 
                               variant="ghost"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
                               onClick={() => handleEditSchedule(schedule.id)}
-                              className="h-8 w-8 p-0 hover:bg-gray-100"
                             >
                               <Edit3 className="h-4 w-4" />
                             </Button>
                             <Button 
                               size="sm" 
                               variant="ghost"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 handleDeleteSchedule(schedule.id);
                               }}
-                              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"
-                              title="Supprimer cette planification"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -329,89 +447,126 @@ export default function SchedulePage() {
                         </div>
                       </div>
                       
-                      {/* Contenu */}
-                      <div className="p-4">
-                        {/* Type de média */}
-                        <div className="flex items-center space-x-2 mb-3">
-                          <Camera className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">video</span>
+                      {/* Contenu principal */}
+                      <div className="p-6">
+                        {/* Caption avec style amélioré */}
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">
+                            {schedule.caption || 'Aucune description disponible'}
+                          </p>
                         </div>
                         
-                        {/* Caption */}
-                        <p className="text-sm text-gray-700 mb-4 line-clamp-3">
-                          {schedule.caption || 'Caption here!'}
-                        </p>
-                        
-                        {/* Thumbnail */}
-                        <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg mb-4 flex items-center justify-center relative border-2 border-dashed border-gray-300">
+                        {/* Thumbnail avec overlay et effet hover */}
+                        <div className="relative w-full h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl mb-4 overflow-hidden group/thumbnail">
                           {schedule.thumbnailUrl ? (
-                            <Image
-                              src={schedule.thumbnailUrl}
-                              alt="Video thumbnail"
-                              width={300}
-                              height={160}
-                              className="object-cover w-full h-full rounded-lg"
-                            />
+                            <>
+                              <Image
+                                src={schedule.thumbnailUrl}
+                                alt="Video thumbnail"
+                                width={400}
+                                height={200}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover/thumbnail:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/thumbnail:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                                <div className="opacity-0 group-hover/thumbnail:opacity-100 transition-opacity duration-300">
+                                  <div className="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                                    <Play className="h-6 w-6 text-gray-700" />
+                                  </div>
+                                </div>
+                              </div>
+                            </>
                           ) : schedule.videoUrl ? (
                             <div className="relative w-full h-full">
                               <video
                                 src={schedule.videoUrl}
-                                className="w-full h-full object-cover rounded-lg"
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover/thumbnail:scale-105"
                                 muted
                                 preload="metadata"
                               />
-                            </div>
-                          ) : (schedule as any).videoFile ? (
-                            <div className="flex flex-col items-center justify-center text-gray-500">
-                              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-2">
-                                <Play className="h-6 w-6 text-blue-600" />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/thumbnail:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                                <div className="opacity-0 group-hover/thumbnail:opacity-100 transition-opacity duration-300">
+                                  <div className="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                                    <Play className="h-6 w-6 text-gray-700" />
+                                  </div>
+                                </div>
                               </div>
-                              <span className="text-sm font-medium">Video File</span>
-                              <span className="text-xs text-gray-400">{(schedule as any).videoFile}</span>
                             </div>
                           ) : (
-                            <div className="flex flex-col items-center justify-center text-gray-500">
-                              <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mb-2">
-                                <Play className="h-6 w-6 text-gray-600" />
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="text-center">
+                                <div className="w-16 h-16 bg-blue-300 rounded-full flex items-center justify-center mx-auto mb-2">
+                                  <Play className="h-8 w-8 text-blue-600" />
+                                </div>
+                                <p className="text-sm text-blue-600">Aperçu non disponible</p>
                               </div>
-                              <span className="text-sm font-medium">Video Preview</span>
-                              <span className="text-xs text-gray-400">Coming soon</span>
                             </div>
                           )}
                         </div>
                         
-                        {/* Plateformes avec avatars */}
+                        {/* Plateformes avec design amélioré */}
                         <div className="mb-4">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <span className="text-xs text-gray-500">Scheduled to:</span>
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Plateformes ciblées</span>
+                            <span className="text-xs text-gray-400">{schedule.platforms?.length || 0} compte(s)</span>
                           </div>
-                          <div className="flex space-x-2">
+                          <div className="flex items-center space-x-2">
                             {schedule.platforms?.map((platformId, index) => {
-                              // Trouver le compte correspondant par ID
                               const account = accounts.find(acc => acc.id === platformId);
                               const platformName = account?.platform || 'tiktok';
                               const username = account?.displayName || account?.username || 'Unknown';
                               
                               return (
-                                <PlatformIcon
-                                  key={index}
-                                  platform={platformName}
-                                  size="md"
-                                  className="cursor-pointer"
-                                  profileImageUrl={account?.avatarUrl}
-                                  username={username}
-                                />
+                                <div key={index} className="relative group/platform">
+                                  <PlatformIcon
+                                    platform={platformName}
+                                    size="md"
+                                    className="w-10 h-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow duration-200"
+                                    profileImageUrl={account?.avatarUrl}
+                                    username={username}
+                                  />
+                                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border-2 border-white rounded-full opacity-0 group-hover/platform:opacity-100 transition-opacity duration-200"></div>
+                                </div>
                               );
                             }) || (
-                              <PlatformIcon
-                                platform="tiktok"
-                                size="md"
-                                className="cursor-pointer"
-                              />
+                              <div className="relative group/platform">
+                                <PlatformIcon
+                                  platform="tiktok"
+                                  size="md"
+                                  className="w-10 h-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow duration-200"
+                                />
+                              </div>
                             )}
                           </div>
                         </div>
-
+                        
+                        {/* Actions en bas */}
+                        <div className="flex items-center justify-between pt-4 border-t border-blue-100">
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                              onClick={() => handleEditSchedule(schedule.id)}
+                            >
+                              <Edit3 className="h-3 w-3 mr-1" />
+                              Modifier
+                            </Button>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Button 
+                              size="sm" 
+                              variant="ghost"
+                              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleDeleteSchedule(schedule.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

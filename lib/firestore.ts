@@ -198,6 +198,18 @@ export class ScheduleService {
     })) as Schedule[];
   }
 
+  async getByWorkspaceId(workspaceId: string): Promise<Schedule[]> {
+    const q = adminDb.collection(this.collection)
+      .where('workspaceId', '==', workspaceId)
+      .orderBy('scheduledAt', 'desc');
+
+    const querySnapshot = await q.get();
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Schedule[];
+  }
+
   async getScheduledForPublishing(): Promise<Schedule[]> {
     const now = FieldValue.serverTimestamp();
     const q = adminDb.collection(this.collection)
@@ -384,6 +396,16 @@ export class WorkspaceMemberService {
       id: doc.id,
       ...doc.data()
     })) as WorkspaceMember[];
+  }
+
+  async getById(id: string): Promise<WorkspaceMember | null> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    const docSnap = await docRef.get();
+    
+    if (docSnap.exists) {
+      return { id: docSnap.id, ...docSnap.data() } as WorkspaceMember;
+    }
+    return null;
   }
 
   async getByWorkspaceAndUser(workspaceId: string, userId: string): Promise<WorkspaceMember | null> {

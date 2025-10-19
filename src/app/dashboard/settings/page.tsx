@@ -14,7 +14,19 @@ import {
   EyeOff,
   Trash2,
   Download,
-  Upload
+  Upload,
+  Plus,
+  Settings as SettingsIcon,
+  Info,
+  CheckCircle,
+  AlertTriangle,
+  Users,
+  Calendar,
+  TrendingUp,
+  Key,
+  Lock,
+  RefreshCw,
+  Zap
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -62,130 +74,217 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Header moderne avec statistiques */}
         <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Paramètres</h1>
-        <p className="text-gray-600">
-          Gérez vos préférences et paramètres de compte.
-        </p>
-      </div>
-
-      <div className="space-y-8">
-        {/* Profile Settings */}
-        <Card className="hover:shadow-lg transition-all duration-200">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2" />
-              Profil
-            </CardTitle>
-            <CardDescription>
-              Informations personnelles et préférences de compte
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom complet
-                </label>
-                <input
-                  type="text"
-                  value={settings.profile.name}
-                  onChange={(e) => setSettings({
-                    ...settings,
-                    profile: { ...settings.profile, name: e.target.value }
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+            <div className="mb-6 lg lis:mb-0">
+              <div className="flex items-center space-x-3 mb-2">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-slate-900 to-slate-600 bg-clip-text text-transparent">
+                  Paramètres
+                </h1>
+                <SettingsIcon className="h-6 w-6 text-gray-400" />
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={settings.profile.email}
-                  disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  L'email ne peut pas être modifié
-                </p>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fuseau horaire
-                </label>
-                <select
-                  value={settings.profile.timezone}
-                  onChange={(e) => setSettings({
-                    ...settings,
-                    profile: { ...settings.profile, timezone: e.target.value }
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
-                  <option value="Europe/London">Europe/London (UTC+0)</option>
-                  <option value="America/New_York">America/New_York (UTC-5)</option>
-                  <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Langue
-                </label>
-                <select
-                  value={settings.profile.language}
-                  onChange={(e) => setSettings({
-                    ...settings,
-                    profile: { ...settings.profile, language: e.target.value }
-                  })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
-                  <option value="es">Español</option>
-                </select>
-              </div>
+              <p className="text-gray-600 text-lg">Gérez vos préférences et paramètres de compte</p>
             </div>
-          </CardContent>
-        </Card>
+            
+            <div className="flex items-center space-x-3">
+              <Button 
+                onClick={handleSave}
+                className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                style={{ background: 'var(--luma-gradient-primary)' }}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Sauvegarder
+              </Button>
+            </div>
+          </div>
 
-        {/* Notifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Bell className="h-5 w-5 mr-2" />
-              Notifications
-            </CardTitle>
-            <CardDescription>
-              Configurez vos préférences de notification
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-gray-900">Notifications par email</h4>
-                  <p className="text-sm text-gray-500">Recevoir des notifications par email</p>
+          {/* Statistiques */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-50 to-slate-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-600">Profil</p>
+                    <p className="text-2xl font-bold text-slate-900">Actif</p>
+                  </div>
+                  <div className="w-12 h-12 bg-slate-500 rounded-full flex items-center justify-center">
+                    <User className="h-6 w-6 text-white" />
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-600">Notifications</p>
+                    <p className="text-2xl font-bold text-blue-900">
+                      {Object.values(settings.notifications).filter(Boolean).length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Bell className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-green-600">Sécurité</p>
+                    <p className="text-2xl font-bold text-green-900">Haut</p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-purple-600">Intégrations</p>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {Object.values(settings.integrations).filter(Boolean).length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+                    <Database className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          {/* Profile Settings */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-white">
+              <CardTitle className="flex items-center text-xl">
+                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center mr-3">
+                  <User className="h-5 w-5 text-slate-600" />
+                </div>
+                Profil
+              </CardTitle>
+              <CardDescription className="text-gray-600">
+                Informations personnelles et préférences de compte
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Nom complet
+                  </label>
                   <input
-                    type="checkbox"
-                    checked={settings.notifications.emailNotifications}
+                    type="text"
+                    value={settings.profile.name}
                     onChange={(e) => setSettings({
                       ...settings,
-                      notifications: { ...settings.notifications, emailNotifications: e.target.checked }
+                      profile: { ...settings.profile, name: e.target.value }
                     })}
-                    className="sr-only peer"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent shadow-sm transition-all duration-200"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={settings.profile.email}
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 shadow-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-2 flex items-center">
+                    <Info className="h-3 w-3 mr-1" />
+                    L'email ne peut pas être modifié
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Fuseau horaire
+                  </label>
+                  <select
+                    value={settings.profile.timezone}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      profile: { ...settings.profile, timezone: e.target.value }
+                    })}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent shadow-sm transition-all duration-200"
+                  >
+                    <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
+                    <option value="Europe/London">Europe/London (UTC+0)</option>
+                    <option value="America/New_York">America/New_York (UTC-5)</option>
+                    <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Langue
+                  </label>
+                  <select
+                    value={settings.profile.language}
+                    onChange={(e) => setSettings({
+                      ...settings,
+                      profile: { ...settings.profile, language: e.target.value }
+                    })}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent shadow-sm transition-all duration-200"
+                  >
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                  </select>
+                </div>
               </div>
+            </CardContent>
+        </Card>
+
+          {/* Notifications */}
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-white">
+              <CardTitle className="flex items-center text-xl">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                  <Bell className="h-5 w-5 text-blue-600" />
+                </div>
+                Notifications
+              </CardTitle>
+              <CardDescription className="text-gray-600">
+                Configurez vos préférences de notification
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 p-6">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Notifications par email</h4>
+                    <p className="text-sm text-gray-600">Recevoir des notifications par email</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={settings.notifications.emailNotifications}
+                      onChange={(e) => setSettings({
+                        ...settings,
+                        notifications: { ...settings.notifications, emailNotifications: e.target.checked }
+                      })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-12 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
 
               <div className="flex items-center justify-between">
                 <div>
@@ -449,13 +548,41 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Save Button */}
-        <div className="flex justify-end">
-          <Button onClick={handleSave} size="lg">
-            <Save className="h-4 w-4 mr-2" />
-            Sauvegarder les modifications
-          </Button>
-        </div>
+          {/* Actions en bas */}
+          <Card className="border-0 shadow-lg bg-gradient-to-r from-slate-50 to-white">
+            <CardContent className="p-6">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
+                    <Save className="h-5 w-5 text-slate-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Sauvegarder les modifications</h3>
+                    <p className="text-sm text-gray-600">Appliquez vos changements de paramètres</p>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <Button 
+                    variant="outline"
+                    onClick={() => window.location.reload()}
+                    className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Réinitialiser
+                  </Button>
+                  <Button 
+                    onClick={handleSave}
+                    className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                    style={{ background: 'var(--luma-gradient-primary)' }}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Sauvegarder
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
