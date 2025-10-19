@@ -50,7 +50,7 @@ export default function FeaturesSection() {
     <section id="features" className="bg-gray-50 py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--luma-dark)' }}>
             Everything you need to grow your audience
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -61,7 +61,7 @@ export default function FeaturesSection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <div key={index} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-green-600 mb-4">
+              <div className="mb-4" style={{ color: 'var(--luma-purple)' }}>
                 {feature.icon}
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -78,13 +78,13 @@ export default function FeaturesSection() {
         <div className="mt-20 bg-white rounded-2xl p-8 lg:p-12">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">
+              <h3 className="text-3xl font-bold mb-6" style={{ color: 'var(--luma-dark)' }}>
                 Why thousands of creators choose Luma Post
               </h3>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ background: 'var(--luma-purple-light)' }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">Save 10+ hours per week</h4>
@@ -92,8 +92,8 @@ export default function FeaturesSection() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ background: 'var(--luma-purple-light)' }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">Increase engagement by 40%</h4>
@@ -101,8 +101,8 @@ export default function FeaturesSection() {
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ background: 'var(--luma-purple-light)' }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-2">Grow your following faster</h4>
@@ -111,9 +111,9 @@ export default function FeaturesSection() {
                 </div>
               </div>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-8">
+            <div className='rounded-xl p-8' style={{ background: 'var(--luma-gradient-light)' }}>
               <div className="text-center">
-                <div className="text-4xl font-bold text-green-600 mb-2">98%</div>
+                <div className="text-4xl font-bold mb-2" style={{ color: 'var(--luma-purple)' }}>98%</div>
                 <div className="text-gray-700 font-semibold mb-4">Customer Satisfaction</div>
                 <div className="text-gray-600 mb-6">
                   &quot;Luma Post transformed how I manage my social media. I&apos;ve grown my following by 300% in just 3 months!&quot;

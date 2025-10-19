@@ -60,7 +60,7 @@ export default function PricingSection() {
     <section id="pricing" className="bg-gray-50 py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--luma-dark)' }}>
             Simple, transparent pricing
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -74,13 +74,14 @@ export default function PricingSection() {
               key={index}
               className={`bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-lg ${
                 plan.popular 
-                  ? 'border-green-500 relative shadow-lg scale-105' 
+                  ? 'relative shadow-lg scale-105' 
                   : 'border-gray-200 hover:border-gray-300'
               }`}
+              style={plan.popular ? { borderColor: 'var(--luma-purple)' } : {}}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  <span className="text-white px-4 py-1 rounded-full text-sm font-medium" style={{ background: 'var(--luma-purple)' }}>
                     Most Popular
                   </span>
                 </div>
@@ -98,7 +99,7 @@ export default function PricingSection() {
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-center space-x-3">
-                    <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                    <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
                     <span className="text-gray-700">{feature}</span>
                   </li>
                 ))}
@@ -107,9 +108,10 @@ export default function PricingSection() {
               <Button 
                 className={`w-full py-3 text-lg font-semibold ${
                   plan.popular 
-                    ? 'bg-green-600 hover:bg-green-700 text-white' 
+                    ? 'text-white' 
                     : 'bg-gray-900 hover:bg-gray-800 text-white'
                 }`}
+                style={plan.popular ? { background: 'var(--luma-gradient-primary)' } : {}}
               >
                 {plan.cta}
               </Button>
@@ -123,15 +125,15 @@ export default function PricingSection() {
           </p>
           <div className="flex justify-center items-center space-x-8 text-sm text-gray-500">
             <span className="flex items-center">
-              <Check className="w-4 h-4 text-green-600 mr-2" />
+              <Check className="w-4 h-4 mr-2" style={{ color: 'var(--luma-purple)' }} />
               Cancel anytime
             </span>
             <span className="flex items-center">
-              <Check className="w-4 h-4 text-green-600 mr-2" />
+              <Check className="w-4 h-4 mr-2" style={{ color: 'var(--luma-purple)' }} />
               Money-back guarantee
             </span>
             <span className="flex items-center">
-              <Check className="w-4 h-4 text-green-600 mr-2" />
+              <Check className="w-4 h-4 mr-2" style={{ color: 'var(--luma-purple)' }} />
               Setup in 2 minutes
             </span>
           </div>

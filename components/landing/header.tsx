@@ -10,10 +10,10 @@ export default function LandingHeader() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'var(--luma-gradient-primary)' }}>
               <span className="text-white font-bold text-lg">L</span>
             </div>
-            <span className="text-xl font-semibold text-gray-900">Luma Post</span>
+            <span className="text-xl font-semibold" style={{ color: 'var(--luma-dark)' }}>Luma Post</span>
           </div>
 
           {/* Navigation */}
@@ -43,7 +43,7 @@ export default function LandingHeader() {
 
           {/* Login Button */}
           <Link href="/auth">
-            <Button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium">
+            <Button className="text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105" style={{ background: 'var(--luma-gradient-primary)' }}>
               Login
             </Button>
           </Link>

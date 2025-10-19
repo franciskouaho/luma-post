@@ -11,13 +11,13 @@ export default function HeroSection() {
           {/* Left Column - Content */}
           <div className="space-y-8">
             {/* Demo Video Link */}
-            <div className="flex items-center space-x-2 text-green-600">
+            <div className="flex items-center space-x-2" style={{ color: 'var(--luma-purple)' }}>
               <Play className="w-4 h-4" />
               <span className="text-sm font-medium">Watch demo video</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--luma-dark)' }}>
               Schedule your content everywhere in seconds.
             </h1>
 
@@ -29,26 +29,26 @@ export default function HeroSection() {
             {/* Features List */}
             <ul className="space-y-4">
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
                 <span className="text-gray-700">Post to all major platforms in one click</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
                 <span className="text-gray-700">Schedule content for the perfect posting time</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
                 <span className="text-gray-700">Customize content for each platform</span>
               </li>
               <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 text-green-600 flex-shrink-0" />
+                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
                 <span className="text-gray-700">Generate viral videos using our studio templates</span>
               </li>
             </ul>
 
             {/* CTA Buttons */}
             <div className="pt-4 flex flex-col sm:flex-row gap-4">
-              <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all">
+              <Button className="text-white px-8 py-4 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all" style={{ background: 'var(--luma-gradient-primary)' }}>
                 Try it for free - No credit card required
               </Button>
               <Button variant="outline" className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold">
@@ -59,20 +59,20 @@ export default function HeroSection() {
             {/* Trust indicators */}
             <div className="pt-6 flex flex-wrap items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                 </div>
                 <span>Free 14-day trial</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                 </div>
                 <span>Setup in 2 minutes</span>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
+                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                 </div>
                 <span>Cancel anytime</span>
               </div>
@@ -125,10 +125,10 @@ export default function HeroSection() {
             </div>
 
             {/* Scheduled Status Box */}
-            <div className="mt-8 bg-green-100 rounded-lg p-4 max-w-xs mx-auto">
+            <div className="mt-8 rounded-lg p-4 max-w-xs mx-auto" style={{ background: 'var(--luma-purple-light)' }}>
               <div className="flex items-center space-x-2">
-                <Check className="w-5 h-5 text-green-600" />
-                <span className="text-green-800 font-medium">Scheduled to all platforms</span>
+                <Check className="w-5 h-5" style={{ color: 'var(--luma-purple)' }} />
+                <span className="font-medium" style={{ color: 'var(--luma-dark)' }}>Scheduled to all platforms</span>
               </div>
             </div>
 
