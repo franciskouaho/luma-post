@@ -840,14 +840,10 @@ function CreateVideoPostPageContent() {
                       className={`transition-all duration-200 aspect-square rounded-full ${
                         platform.connected 
                           ? selectedPlatforms.includes(platform.id)
-                            ? 'ring-4 shadow-lg scale-105 border-2'
+                            ? 'ring-4 shadow-lg scale-105 border-2 ring-luma-purple border-luma-purple'
                             : 'shadow-md hover:shadow-lg'
                           : 'opacity-50'
                       }`}
-                      style={selectedPlatforms.includes(platform.id) ? {
-                        ringColor: 'var(--luma-purple)',
-                        borderColor: 'var(--luma-purple)'
-                      } : {}}
                     />
                     <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
                       {platform.connected ? platform.username : `${platform.name} - Non connecté`}
