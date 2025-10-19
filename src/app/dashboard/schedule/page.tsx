@@ -179,11 +179,12 @@ export default function SchedulePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <h1 className="text-2xl font-semibold text-gray-900">Scheduled Posts</h1>
+            <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Scheduled Posts</h1>
             <Info className="h-4 w-4 text-gray-400" />
           </div>
           
@@ -245,10 +246,9 @@ export default function SchedulePage() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
-      {/* Main Content */}
-      <div className="p-6">
+        {/* Main Content */}
         {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-12">
@@ -292,7 +292,7 @@ export default function SchedulePage() {
               filteredSchedules.map((schedule) => {
                 const dateInfo = formatDate(schedule.scheduledAt);
                 return (
-                  <Card key={schedule.id} className="overflow-hidden shadow-lg">
+                  <Card key={schedule.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
                     <CardContent className="p-0">
                       {/* Header avec date et statut */}
                       <div className="p-4 border-b border-gray-200 flex items-center justify-between">

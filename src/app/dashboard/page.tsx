@@ -103,12 +103,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
                 Analytics
               </h1>
               <p className="text-gray-600">
@@ -235,7 +235,7 @@ export default function DashboardPage() {
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index}>
+              <Card key={index} className="hover:shadow-lg transition-all duration-200 hover:scale-105">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -247,9 +247,11 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Icon className="h-8 w-8 text-green-600" />
-                      <span className={`text-sm font-medium ${
-                        stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                      <div className="p-2 bg-green-50 rounded-lg">
+                        <Icon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <span className={`text-sm font-medium px-2 py-1 rounded-full ${
+                        stat.changeType === 'positive' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'
                       }`}>
                         {stat.change}
                       </span>
@@ -323,46 +325,48 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {/* Top Posts */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Posts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {topPosts.map((post) => (
-                <div key={post.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-gray-900 mb-1">{post.title}</h3>
-                    <p className="text-sm text-gray-500">{post.platform}</p>
+        {/* Top Posts - Affiché seulement s'il y a des données */}
+        {topPosts && topPosts.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Posts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {topPosts.map((post) => (
+                  <div key={post.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900 mb-1">{post.title}</h3>
+                      <p className="text-sm text-gray-500">{post.platform}</p>
+                    </div>
+                    <div className="flex items-center space-x-6 text-sm text-gray-600">
+                      <div className="text-center">
+                        <p className="font-medium">{post.views.toLocaleString()}</p>
+                        <p className="text-xs text-gray-500">Vues</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="font-medium">{post.likes}</p>
+                        <p className="text-xs text-gray-500">Likes</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="font-medium">{post.comments}</p>
+                        <p className="text-xs text-gray-500">Commentaires</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="font-medium">{post.shares}</p>
+                        <p className="text-xs text-gray-500">Partages</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="font-medium text-green-600">{post.engagement.toFixed(1)}%</p>
+                        <p className="text-xs text-gray-500">Engagement</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-6 text-sm text-gray-600">
-                    <div className="text-center">
-                      <p className="font-medium">{post.views.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Vues</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium">{post.likes}</p>
-                      <p className="text-xs text-gray-500">Likes</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium">{post.comments}</p>
-                      <p className="text-xs text-gray-500">Commentaires</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium">{post.shares}</p>
-                      <p className="text-xs text-gray-500">Partages</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium text-green-600">{post.engagement.toFixed(1)}%</p>
-                      <p className="text-xs text-gray-500">Engagement</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );

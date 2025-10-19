@@ -145,11 +145,13 @@ export default function AllPostsPage() {
 
   if (loading) {
     return (
-      <div className="p-8">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-4"></div>
-            <p className="text-gray-500">Chargement des posts publiés...</p>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-4"></div>
+              <p className="text-gray-500">Chargement des posts publiés...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -157,12 +159,12 @@ export default function AllPostsPage() {
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-2 mb-4">
-            <h1 className="text-3xl font-bold text-gray-900">All Posts</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">All Posts</h1>
             <Info className="h-5 w-5 text-gray-400" />
           </div>
           
@@ -227,7 +229,7 @@ export default function AllPostsPage() {
         {/* Grille des posts */}
         <div className="grid grid-cols-3 gap-6">
           {filteredSchedules.map((schedule) => (
-            <Card key={schedule.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            <Card key={schedule.id} className="overflow-hidden hover:shadow-lg transition-all duration-200 hover:scale-105">
               <CardContent className="p-0">
                 {/* Header avec date et heure */}
                 <div className="p-4 border-b border-gray-100">

@@ -174,19 +174,23 @@ export default function DraftsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Loading drafts...</p>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <p>Loading drafts...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-2 mb-4">
-            <h1 className="text-3xl font-bold text-gray-900">Drafts</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Drafts</h1>
             <Info className="h-5 w-5 text-gray-400" />
           </div>
           
@@ -250,7 +254,7 @@ export default function DraftsPage() {
         {/* Grille des drafts */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDrafts.map((draft) => (
-            <Card key={draft.id} className="overflow-hidden shadow-lg">
+            <Card key={draft.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
               <CardContent className="p-0">
                 {/* Header avec date et statut */}
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between">

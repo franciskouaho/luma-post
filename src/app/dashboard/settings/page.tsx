@@ -67,9 +67,10 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Paramètres</h1>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Paramètres</h1>
         <p className="text-gray-600">
           Gérez vos préférences et paramètres de compte.
         </p>
@@ -77,7 +78,7 @@ export default function SettingsPage() {
 
       <div className="space-y-8">
         {/* Profile Settings */}
-        <Card>
+        <Card className="hover:shadow-lg transition-all duration-200">
           <CardHeader>
             <CardTitle className="flex items-center">
               <User className="h-5 w-5 mr-2" />
@@ -459,6 +460,7 @@ export default function SettingsPage() {
             <Save className="h-4 w-4 mr-2" />
             Sauvegarder les modifications
           </Button>
+        </div>
         </div>
       </div>
     </div>

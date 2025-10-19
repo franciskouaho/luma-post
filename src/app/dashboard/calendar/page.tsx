@@ -232,12 +232,13 @@ export default function CalendarPage() {
   console.log('Date actuelle du calendrier:', currentDate);
 
   return (
-    <div className="h-full p-4">
-      <div className="h-full flex flex-col">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold text-gray-900">Calendar</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Calendar</h1>
             <Info className="h-5 w-5 text-gray-400" />
           </div>
           
@@ -406,6 +407,7 @@ export default function CalendarPage() {
             <Globe className="h-4 w-4" />
             <span>Text/Image</span>
           </div>
+        </div>
         </div>
       </div>
     </div>

@@ -46,7 +46,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
     {
       name: 'Overview',
       items: [
-        { name: 'Overview', href: '/dashboard', icon: BarChart3, current: pathname === '/dashboard' },
+        { name: 'Overview', href: '/dashboard', icon: BarChart3 },
       ]
     },
     {
@@ -62,7 +62,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
     {
       name: 'Configuration',
       items: [
-        { name: 'Connections', href: '/dashboard/accounts', icon: Link2, current: pathname === '/dashboard/accounts' },
+        { name: 'Connections', href: '/dashboard/accounts', icon: Link2 },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
       ]
     },
@@ -77,10 +77,10 @@ export default function SidebarLayout({ children }: SidebarProps) {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
         {/* Logo */}
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-900">Luma Post</h1>
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Luma Post</h1>
         </div>
 
         {/* Workspace */}
@@ -100,7 +100,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
         {/* Create Post Button */}
         <div className="p-4">
           <Link href="/dashboard/create-post">
-            <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-colors">
+            <button className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
               <Plus className="h-5 w-5 mr-2" />
               Create post
             </button>
@@ -121,10 +121,10 @@ export default function SidebarLayout({ children }: SidebarProps) {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                          item.current
-                            ? 'bg-green-50 text-green-700'
-                            : 'text-gray-700 hover:bg-gray-100'
+                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                          pathname === item.href
+                            ? 'bg-green-50 text-green-700 border-l-4 border-green-500 shadow-sm'
+                            : 'text-gray-700 hover:bg-gray-100 hover:shadow-sm'
                         }`}
                       >
                         <Icon className="h-5 w-5 mr-3" />

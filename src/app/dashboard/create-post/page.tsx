@@ -61,11 +61,11 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
             Create a new post
           </h1>
           <p className="text-gray-600">
@@ -86,10 +86,10 @@ export default function DashboardPage() {
                 onMouseLeave={() => setHoveredCard(null)}
               >
                 <div className={`
-                  relative p-8 border-2 border-dashed rounded-xl transition-all duration-200
+                  relative p-8 border-2 border-dashed rounded-xl transition-all duration-200 hover:shadow-lg
                   ${hoveredCard === postType.id 
-                    ? 'border-green-300 bg-green-50 shadow-lg' 
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'border-green-300 bg-green-50 shadow-lg scale-105' 
+                    : 'border-gray-300 hover:border-gray-400 hover:scale-105'
                   }
                 `}>
                   {/* Icon */}

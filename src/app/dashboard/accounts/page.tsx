@@ -221,10 +221,11 @@ function AccountsPageContent() {
   }
 
   return (
-    <div className="flex-1 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Connected Accounts</h1>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Connected Accounts</h1>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600">all accounts</span>
           <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -267,7 +268,7 @@ function AccountsPageContent() {
         {platforms.map((platform) => {
           const isDisabled = platform.name !== 'TikTok';
           return (
-            <Card key={platform.name} className={`overflow-hidden ${isDisabled ? 'opacity-50' : ''}`}>
+            <Card key={platform.name} className={`overflow-hidden hover:shadow-lg transition-all duration-200 ${isDisabled ? 'opacity-50' : 'hover:scale-105'}`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
@@ -380,6 +381,7 @@ function AccountsPageContent() {
       <div className="flex items-center space-x-2 text-sm text-gray-600">
         <HelpCircle className="h-4 w-4" />
         <span>Get help connecting your accounts</span>
+      </div>
       </div>
     </div>
   );
