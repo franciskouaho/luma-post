@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier que nous avons bien des données de fichier
-    if (!(fileData instanceof File)) {
+    // Note: File n'existe pas côté serveur Node.js, on vérifie les propriétés directement
+    if (!fileData || typeof fileData !== 'object') {
       return NextResponse.json(
         { error: 'Format de fichier invalide' },
         { status: 400 }

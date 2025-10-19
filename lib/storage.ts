@@ -54,11 +54,14 @@ export class StorageService {
     let fileData: Buffer | Uint8Array;
     let finalContentType = contentType;
     
-    if (file instanceof File) {
+    // Vérifier si c'est un objet File (navigateur) ou un Buffer/Uint8Array (serveur)
+    if (file && typeof file === 'object' && 'arrayBuffer' in file && 'type' in file) {
+      // C'est un objet File du navigateur
       const arrayBuffer = await file.arrayBuffer();
       fileData = Buffer.from(arrayBuffer);
       finalContentType = contentType || file.type;
     } else {
+      // C'est déjà un Buffer ou Uint8Array côté serveur
       fileData = file;
     }
     
