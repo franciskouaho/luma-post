@@ -409,13 +409,6 @@ class TikTokAPIService {
     if (!description.trim()) {
       description = 'Vidéo publiée via Luma Post';
     }
-
-    // Détecter le type de compte basé sur le nom d'utilisateur
-    const isBusinessAccount = account.username.toLowerCase().includes('app') || 
-                             account.username.toLowerCase().includes('business') ||
-                             account.username.toLowerCase().includes('awa');
-
-    // ÉTAPE 1: Préparation de la vidéo avec FILE_UPLOAD
     
     // Récupérer la vidéo depuis l'URL et la convertir en Buffer (côté serveur)
     const videoResponse = await fetch(videoData.videoUrl);
