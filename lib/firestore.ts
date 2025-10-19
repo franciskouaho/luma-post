@@ -56,6 +56,7 @@ export interface TikTokAccount {
   refreshTokenEnc: string;
   expiresAt: FieldValue;
   isActive: boolean;
+  scopes?: string[]; // Scopes autorisés pour ce compte
   createdAt: FieldValue;
   updatedAt: FieldValue;
 }

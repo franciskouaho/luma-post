@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
       refreshTokenEnc: encryptToken(tokenResponse.refresh_token),
       expiresAt: FieldValue.serverTimestamp(),
       isActive: true,
+      scopes: tokenResponse.scope ? tokenResponse.scope.split(',') : [], // Sauvegarder les scopes
     });
 
 

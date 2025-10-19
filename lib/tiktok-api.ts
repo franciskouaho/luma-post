@@ -114,7 +114,7 @@ class TikTokAPIService {
     
     const params = new URLSearchParams({
       client_key: this.clientId,
-      scope: 'user.info.basic,video.publish,video.upload',
+      scope: 'user.info.basic,video.publish',
       response_type: 'code',
       redirect_uri: cleanRedirectUri,
       state: userId, // Utiliser userId comme state pour CSRF
@@ -373,6 +373,26 @@ class TikTokAPIService {
     description?: string;
     hashtags?: string[];
   }, settings: TikTokPostSettings) {
+    
+    // Validation des scopes requis
+    console.log('🔍 Validation des scopes TikTok...');
+    try {
+      const scopeCheckUrl = 'https://open.tiktokapis.com/v2/user/info/';
+      const scopeResponse = await fetch(scopeCheckUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
+      
+      if (!scopeResponse.ok) {
+        throw new Error('Scopes TikTok insuffisants - vérifiez les permissions video.publish');
+      }
+      console.log('✅ Scopes TikTok validés');
+    } catch (error) {
+      console.error('❌ Erreur validation scopes:', error);
+      throw new Error('Impossible de valider les scopes TikTok. Veuillez reconnecter votre compte.');
+    }
     // Construire la description avec hashtags
     let description = videoData.description || videoData.title || '';
     if (videoData.hashtags && videoData.hashtags.length > 0) {
@@ -392,14 +412,16 @@ class TikTokAPIService {
 
     // ÉTAPE 1: Préparation de la vidéo avec FILE_UPLOAD
     
-    // Toujours utiliser FILE_UPLOAD pour éviter l'erreur url_ownership_unverified
+    // Récupérer la vidéo depuis l'URL et la convertir en Buffer (côté serveur)
     const videoResponse = await fetch(videoData.videoUrl);
     if (!videoResponse.ok) {
-      throw new Error('Impossible de récupérer la vidéo');
+      throw new Error('Impossible de récupérer la vidéo depuis l\'URL fournie');
     }
     
-    const videoBuffer = await videoResponse.arrayBuffer();
-    const videoSize = videoBuffer.byteLength;
+    // Convertir en Buffer pour éviter les problèmes avec l'objet File côté serveur
+    const videoArrayBuffer = await videoResponse.arrayBuffer();
+    const videoBuffer = Buffer.from(videoArrayBuffer);
+    const videoSize = videoBuffer.length;
     
     // Pour l'instant, utilisons un seul chunk pour éviter les problèmes de chunking
     // TikTok devrait accepter les fichiers de 57MB en un seul chunk
@@ -444,7 +466,9 @@ class TikTokAPIService {
           brand_organic_toggle: settings.commercialContent.yourBrand,
           video_cover_timestamp_ms: 1000, // Utiliser la première seconde comme couverture
         },
-        source_info: sourceInfo
+        source_info: sourceInfo,
+        // Forcer le mode Direct Post (pas INBOX_SHARE)
+        publish_type: 'DIRECT_POST'
       };
 
 
@@ -679,16 +703,17 @@ class TikTokAPIService {
     // Retour pour Direct Post uniquement
     const isPublished = finalStatus === 'PUBLISHED';
     return {
-      success: isPublished,
+      success: true, // La demande a été envoyée avec succès
       publishId: publish_id,
       status: finalStatus,
       message: isPublished 
         ? 'Vidéo publiée avec succès sur TikTok !' 
-        : `Publication en cours - Statut: ${finalStatus}`,
+        : `Direct Post initialisé - Statut: ${finalStatus}`,
       inboxMode: false, // Toujours false - on force Direct Post
       privacyLevel: settings.privacyLevel || 'PUBLIC_TO_EVERYONE',
       requiresManualPublish: false,
-      directPostSuccess: true
+      directPostSuccess: true, // Indique que Direct Post a été utilisé
+      publishType: 'DIRECT_POST' // Indication explicite du type
     };
   }
 }

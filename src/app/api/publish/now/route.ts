@@ -45,7 +45,17 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
+    // Vérifier les scopes requis pour Direct Post
+    const scopes: string[] = Array.isArray(tiktokAccount.scopes) ? tiktokAccount.scopes : [];
+    const hasUpload = scopes.includes('video.upload');
+    const hasPublish = scopes.includes('video.publish');
+    if (!hasUpload || !hasPublish) {
+      return NextResponse.json(
+        { error: 'Le compte TikTok n\'a pas autorisé les scopes requis (video.upload + video.publish)' },
+        { status: 403 }
+      );
+    }
 
     // Publier sur TikTok
     const publishResult = await tiktokAPIService.publishVideoComplete(tiktokAccount, {
@@ -86,7 +96,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Créer le post dans la base de données
+    // Créer le post en base avec statut initial 'queued' - on attend le webhook
+    const publishId = 'publishId' in publishResult ? publishResult.publishId : 'unknown';
+    const initialStatus = 'queued'; // On attend le webhook pour confirmer la publication
+    
     const scheduleId = await scheduleService.create({
       userId,
       caption,
@@ -94,47 +107,45 @@ export async function POST(request: NextRequest) {
       thumbnailUrl,
       platforms,
       scheduledAt: FieldValue.serverTimestamp(),
-      status: 'published',
+      status: initialStatus,
       mediaType,
-      tiktokUrl: `https://www.tiktok.com/@${tiktokAccount.username}/video/${'publishId' in publishResult ? publishResult.publishId : 'unknown'}`,
-      publishId: 'publishId' in publishResult ? publishResult.publishId : 'unknown',
+      tiktokUrl: undefined, // Attendre video_id/share_url via webhook post.publish.success
+      publishId,
     });
 
 
     // Récupérer le post créé
     const newPost = await scheduleService.getById(scheduleId);
 
-    // Message adapté selon le mode de publication
-    let successMessage = 'Vidéo publiée avec succès sur TikTok';
-    let additionalInfo = null;
-    
-    // Maintenant on utilise toujours Direct Post - plus de mode inbox
-    if ('directPostSuccess' in publishResult && publishResult.directPostSuccess) {
-      successMessage = 'Vidéo publiée directement sur TikTok !';
-      additionalInfo = {
-        inboxMode: false,
-        directPostSuccess: true,
-        privacyLevel: publishResult.privacyLevel,
-        requiresManualPublish: false,
-        instructions: `Publication directe réussie avec le niveau de confidentialité: ${publishResult.privacyLevel}`
-      };
-    } else {
-      // En cas d'échec de Direct Post
-      successMessage = 'Échec de la publication directe sur TikTok';
-      additionalInfo = {
-        inboxMode: false,
-        directPostSuccess: false,
-        privacyLevel: 'SELF_ONLY', // Valeur par défaut en cas d'échec
-        requiresManualPublish: false,
-        instructions: 'La publication directe a échoué. Vérifiez les permissions de votre compte TikTok.'
-      };
+    // Construire le message en différenciant Direct Post vs Inbox
+    let successMessage = 'Demande de publication envoyée à TikTok';
+    const additionalInfo: Record<string, unknown> = {
+      inboxMode: false,
+      directPostSuccess: false,
+      requiresManualPublish: false,
+      privacyLevel: 'privacyLevel' in publishResult ? publishResult.privacyLevel : 'PUBLIC_TO_EVERYONE',
+    };
+
+    // Si le service signale explicitement le Direct Post lancé
+    if ('directPostSuccess' in publishResult && publishResult.directPostSuccess === true) {
+      successMessage = 'Direct Post initialisé – en attente de confirmation';
+      additionalInfo.directPostSuccess = true;
     }
 
+    // Si le service renvoie des indices d'Inbox
+    if ((publishResult as any).publishType === 'INBOX_SHARE' || (publishResult as any).inboxShare === true) {
+      successMessage = 'Upload en Inbox (brouillon) – l\'utilisateur devra finaliser dans l\'app TikTok';
+      additionalInfo.inboxMode = true;
+      additionalInfo.requiresManualPublish = true;
+    }
+
+    // Réponse sans URL finale tant qu'on n'a pas video_id
     return NextResponse.json({
       success: true,
       post: newPost,
-      publishId: 'publishId' in publishResult ? publishResult.publishId : 'unknown',
-      tiktokUrl: `https://www.tiktok.com/@${tiktokAccount.username}/video/${'publishId' in publishResult ? publishResult.publishId : 'unknown'}`,
+      publishId,
+      tiktokUrl: undefined, // On attend le webhook avec video_id/share_url
+      status: 'queued',
       message: successMessage,
       ...additionalInfo
     }, { status: 201 });
