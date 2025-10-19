@@ -14,6 +14,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Vérifier que nous avons bien un objet File valide
+    if (!file.type || !file.size || !file.name) {
+      return NextResponse.json(
+        { error: 'Format de fichier invalide' },
+        { status: 400 }
+      );
+    }
+
     // Validation du type de fichier
     if (!storageService.validateFileType(file.type)) {
       return NextResponse.json(

@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     });
 
+    // Debug: afficher la structure complète du body
+    console.log('🔍 Structure du body reçu:', JSON.stringify(body, null, 2));
+
     // Vérifier la signature TikTok (optionnel pour le développement)
     const signature = request.headers.get('x-tiktok-signature');
     if (!signature) {
@@ -51,6 +54,13 @@ export async function POST(request: NextRequest) {
 
     if (!publish_id) {
       console.error('❌ publish_id manquant dans le webhook');
+      console.error('🔍 Données disponibles dans le body:', {
+        body_keys: Object.keys(body),
+        content_type: typeof body.content,
+        content_value: body.content,
+        direct_publish_id: body.publish_id,
+        event_type: body.event
+      });
       return NextResponse.json(
         { error: 'publish_id manquant' },
         { status: 400 }
