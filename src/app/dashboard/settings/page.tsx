@@ -49,18 +49,15 @@ export default function SettingsPage() {
   const [apiKey] = useState('sk_live_1234567890abcdef');
 
   const handleSave = () => {
-    console.log('Sauvegarde des paramètres:', settings);
     // Ici on ferait l'appel API pour sauvegarder
   };
 
   const handleExportData = () => {
-    console.log('Export des données');
     // Ici on ferait l'export des données
   };
 
   const handleDeleteAccount = () => {
     if (confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
-      console.log('Suppression du compte');
     }
   };
 

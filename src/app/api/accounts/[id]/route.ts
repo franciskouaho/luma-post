@@ -16,12 +16,10 @@ export async function DELETE(
       );
     }
 
-    console.log('Suppression du compte TikTok:', accountId);
     
     // Supprimer le compte depuis Firestore
     await tiktokAccountService.delete(accountId);
     
-    console.log('Compte supprimé avec succès');
 
     return NextResponse.json({
       success: true,

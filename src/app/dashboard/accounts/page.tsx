@@ -49,10 +49,8 @@ function AccountsPageContent() {
   useEffect(() => {
     if (connected === 'true') {
       // Afficher un message de succès
-      console.log('Compte TikTok connecté avec succès!');
     } else if (connectionError === 'connection_failed') {
       // Afficher un message d'erreur
-      console.log('Échec de la connexion TikTok');
     }
   }, [connected, connectionError]);
 
@@ -173,7 +171,6 @@ function AccountsPageContent() {
       }
       
       const data = await response.json();
-      console.log('URL d\'autorisation TikTok:', data.authUrl);
       
       // Rediriger vers TikTok
       window.location.href = data.authUrl;

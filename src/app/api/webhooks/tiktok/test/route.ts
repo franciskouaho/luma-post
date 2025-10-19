@@ -4,7 +4,6 @@ export async function POST(request: NextRequest) {
   try {
     const { publish_id, status, error_message, video_id, share_url } = await request.json();
     
-    console.log('🧪 Test webhook TikTok:', {
       publish_id,
       status,
       error_message,

@@ -15,11 +15,6 @@ export async function POST(request: NextRequest) {
       tiktokSettings
     } = await request.json();
 
-    console.log('=== Publication immédiate ===');
-    console.log('UserId:', userId);
-    console.log('Caption:', caption);
-    console.log('VideoUrl:', videoUrl);
-    console.log('Platforms:', platforms);
 
     // Validation des paramètres
     if (!userId || !videoUrl || !platforms || platforms.length === 0) {
@@ -51,7 +46,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    console.log('Compte TikTok utilisé:', tiktokAccount.username);
 
     // Publier sur TikTok
     const publishResult = await tiktokAPIService.publishVideoComplete(tiktokAccount, {
@@ -106,7 +100,6 @@ export async function POST(request: NextRequest) {
       publishId: 'publishId' in publishResult ? publishResult.publishId : 'unknown',
     });
 
-    console.log('Post publié avec ID:', scheduleId);
 
     // Récupérer le post créé
     const newPost = await scheduleService.getById(scheduleId);

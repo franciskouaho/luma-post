@@ -7,27 +7,20 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    console.log('🔍 API members GET appelée pour workspace:', params.id);
-    
     const authHeader = request.headers.get('authorization');
     let userId = null;
 
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {
-        console.log('🔑 Vérification du token...');
         const decodedToken = await adminAuth.verifyIdToken(token);
         userId = decodedToken.uid;
-        console.log('✅ Token vérifié, userId:', userId);
       } catch (error) {
-        console.error('❌ Erreur de vérification du token:', error);
+        console.error('Erreur de vérification du token:', error);
       }
-    } else {
-      console.log('❌ Pas de token d\'authentification');
     }
 
     if (!userId) {
-      console.log('❌ Utilisateur non autorisé');
       return NextResponse.json(
         { error: 'Non autorisé' },
         { status: 401 }
@@ -35,14 +28,11 @@ export async function GET(
     }
 
     const workspaceId = params.id;
-    console.log('📊 Vérification de l\'accès au workspace:', workspaceId);
 
     // Vérifier que l'utilisateur a accès au workspace
     const member = await workspaceMemberService.getByWorkspaceAndUser(workspaceId, userId);
-    console.log('👤 Membre trouvé:', member ? 'Oui' : 'Non');
     
     if (!member) {
-      console.log('❌ Accès non autorisé au workspace');
       return NextResponse.json(
         { error: 'Accès non autorisé à ce workspace' },
         { status: 403 }

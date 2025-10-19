@@ -2,16 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('=== Test API TikTok Callback ===');
     
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const state = searchParams.get('state');
     const error = searchParams.get('error');
 
-    console.log('Code:', code ? 'présent' : 'absent');
-    console.log('State:', state);
-    console.log('Error:', error);
 
     // Test simple sans appels API externes
     return NextResponse.json({

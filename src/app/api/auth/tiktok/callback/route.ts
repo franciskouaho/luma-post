@@ -5,19 +5,14 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('=== TikTok Callback démarré ===');
     
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const state = searchParams.get('state'); // userId
     const error = searchParams.get('error');
 
-    console.log('Code:', code ? 'présent' : 'absent');
-    console.log('State:', state);
-    console.log('Error:', error);
 
     if (error) {
-      console.log('Erreur dans les paramètres:', error);
       return NextResponse.json(
         { error: `Erreur d'autorisation TikTok: ${error}` },
         { status: 400 }
@@ -25,32 +20,25 @@ export async function GET(request: NextRequest) {
     }
 
     if (!code || !state) {
-      console.log('Code ou state manquant');
       return NextResponse.json(
         { error: 'Code d\'autorisation et state requis' },
         { status: 400 }
       );
     }
 
-    console.log('Échange du code contre des tokens...');
     // Échanger le code contre des tokens
     const tokenResponse = await tiktokAPIService.exchangeCodeForTokens(code);
-    console.log('Tokens reçus:', !!tokenResponse.access_token);
 
-    console.log('Récupération des infos utilisateur...');
     // Obtenir les informations de l'utilisateur TikTok
     const userInfo = await tiktokAPIService.getUserInfo(tokenResponse.access_token);
-    console.log('Infos utilisateur:', userInfo);
 
     if (userInfo.error && userInfo.error.code !== 'ok') {
-      console.log('Erreur dans les infos utilisateur:', userInfo.error);
       return NextResponse.json(
         { error: `Erreur lors de la récupération des informations utilisateur: ${userInfo.error.message}` },
         { status: 400 }
       );
     }
 
-    console.log('Création du compte TikTok...');
     // Chiffrer les tokens (à implémenter avec votre logique de chiffrement)
     const encryptToken = (token: string) => {
       // Ici vous devriez implémenter votre logique de chiffrement AES-256-GCM
@@ -72,8 +60,6 @@ export async function GET(request: NextRequest) {
       isActive: true,
     });
 
-    console.log('Compte TikTok créé avec ID:', accountId);
-    console.log('=== TikTok Callback terminé avec succès ===');
 
     // Rediriger vers le dashboard avec un message de succès
     // Utiliser l'URL ngrok depuis les paramètres de redirection TikTok

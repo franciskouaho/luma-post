@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId') || 'FGcdXcRXVoVfsSwJIciurCeuCXz1';
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    console.log('Récupération des drafts pour userId:', userId);
 
     // Récupérer les drafts depuis Firestore
     // Simplifier la requête pour éviter le besoin d'index composite
@@ -20,7 +19,6 @@ export async function GET(request: NextRequest) {
 
     const drafts = draftsSnapshot.docs.map(doc => {
       const data = doc.data();
-      console.log('Draft data:', {
         id: doc.id,
         caption: data.caption,
         thumbnailUrl: data.thumbnailUrl,
@@ -41,7 +39,6 @@ export async function GET(request: NextRequest) {
     // Limiter le nombre de résultats
     const limitedDrafts = drafts.slice(0, limit);
 
-    console.log('Drafts trouvés:', limitedDrafts.length);
 
     return NextResponse.json({
       success: true,
@@ -62,14 +59,12 @@ export async function POST(request: NextRequest) {
     const { userId, caption, videoFile, videoUrl, platforms, mediaType, thumbnailUrl } = await request.json();
 
     if (!userId || !platforms || !Array.isArray(platforms) || platforms.length === 0) {
-      console.log('Validation failed:', { userId, caption, platforms });
       return NextResponse.json(
         { error: 'userId et platforms (tableau non vide) sont requis' },
         { status: 400 }
       );
     }
 
-    console.log('Création d\'un nouveau draft:', { userId, caption, platforms });
 
     const draftData = {
       userId,
@@ -86,7 +81,6 @@ export async function POST(request: NextRequest) {
 
     const docRef = await adminDb.collection('drafts').add(draftData);
 
-    console.log('Draft créé avec ID:', docRef.id);
 
     return NextResponse.json({
       success: true,
@@ -114,7 +108,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    console.log('Suppression du draft avec ID:', draftId);
 
     // Récupérer les données du draft avant suppression
     const draftDoc = await adminDb.collection('drafts').doc(draftId).get();
@@ -131,7 +124,6 @@ export async function DELETE(request: NextRequest) {
     // Supprimer la vidéo et la thumbnail du Firebase Storage si elles existent
     const { storageService } = await import('@/lib/storage');
     
-    console.log('🔍 Données du draft:', {
       videoUrl: draftData?.videoUrl,
       thumbnailUrl: draftData?.thumbnailUrl,
       caption: draftData?.caption
@@ -140,7 +132,6 @@ export async function DELETE(request: NextRequest) {
     // Supprimer la vidéo
     if (draftData?.videoUrl) {
       try {
-        console.log('🔍 URL vidéo complète:', draftData.videoUrl);
         
         // Extraire le nom du fichier de l'URL Firebase Storage
         let videoStorageKey = '';
@@ -165,12 +156,8 @@ export async function DELETE(request: NextRequest) {
           videoStorageKey = `videos/${fileName}`;
         }
         
-        console.log('🗑️ Suppression de la vidéo:', videoStorageKey);
-        console.log('🔍 URL originale vidéo:', draftData.videoUrl);
-        console.log('🔍 Storage key construit vidéo:', videoStorageKey);
         
         await storageService.deleteFile(videoStorageKey);
-        console.log('✅ Vidéo supprimée du Storage');
       } catch (error) {
         console.error('❌ Erreur suppression vidéo:', error);
         console.error('Détails de l\'erreur vidéo:', {
@@ -184,7 +171,6 @@ export async function DELETE(request: NextRequest) {
     // Supprimer la thumbnail
     if (draftData?.thumbnailUrl) {
       try {
-        console.log('🔍 URL thumbnail complète:', draftData.thumbnailUrl);
         
         // Extraire le nom du fichier de l'URL Firebase Storage
         let thumbnailStorageKey = '';
@@ -214,12 +200,8 @@ export async function DELETE(request: NextRequest) {
           thumbnailStorageKey = `thumbnails/${cleanFileName}`;
         }
         
-        console.log('🗑️ Suppression de la thumbnail:', thumbnailStorageKey);
-        console.log('🔍 URL originale:', draftData.thumbnailUrl);
-        console.log('🔍 Storage key construit:', thumbnailStorageKey);
         
         await storageService.deleteFile(thumbnailStorageKey);
-        console.log('✅ Thumbnail supprimée du Storage');
       } catch (error) {
         console.error('❌ Erreur suppression thumbnail:', error);
         console.error('Détails de l\'erreur:', {

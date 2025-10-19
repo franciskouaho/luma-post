@@ -35,51 +35,37 @@ export function useWorkspaces() {
   const [error, setError] = useState<string | null>(null);
   const { user, isAuthenticated, loading: authLoading = true } = useAuth();
 
-  const fetchWorkspaces = useCallback(async () => {
-    if (!isAuthenticated || !user) {
-      console.log('Utilisateur non authentifié:', { isAuthenticated, user: !!user });
-      return;
-    }
+      const fetchWorkspaces = useCallback(async () => {
+        if (!isAuthenticated || !user) {
+          return;
+        }
 
-    try {
-      setLoading(true);
-      setError(null);
+        try {
+          setLoading(true);
+          setError(null);
 
-      console.log('Récupération du token pour l\'utilisateur:', user.uid);
-      const token = await user.getIdToken();
-      console.log('Token récupéré, appel de l\'API workspaces...');
-      const response = await fetch('/api/workspaces', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log('Réponse API workspaces:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
-      });
+          const token = await user.getIdToken();
+          const response = await fetch('/api/workspaces', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Erreur API workspaces:', {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorData
-        });
-        throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
-      }
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
+          }
 
-      const data = await response.json();
-      setWorkspaces(data.workspaces || []);
-    } catch (err) {
-      console.error('Erreur lors de la récupération des workspaces:', err);
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-    } finally {
-      setLoading(false);
-    }
-  }, [isAuthenticated, user]);
+          const data = await response.json();
+          setWorkspaces(data.workspaces || []);
+        } catch (err) {
+          console.error('Erreur lors de la récupération des workspaces:', err);
+          setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+        } finally {
+          setLoading(false);
+        }
+      }, [isAuthenticated, user]);
 
   const createWorkspace = useCallback(async (name: string, description?: string) => {
     if (!isAuthenticated || !user) return;
@@ -149,9 +135,7 @@ export function useWorkspaceMembers(workspaceId: string | null) {
           setLoading(true);
           setError(null);
 
-          console.log('🔍 Récupération des membres pour workspace:', workspaceId);
           const token = await user.getIdToken();
-          console.log('🔑 Token récupéré, appel de l\'API members...');
           
           const response = await fetch(`/api/workspaces/${workspaceId}/members`, {
             headers: {
@@ -160,24 +144,12 @@ export function useWorkspaceMembers(workspaceId: string | null) {
             },
           });
 
-          console.log('📊 Réponse API members:', {
-            status: response.status,
-            statusText: response.statusText,
-            ok: response.ok
-          });
-
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('❌ Erreur API members:', {
-              status: response.status,
-              statusText: response.statusText,
-              error: errorData
-            });
             throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`);
           }
 
           const data = await response.json();
-          console.log('✅ Membres récupérés:', data.members?.length || 0);
           setMembers(data.members || []);
         } catch (err) {
           console.error('Erreur lors de la récupération des membres:', err);

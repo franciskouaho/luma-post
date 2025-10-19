@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    console.log('🔔 Webhook TikTok reçu:', {
       headers: Object.fromEntries(request.headers.entries()),
       body: body,
       timestamp: new Date().toISOString()
@@ -15,7 +14,6 @@ export async function POST(request: NextRequest) {
     // Vérifier la signature TikTok (optionnel pour le développement)
     const signature = request.headers.get('x-tiktok-signature');
     if (!signature) {
-      console.log('⚠️ Signature TikTok manquante, mais on continue pour le développement');
     }
 
     // Extraire les données du webhook
@@ -57,7 +55,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('📊 Données webhook extraites:', {
       publish_id,
       status,
       error_message,
@@ -76,20 +73,16 @@ export async function POST(request: NextRequest) {
       case 'post.publish.inbox_delivered':
         // La vidéo a été livrée dans la boîte de réception TikTok
         finalStatus = 'PROCESSING';
-        console.log('📥 Vidéo livrée dans la boîte de réception TikTok');
         break;
       case 'post.publish.completed':
         // La publication est terminée avec succès
         finalStatus = 'PUBLISHED';
-        console.log('✅ Publication TikTok terminée avec succès');
         break;
       case 'post.publish.failed':
         // La publication a échoué
         finalStatus = 'FAILED';
-        console.log('❌ Publication TikTok échouée');
         break;
       default:
-        console.log(`📋 Événement TikTok non géré: ${eventType}`);
     }
 
     // Mettre à jour le statut du schedule dans Firestore
@@ -104,10 +97,8 @@ export async function POST(request: NextRequest) {
         schedule = allSchedules.find(s => s.publishId === publish_id);
         
         if (schedule) {
-          console.log('✅ Schedule trouvé par publishId exact:', schedule.id);
         }
       } catch (globalSearchError) {
-        console.log('⚠️ Recherche globale échouée, tentative par userId:', globalSearchError);
         
         // Fallback: recherche par userId si disponible
         if (user_id) {
@@ -118,11 +109,9 @@ export async function POST(request: NextRequest) {
       
       // Si toujours pas trouvé, essayer d'autres critères
       if (!schedule) {
-        console.log('⚠️ Schedule non trouvé par publishId, recherche par autres critères...');
         const allSchedules = await scheduleService.getAll();
         
         // Log tous les schedules pour déboguer
-        console.log('📋 Tous les schedules disponibles:', allSchedules.map(s => ({
           id: s.id,
           publishId: s.publishId,
           userId: s.userId,
@@ -138,12 +127,10 @@ export async function POST(request: NextRequest) {
         );
         
         if (schedule) {
-          console.log('✅ Schedule trouvé par critères alternatifs:', schedule.id);
         }
       }
 
       if (schedule) {
-        console.log('✅ Schedule trouvé:', schedule.id);
         
         // Déterminer le nouveau statut
         let newStatus: 'scheduled' | 'queued' | 'published' | 'failed';
@@ -174,7 +161,6 @@ export async function POST(request: NextRequest) {
           updatedAt: FieldValue.serverTimestamp()
         });
 
-        console.log('✅ Schedule mis à jour:', {
           id: schedule.id,
           newStatus,
           tiktokUrl,
@@ -182,7 +168,6 @@ export async function POST(request: NextRequest) {
         });
 
       } else {
-        console.log('⚠️ Aucun schedule trouvé pour publish_id:', publish_id);
       }
 
     } catch (updateError) {
@@ -218,7 +203,6 @@ export async function PUT(request: NextRequest) {
   try {
     const { publish_id, status, error_message, video_id, share_url } = await request.json();
     
-    console.log('🧪 Test webhook TikTok:', {
       publish_id,
       status,
       error_message,

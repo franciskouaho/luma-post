@@ -130,13 +130,11 @@ export default function DraftsPage() {
   };
 
   const handlePublishDraft = (draftId: string) => {
-    console.log('Publishing draft:', draftId);
     // Ici on pourrait rediriger vers la page de création avec les données du draft
     alert('Fonctionnalité de publication à venir !');
   };
 
          const handleEditDraft = (draft: Draft) => {
-           console.log('Editing draft:', draft);
            // Stocker les données du draft dans le localStorage pour un accès rapide
            localStorage.setItem('editingDraft', JSON.stringify({
              id: draft.id,
@@ -160,7 +158,6 @@ export default function DraftsPage() {
 
         if (response.ok) {
           setDrafts(prev => prev.filter(draft => draft.id !== draftId));
-          console.log('Draft deleted:', draftId);
         } else {
           console.error('Erreur lors de la suppression du draft');
           alert('Erreur lors de la suppression du brouillon');

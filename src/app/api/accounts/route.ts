@@ -21,15 +21,12 @@ export async function GET(request: NextRequest) {
     // Pour le développement, utiliser un userId par défaut si pas d'auth
     if (!userId) {
       userId = 'FGcdXcRXVoVfsSwJIciurCeuCXz1'; // Votre userId de test
-      console.log('Utilisation du userId par défaut:', userId);
     }
 
-    console.log('Récupération des comptes TikTok pour userId:', userId);
     
     // Récupérer les comptes TikTok depuis Firestore
     const accounts = await tiktokAccountService.getByUserId(userId);
     
-    console.log('Comptes trouvés:', accounts.length);
 
     return NextResponse.json({
       success: true,

@@ -139,7 +139,6 @@ export default function SchedulePage() {
   };
 
   const handleDeleteSchedule = async (id: string) => {
-    console.log('🔴 handleDeleteSchedule appelé avec ID:', id);
     setScheduleToDelete(id);
     setDeleteDialogOpen(true);
   };
@@ -148,18 +147,14 @@ export default function SchedulePage() {
     if (!scheduleToDelete) return;
     
     try {
-      console.log('🔴 Début de la suppression de la planification:', scheduleToDelete);
       
       const response = await fetch(`/api/schedules?id=${scheduleToDelete}`, {
         method: 'DELETE',
       });
 
-      console.log('🔴 Réponse reçue:', response.status, response.ok);
 
       if (response.ok) {
         const result = await response.json();
-        console.log('🔴 Résultat:', result);
-        console.log('Planification supprimée avec succès:', scheduleToDelete);
         // Recharger la page pour mettre à jour la liste
         window.location.reload();
       } else {
@@ -323,7 +318,6 @@ export default function SchedulePage() {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                console.log('🔴 Bouton supprimer cliqué pour:', schedule.id);
                                 handleDeleteSchedule(schedule.id);
                               }}
                               className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors"

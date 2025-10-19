@@ -74,7 +74,6 @@ export default function CalendarPage() {
       });
       
       if (dayPosts.length > 0) {
-        console.log('📅 Posts trouvés pour le', date.toDateString(), ':', dayPosts);
       }
 
       days.push({
@@ -107,7 +106,6 @@ export default function CalendarPage() {
         const response = await fetch('/api/schedules?userId=FGcdXcRXVoVfsSwJIciurCeuCXz1');
         if (response.ok) {
           const data = await response.json();
-          console.log('Posts récupérés:', data.schedules);
           
           // Convertir les dates Firestore en objets Date
           const posts = (data.schedules || []).map((post: any) => {
@@ -129,7 +127,6 @@ export default function CalendarPage() {
             };
           });
           
-          console.log('Posts avec dates converties:', posts);
           setScheduledPosts(posts);
         }
       } catch (error) {
@@ -204,9 +201,6 @@ export default function CalendarPage() {
     // Trouver le premier compte correspondant
     const account = accounts.find(acc => platforms.includes(acc.id));
     
-    console.log('🔍 getPostIcon - platforms:', platforms);
-    console.log('🔍 getPostIcon - accounts:', accounts);
-    console.log('🔍 getPostIcon - found account:', account);
     
     if (account) {
       return (
@@ -228,8 +222,6 @@ export default function CalendarPage() {
   const weekDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
   // Debug: afficher les posts récupérés
-  console.log('Posts programmés:', scheduledPosts);
-  console.log('Date actuelle du calendrier:', currentDate);
 
   return (
     <div className="min-h-screen bg-gray-50">

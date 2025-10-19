@@ -62,8 +62,6 @@ export function useAnalytics(userId: string, timeRange: string = '7d') {
         setLoading(true);
         setError(null);
 
-        console.log('Récupération des analytics via API...');
-        
         const response = await fetch(`/api/analytics?userId=${userId}&timeRange=${timeRange}`);
         
         if (!response.ok) {
@@ -74,7 +72,6 @@ export function useAnalytics(userId: string, timeRange: string = '7d') {
         
         if (result.success) {
           setData(result.data);
-          console.log('Analytics récupérés:', result.data);
         } else {
           throw new Error(result.error || 'Erreur inconnue');
         }

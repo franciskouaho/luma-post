@@ -3,51 +3,39 @@ import { workspaceService, workspaceMemberService } from '@/lib/firestore';
 import { adminAuth } from '@/lib/firebase';
 
 export async function GET(request: NextRequest) {
-  try {
-    console.log('🔍 API workspaces GET appelée');
-    
-    // Récupérer le token d'authentification depuis les headers
-    const authHeader = request.headers.get('authorization');
-    let userId = null;
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7);
       try {
-        console.log('🔑 Vérification du token...');
-        const decodedToken = await adminAuth.verifyIdToken(token);
-        userId = decodedToken.uid;
-        console.log('✅ Token vérifié, userId:', userId);
-      } catch (error) {
-        console.error('❌ Erreur de vérification du token:', error);
-      }
-    } else {
-      console.log('❌ Pas de token d\'authentification');
-    }
+        // Récupérer le token d'authentification depuis les headers
+        const authHeader = request.headers.get('authorization');
+        let userId = null;
 
-    if (!userId) {
-      console.log('❌ Utilisateur non autorisé');
-      return NextResponse.json(
-        { error: 'Non autorisé' },
-        { status: 401 }
-      );
-    }
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.substring(7);
+          try {
+            const decodedToken = await adminAuth.verifyIdToken(token);
+            userId = decodedToken.uid;
+          } catch (error) {
+            console.error('Erreur de vérification du token:', error);
+          }
+        }
 
-    // Récupérer les workspaces de l'utilisateur
-    console.log('📊 Récupération des workspaces...');
-    
-    let ownedWorkspaces = [];
-    let memberWorkspaces = [];
-    
-    try {
-      ownedWorkspaces = await workspaceService.getByOwnerId(userId);
-      console.log('✅ Workspaces possédés:', ownedWorkspaces.length);
-      
-      memberWorkspaces = await workspaceMemberService.getByUserId(userId);
-      console.log('✅ Workspaces membres:', memberWorkspaces.length);
-    } catch (dbError) {
-      console.error('❌ Erreur base de données:', dbError);
-      throw dbError;
-    }
+        if (!userId) {
+          return NextResponse.json(
+            { error: 'Non autorisé' },
+            { status: 401 }
+          );
+        }
+
+        // Récupérer les workspaces de l'utilisateur
+        let ownedWorkspaces = [];
+        let memberWorkspaces = [];
+        
+        try {
+          ownedWorkspaces = await workspaceService.getByOwnerId(userId);
+          memberWorkspaces = await workspaceMemberService.getByUserId(userId);
+        } catch (dbError) {
+          console.error('Erreur base de données:', dbError);
+          throw dbError;
+        }
 
     // Récupérer les détails des workspaces dont l'utilisateur est membre
     const memberWorkspaceDetails = await Promise.all(
@@ -77,13 +65,10 @@ export async function GET(request: NextRequest) {
       return acc;
     }, [] as typeof allWorkspaces);
 
-    console.log('✅ Total workspaces:', uniqueWorkspaces.length);
-    console.log('📋 Workspaces détaillés:', JSON.stringify(uniqueWorkspaces, null, 2));
-
-    return NextResponse.json({
-      success: true,
-      workspaces: uniqueWorkspaces
-    });
+        return NextResponse.json({
+          success: true,
+          workspaces: uniqueWorkspaces
+        });
 
   } catch (error) {
     console.error('Erreur lors de la récupération des workspaces:', error);

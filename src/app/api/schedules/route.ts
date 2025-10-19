@@ -11,8 +11,6 @@ export async function GET(request: NextRequest) {
 
     // Si un ID spécifique est demandé, récupérer cette planification
     if (id) {
-      console.log('=== Récupération d\'une planification spécifique ===');
-      console.log('Schedule ID:', id);
 
       const schedule = await scheduleService.getById(id);
       
@@ -23,7 +21,6 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      console.log('Planification trouvée:', schedule.id);
 
       return NextResponse.json({
         success: true,
@@ -39,14 +36,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('=== Récupération des planifications ===');
-    console.log('UserId:', userId);
-    console.log('Status:', status);
 
     // Récupérer les planifications
     const schedules = await scheduleService.getByUserId(userId, status || undefined);
 
-    console.log('Planifications trouvées:', schedules.length);
 
     return NextResponse.json({
       success: true,
@@ -81,15 +74,6 @@ export async function POST(request: NextRequest) {
       mediaType = 'video'
     } = await request.json();
 
-    console.log('=== Création de post planifié ===');
-    console.log('UserId:', userId);
-    console.log('Caption:', caption);
-    console.log('VideoFile:', videoFile);
-    console.log('VideoUrl:', videoUrl);
-    console.log('ThumbnailUrl:', thumbnailUrl);
-    console.log('Platforms:', platforms);
-    console.log('ScheduledAt:', scheduledAt);
-    console.log('Status:', status);
 
     // Validation des paramètres
     if (!userId || !platforms || platforms.length === 0) {
@@ -111,7 +95,6 @@ export async function POST(request: NextRequest) {
       mediaType,
     });
 
-    console.log('Post planifié créé avec ID:', scheduleId);
 
     // Programmer la tâche Cloud Tasks pour la publication automatique
     try {
@@ -136,7 +119,6 @@ export async function POST(request: NextRequest) {
       }
 
       const taskResult = await cloudTasksResponse.json();
-      console.log('Tâche Cloud Tasks programmée avec succès:', taskResult);
     } catch (taskError) {
       console.error('Erreur lors de la programmation de la tâche Cloud Tasks:', taskError);
       // Ne pas faire échouer la création du post, juste logger l'erreur
@@ -194,9 +176,6 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    console.log('=== Mise à jour de planification ===');
-    console.log('Schedule ID:', scheduleId);
-    console.log('Données reçues:', { userId, caption, platforms, scheduledAt, status });
 
     // Mettre à jour la planification
     await scheduleService.update(scheduleId, {
@@ -213,7 +192,6 @@ export async function PUT(request: NextRequest) {
     // Récupérer la planification mise à jour
     const updatedSchedule = await scheduleService.getById(scheduleId);
 
-    console.log('Planification mise à jour avec succès:', scheduleId);
 
     return NextResponse.json({
       success: true,
@@ -246,13 +224,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    console.log('=== Suppression de planification ===');
-    console.log('Schedule ID:', scheduleId);
 
     // Supprimer la planification
     await scheduleService.delete(scheduleId);
 
-    console.log('Planification supprimée avec succès:', scheduleId);
 
     return NextResponse.json({
       success: true,

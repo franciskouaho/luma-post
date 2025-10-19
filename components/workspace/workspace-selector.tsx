@@ -38,12 +38,6 @@ export function WorkspaceSelector({
     return acc;
   }, [] as typeof workspaces);
 
-  // Debug: afficher les workspaces
-  console.log('WorkspaceSelector - workspaces originaux:', workspaces.length);
-  console.log('WorkspaceSelector - workspaces uniques:', uniqueWorkspaces.length);
-  console.log('WorkspaceSelector - selectedWorkspace reçu:', selectedWorkspace);
-  console.log('WorkspaceSelector - workspaces détaillés:', JSON.stringify(workspaces, null, 2));
-  console.log('WorkspaceSelector - uniqueWorkspaces détaillés:', JSON.stringify(uniqueWorkspaces, null, 2));
 
   const getRoleColor = (role: string) => {
     switch (role) {

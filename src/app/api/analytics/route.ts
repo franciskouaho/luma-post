@@ -30,9 +30,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('=== Récupération des analytics ===');
-    console.log('UserId:', userId);
-    console.log('TimeRange:', timeRange);
 
     // Calculer la date de début selon la période
     const now = new Date();
@@ -217,7 +214,6 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    console.log('Analytics calculés:', analyticsData);
 
     return NextResponse.json({
       success: true,
