@@ -1,18 +1,9 @@
-import { setGlobalOptions } from "firebase-functions";
-import { onRequest, onCall } from "firebase-functions/v2/https";
-import { onSchedule } from "firebase-functions/v2/scheduler";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
-import * as logger from "firebase-functions/logger";
-
-// Configuration globale des fonctions
-setGlobalOptions({ 
-  maxInstances: 10,
-  region: 'europe-west1'
-});
-
+const {onRequest, onCall} = require("firebase-functions/v2/https");
+const {onSchedule} = require("firebase-functions/v2/scheduler");
+const logger = require("firebase-functions/logger");
 
 // Fonction de test pour vérifier que les fonctions sont actives
-export const healthCheck = onRequest(
+exports.healthCheck = onRequest(
   {
     region: 'europe-west1',
     memory: '256MiB',
@@ -31,7 +22,7 @@ export const healthCheck = onRequest(
 );
 
 // Fonction pour publier immédiatement une vidéo
-export const publishVideoNow = onCall(
+exports.publishVideoNow = onCall(
   {
     region: 'europe-west1',
     memory: '512MiB',
@@ -65,7 +56,7 @@ export const publishVideoNow = onCall(
 );
 
 // Fonction planifiée qui vérifie les publications en attente toutes les minutes
-export const checkScheduledPosts = onSchedule(
+exports.checkScheduledPosts = onSchedule(
   {
     schedule: 'every 1 minutes',
     region: 'europe-west1',
@@ -86,28 +77,34 @@ export const checkScheduledPosts = onSchedule(
   }
 );
 
-// Trigger Firestore pour les nouvelles planifications
-export const onScheduleCreated = onDocumentCreated(
+// Fonction pour traiter les nouvelles planifications (appelée manuellement)
+exports.processSchedule = onCall(
   {
-    document: 'schedules/{scheduleId}',
     region: 'europe-west1',
     memory: '256MiB',
     timeoutSeconds: 60,
   },
-  async (event) => {
+  async (request) => {
     try {
-      const scheduleId = event.params.scheduleId;
-      const scheduleData = event.data?.data();
+      const { scheduleId } = request.data;
       
-      if (!scheduleData) return;
+      if (!scheduleId) {
+        throw new Error('ScheduleId requis');
+      }
       
-      logger.info(`Nouvelle planification créée: ${scheduleId}`, { structuredData: true });
+      logger.info(`Traitement de la planification: ${scheduleId}`, { structuredData: true });
       
-      // Ici on peut ajouter la logique pour traiter la nouvelle planification
-      // Par exemple, programmer une tâche ou vérifier si c'est pour maintenant
+      // Ici on peut ajouter la logique pour traiter la planification
+      
+      return {
+        success: true,
+        message: `Planification ${scheduleId} traitée avec succès`,
+        scheduleId
+      };
       
     } catch (error) {
-      logger.error('Erreur lors du traitement de la nouvelle planification:', error);
+      logger.error('Erreur lors du traitement de la planification:', error);
+      throw new Error(`Erreur lors du traitement: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     }
   }
 );

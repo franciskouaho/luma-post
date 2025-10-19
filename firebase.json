@@ -2,9 +2,7 @@
   "functions": [
     {
       "codebase": "default",
-      "predeploy": [
-        "yarn --cwd \"$RESOURCE_DIR\" build"
-      ],
+      "predeploy": [],
       "source": "functions",
       "runtime": "nodejs18",
       "ignore": [
