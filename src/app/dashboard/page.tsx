@@ -16,7 +16,8 @@ import {
   Clock,
   Send,
   FileEdit,
-  X
+  X,
+  Target
 } from 'lucide-react';
 import { 
   ChartContainer, 
@@ -194,12 +195,12 @@ export default function DashboardPage() {
 
         {/* Filters */}
         <div className="mb-8 flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2">
             <Calendar className="h-4 w-4 text-gray-500" />
             <select 
               value={timeRange} 
               onChange={(e) => setTimeRange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="bg-transparent border-0 focus:ring-0 focus:outline-none text-gray-700 font-medium"
             >
               <option value="7d">7 derniers jours</option>
               <option value="30d">30 derniers jours</option>
@@ -207,12 +208,12 @@ export default function DashboardPage() {
               <option value="1y">1 an</option>
             </select>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-2">
             <Filter className="h-4 w-4 text-gray-500" />
             <select 
               value={selectedPlatform} 
               onChange={(e) => setSelectedPlatform(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="bg-transparent border-0 focus:ring-0 focus:outline-none text-gray-700 font-medium"
             >
               <option value="all">Toutes les plateformes</option>
               <option value="linkedin">LinkedIn</option>
@@ -225,72 +226,72 @@ export default function DashboardPage() {
 
         {/* Posts par statut */}
         {data?.postsByStatus && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-purple-100">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Publiés</p>
-                    <p className="text-2xl font-bold text-purple-600">{data.postsByStatus.published}</p>
+                    <p className="text-sm font-medium text-purple-700">Publiés</p>
+                    <p className="text-3xl font-bold text-purple-600">{data.postsByStatus.published}</p>
                   </div>
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Send className="h-6 w-6 text-purple-600" />
+                  <div className="w-14 h-14 bg-purple-200 rounded-full flex items-center justify-center shadow-md">
+                    <Send className="h-7 w-7 text-purple-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Programmés</p>
-                    <p className="text-2xl font-bold text-blue-600">{data.postsByStatus.scheduled}</p>
+                    <p className="text-sm font-medium text-blue-700">Programmés</p>
+                    <p className="text-3xl font-bold text-blue-600">{data.postsByStatus.scheduled}</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Calendar className="h-6 w-6 text-blue-600" />
+                  <div className="w-14 h-14 bg-blue-200 rounded-full flex items-center justify-center shadow-md">
+                    <Calendar className="h-7 w-7 text-blue-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-gray-50 to-gray-100">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Brouillons</p>
-                    <p className="text-2xl font-bold text-gray-600">{data.postsByStatus.draft}</p>
+                    <p className="text-sm font-medium text-gray-700">Brouillons</p>
+                    <p className="text-3xl font-bold text-gray-600">{data.postsByStatus.draft}</p>
                   </div>
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                    <FileEdit className="h-6 w-6 text-gray-600" />
+                  <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center shadow-md">
+                    <FileEdit className="h-7 w-7 text-gray-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-yellow-50 to-yellow-100">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">En file</p>
-                    <p className="text-2xl font-bold text-yellow-600">{data.postsByStatus.queued}</p>
+                    <p className="text-sm font-medium text-yellow-700">En file</p>
+                    <p className="text-3xl font-bold text-yellow-600">{data.postsByStatus.queued}</p>
                   </div>
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-yellow-600" />
+                  <div className="w-14 h-14 bg-yellow-200 rounded-full flex items-center justify-center shadow-md">
+                    <Clock className="h-7 w-7 text-yellow-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-red-50 to-red-100">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Échecs</p>
-                    <p className="text-2xl font-bold text-red-600">{data.postsByStatus.failed}</p>
+                    <p className="text-sm font-medium text-red-700">Échecs</p>
+                    <p className="text-3xl font-bold text-red-600">{data.postsByStatus.failed}</p>
                   </div>
-                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                    <X className="h-6 w-6 text-red-600" />
+                  <div className="w-14 h-14 bg-red-200 rounded-full flex items-center justify-center shadow-md">
+                    <X className="h-7 w-7 text-red-600" />
                   </div>
                 </div>
               </CardContent>
@@ -299,27 +300,27 @@ export default function DashboardPage() {
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Icon className="h-6 w-6 text-purple-600" />
+                    <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center shadow-md">
+                      <Icon className="h-7 w-7 text-purple-600" />
                     </div>
                     <div className="flex items-center space-x-1">
-                      <span className={`text-sm font-medium px-2 py-1 rounded-full ${
-                        stat.changeType === 'positive' ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'
+                      <span className={`text-sm font-semibold px-3 py-1 rounded-full ${
+                        stat.changeType === 'positive' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'
                       }`}>
                         {stat.change}
                       </span>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                    <p className="text-gray-600">{stat.title}</p>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</h3>
+                    <p className="text-gray-600 font-medium">{stat.title}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -330,9 +331,10 @@ export default function DashboardPage() {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Engagement Chart */}
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-900">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                <TrendingUp className="h-5 w-5 mr-2 text-purple-600" />
                 Engagement par jour
               </CardTitle>
             </CardHeader>
@@ -383,9 +385,10 @@ export default function DashboardPage() {
           </Card>
 
           {/* Platform Performance */}
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-900">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2 text-purple-600" />
                 Performance par plateforme
               </CardTitle>
             </CardHeader>
@@ -438,66 +441,78 @@ export default function DashboardPage() {
 
         {/* Prochains posts programmés */}
         {data?.upcomingPosts && data.upcomingPosts.length > 0 && (
-          <Card className="mb-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-900">Prochains posts programmés</CardTitle>
+          <Card className="mb-8 border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                <Calendar className="h-5 w-5 mr-2 text-purple-600" />
+                Prochains posts programmés
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {data.upcomingPosts.map((post) => (
-                  <div key={post.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">{post.title}</h3>
-                      <p className="text-sm text-gray-600">{post.platform}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
-                        {new Date(post.scheduledAt).toLocaleDateString('fr-FR')}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(post.scheduledAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
+                  <div className="space-y-3">
+                    {data.upcomingPosts.map((post) => (
+                      <div key={post.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 mb-1">{post.title}</h3>
+                          <p className="text-sm text-gray-600 flex items-center">
+                            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                            {post.platform}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-900">
+                            {new Date(post.scheduledAt).toLocaleDateString('fr-FR')}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(post.scheduledAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
             </CardContent>
           </Card>
         )}
 
         {/* Top Posts - Affiché seulement s'il y a des données */}
         {topPosts && topPosts.length > 0 && (
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-900">Top Posts</CardTitle>
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-semibold text-gray-900 flex items-center">
+                <Target className="h-5 w-5 mr-2 text-purple-600" />
+                Top Posts
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {topPosts.map((post) => (
-                  <div key={post.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                  <div key={post.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 mb-1">{post.title}</h3>
-                      <p className="text-sm text-gray-600">{post.platform}</p>
+                      <p className="text-sm text-gray-600 flex items-center">
+                        <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                        {post.platform}
+                      </p>
                     </div>
                     <div className="flex items-center space-x-6 text-sm text-gray-600">
                       <div className="text-center">
-                        <p className="font-medium">{post.views.toLocaleString()}</p>
+                        <p className="font-semibold text-gray-900">{post.views.toLocaleString()}</p>
                         <p className="text-xs text-gray-500">Vues</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium">{post.likes}</p>
+                        <p className="font-semibold text-gray-900">{post.likes}</p>
                         <p className="text-xs text-gray-500">Likes</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium">{post.comments}</p>
+                        <p className="font-semibold text-gray-900">{post.comments}</p>
                         <p className="text-xs text-gray-500">Commentaires</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium">{post.shares}</p>
+                        <p className="font-semibold text-gray-900">{post.shares}</p>
                         <p className="text-xs text-gray-500">Partages</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium text-purple-600">{post.engagement.toFixed(1)}%</p>
+                        <p className="font-semibold text-purple-600">{post.engagement.toFixed(1)}%</p>
                         <p className="text-xs text-gray-500">Engagement</p>
                       </div>
                     </div>
