@@ -12,9 +12,9 @@ const firebaseAdminConfig = {
 
 // Credentials Firebase Admin SDK (service account)
 const firebaseCredentials = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY,
-  clientEmail: process.env.FIREBASE_CLIENT_EMAIL
+  project_id: process.env.FIREBASE_PROJECT_ID,
+  private_key: process.env.FIREBASE_PRIVATE_KEY,
+  client_email: process.env.FIREBASE_CLIENT_EMAIL
 };
 
 // Configuration Firebase Admin pour la production
