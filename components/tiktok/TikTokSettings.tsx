@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -65,8 +64,8 @@ export default function TikTokSettings({
   }, [settings, onSettingsChange]);
 
   // Vérifier les contraintes de confidentialité pour le contenu commercial
-  const canUsePrivateWithCommercial = !settings.commercialContent.enabled || 
-    (!settings.commercialContent.brandedContent);
+  // const canUsePrivateWithCommercial = !settings.commercialContent.enabled || 
+  //   (!settings.commercialContent.brandedContent);
 
   const handlePrivacyChange = (value: string) => {
     const newPrivacyLevel = value as TikTokPostSettings['privacyLevel'];
@@ -354,7 +353,7 @@ export default function TikTokSettings({
                   </div>
                   {settings.commercialContent.yourBrand && (
                     <p className="text-sm text-blue-600 ml-6">
-                      Votre photo/vidéo sera étiquetée comme "Contenu promotionnel"
+                      Votre photo/vidéo sera étiquetée comme &quot;Contenu promotionnel&quot;
                     </p>
                   )}
 
@@ -370,7 +369,7 @@ export default function TikTokSettings({
                   </div>
                   {settings.commercialContent.brandedContent && (
                     <p className="text-sm text-blue-600 ml-6">
-                      Votre photo/vidéo sera étiquetée comme "Partenariat payant"
+                      Votre photo/vidéo sera étiquetée comme &quot;Partenariat payant&quot;
                     </p>
                   )}
                 </div>
