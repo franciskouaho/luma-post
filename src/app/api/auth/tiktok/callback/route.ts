@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { tiktokAPIService } from '@/lib/tiktok-api';
 import { tiktokAccountService } from '@/lib/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
+import { EncryptionService } from '@/lib/encryption';
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,12 +40,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Chiffrer les tokens (à implémenter avec votre logique de chiffrement)
-    const encryptToken = (token: string) => {
-      // Ici vous devriez implémenter votre logique de chiffrement AES-256-GCM
-      // Pour l'instant, on retourne le token tel quel
-      return token;
-    };
+    // Utiliser le service de chiffrement pour les tokens
 
     // Créer le compte TikTok avec le vrai userId
     const accountId = await tiktokAccountService.create({
@@ -54,8 +50,8 @@ export async function GET(request: NextRequest) {
       username: userInfo.data.user.display_name,
       displayName: userInfo.data.user.display_name,
       avatarUrl: userInfo.data.user.avatar_url,
-      accessTokenEnc: encryptToken(tokenResponse.access_token),
-      refreshTokenEnc: encryptToken(tokenResponse.refresh_token),
+      accessTokenEnc: EncryptionService.encrypt(tokenResponse.access_token),
+      refreshTokenEnc: EncryptionService.encrypt(tokenResponse.refresh_token),
       expiresAt: FieldValue.serverTimestamp(),
       isActive: true,
       scopes: tokenResponse.scope ? tokenResponse.scope.split(',') : [], // Sauvegarder les scopes

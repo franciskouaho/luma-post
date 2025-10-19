@@ -88,8 +88,12 @@ export async function POST(request: NextRequest) {
         // La vidéo a été livrée dans la boîte de réception TikTok
         finalStatus = 'PROCESSING';
         break;
+      case 'post.publish.success':
+        // Événement standard TikTok : publication réussie
+        finalStatus = 'PUBLISHED';
+        break;
       case 'post.publish.completed':
-        // La publication est terminée avec succès
+        // Alternative : publication terminée avec succès
         finalStatus = 'PUBLISHED';
         break;
       case 'post.publish.failed':

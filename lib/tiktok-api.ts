@@ -1,3 +1,5 @@
+import { EncryptionService } from './encryption';
+
 interface TikTokTokenResponse {
   access_token: string;
   refresh_token: string;
@@ -62,11 +64,14 @@ class TikTokAPIService {
     this.redirectUri = process.env.TIKTOK_REDIRECT_URI || '';
   }
 
-  // Fonction de déchiffrement (à implémenter avec votre logique de chiffrement)
+  // Fonction de déchiffrement avec AES-256-GCM
   private decryptToken(encryptedToken: string): string {
-    // Ici vous devriez implémenter votre logique de déchiffrement AES-256-GCM
-    // Pour l'instant, on retourne le token tel quel (pas de chiffrement en place)
-    return encryptedToken;
+    try {
+      return EncryptionService.decrypt(encryptedToken);
+    } catch (error) {
+      console.error('Erreur déchiffrement token:', error);
+      throw new Error('Impossible de déchiffrer le token d\'accès');
+    }
   }
 
   // Fonction pour vérifier si une URL peut être utilisée avec PULL_FROM_URL
@@ -304,8 +309,8 @@ class TikTokAPIService {
             
             // Mettre à jour le token dans la base de données
             await accountService.update(account.id, {
-              accessTokenEnc: newTokens.access_token, // Chiffrer si nécessaire
-              refreshTokenEnc: newTokens.refresh_token, // Chiffrer si nécessaire
+              accessTokenEnc: EncryptionService.encrypt(newTokens.access_token),
+              refreshTokenEnc: EncryptionService.encrypt(newTokens.refresh_token),
               expiresAt: new Date(Date.now() + newTokens.expires_in * 1000),
             });
             
@@ -434,7 +439,9 @@ class TikTokAPIService {
       chunkSize = videoSize;
     }
     
-    const totalChunkCount = Math.ceil(videoSize / chunkSize);
+    // IMPORTANT: TikTok spécifie Math.floor pour total_chunk_count
+    // Le dernier chunk peut dépasser (trailing bytes) jusqu'à 128MB
+    const totalChunkCount = Math.floor(videoSize / chunkSize) + (videoSize % chunkSize > 0 ? 1 : 0);
     
     console.log(`📊 Chunking: ${videoSize} bytes en ${totalChunkCount} chunk(s) de ${chunkSize} bytes`);
 
@@ -633,23 +640,17 @@ class TikTokAPIService {
     // ÉTAPE 3: Upload du fichier vers TikTok en chunks (si upload_url fourni)
 
     if (upload_url) {
-      // Déterminer le Content-Type selon l'extension de la vidéo
-      let contentType = 'video/mp4'; // Par défaut MP4
+      // Déterminer le Content-Type selon les formats TikTok supportés uniquement
+      let contentType = 'video/mp4'; // Par défaut MP4 (format recommandé)
       const url = videoData.videoUrl.toLowerCase();
       
+      // Formats TikTok officiellement supportés uniquement
       if (url.includes('.mov')) {
         contentType = 'video/quicktime';
-      } else if (url.includes('.avi')) {
-        contentType = 'video/avi';
       } else if (url.includes('.webm')) {
         contentType = 'video/webm';
-      } else if (url.includes('.wmv')) {
-        contentType = 'video/x-ms-wmv';
-      } else if (url.includes('.mkv')) {
-        contentType = 'video/x-matroska';
-      } else if (url.includes('.flv')) {
-        contentType = 'video/x-flv';
       }
+      // Note: AVI, WMV, MKV, FLV ne sont pas supportés par TikTok
       
       console.log(`📤 Upload vidéo avec Content-Type: ${contentType}`);
       
