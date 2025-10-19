@@ -379,24 +379,23 @@ class TikTokAPIService {
     hashtags?: string[];
   }, settings: TikTokPostSettings) {
     
-    // Validation des scopes requis
-    console.log('🔍 Validation des scopes TikTok...');
+    // Vérification simple du token via getUserInfo
+    console.log('🔍 Vérification du token TikTok...');
     try {
-      const scopeCheckUrl = 'https://open.tiktokapis.com/v2/user/info/';
-      const scopeResponse = await fetch(scopeCheckUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
+      const userInfo = await this.getUserInfo(accessToken);
       
-      if (!scopeResponse.ok) {
-        throw new Error('Scopes TikTok insuffisants - vérifiez les permissions video.publish');
+      if (userInfo.error && userInfo.error.code !== 'ok') {
+        throw new Error(`Token TikTok invalide: ${userInfo.error.message}`);
       }
-      console.log('✅ Scopes TikTok validés');
+      
+      if (!userInfo.data?.user?.open_id) {
+        throw new Error('Token TikTok invalide ou indisponible');
+      }
+      
+      console.log('✅ Token TikTok valide');
     } catch (error) {
-      console.error('❌ Erreur validation scopes:', error);
-      throw new Error('Impossible de valider les scopes TikTok. Veuillez reconnecter votre compte.');
+      console.error('❌ Erreur vérification token:', error);
+      throw new Error('Token TikTok invalide ou indisponible. Réessayez ou reconnectez le compte.');
     }
     // Construire la description avec hashtags
     let description = videoData.description || videoData.title || '';
