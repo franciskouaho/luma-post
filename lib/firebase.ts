@@ -6,19 +6,23 @@ import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 
 // Configuration Firebase Admin
 const firebaseAdminConfig = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
+  projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
 };
 
 // Credentials Firebase Admin SDK (service account)
 const firebaseCredentials: ServiceAccount = {
-  projectId: process.env.FIREBASE_PROJECT_ID!,
+  projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
   privateKey: process.env.FIREBASE_PRIVATE_KEY!,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL!
 };
 
 // Configuration Firebase Admin pour la production
 console.log('🔥 Utilisation de Firebase en production');
+console.log('🔍 Project ID:', process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+console.log('🔍 Storage Bucket:', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+console.log('🔍 Client Email:', process.env.FIREBASE_CLIENT_EMAIL ? '✅ Présent' : '❌ Manquant');
+console.log('🔍 Private Key:', process.env.FIREBASE_PRIVATE_KEY ? '✅ Présent' : '❌ Manquant');
 
 let adminApp;
 try {

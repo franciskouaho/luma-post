@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { PermissionGuard, WorkspaceRequired } from '@/components/workspace/permission-guard';
 import { 
   Type, 
   Image, 
@@ -61,17 +62,19 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
-            Create a new post
-          </h1>
-          <p className="text-gray-600">
-            Choose the type of content you want to create and publish across your social media accounts.
-          </p>
-        </div>
+    <WorkspaceRequired>
+      <PermissionGuard permission="canCreatePosts">
+        <div className="min-h-screen bg-gray-50">
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+                Create a new post
+              </h1>
+              <p className="text-gray-600">
+                Choose the type of content you want to create and publish across your social media accounts.
+              </p>
+            </div>
 
         {/* Post Type Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -163,8 +166,9 @@ export default function DashboardPage() {
               connect more accounts here
             </Link>
           </p>
+          </div>
         </div>
-      </div>
-    </div>
+      </PermissionGuard>
+    </WorkspaceRequired>
   );
 }

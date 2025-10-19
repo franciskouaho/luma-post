@@ -9,6 +9,7 @@ export interface PostedPost {
   status: 'posted';
   platforms: string[];
   userId: string;
+  workspaceId?: string;
   createdAt: Date;
   mediaType?: 'video' | 'image' | 'text';
   thumbnailUrl?: string;

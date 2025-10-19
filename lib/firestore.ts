@@ -5,6 +5,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 export interface Video {
   id: string;
   userId: string;
+  workspaceId?: string;
   title: string;
   storageKey: string;
   thumbnailKey?: string;
@@ -18,6 +19,7 @@ export interface Video {
 export interface Schedule {
   id: string;
   userId: string;
+  workspaceId?: string;
   videoId?: string;
   accountId?: string;
   title?: string;
@@ -44,6 +46,7 @@ export interface Schedule {
 export interface TikTokAccount {
   id: string;
   userId: string;
+  workspaceId?: string;
   platform: 'tiktok';
   tiktokUserId: string;
   username: string;
@@ -53,6 +56,48 @@ export interface TikTokAccount {
   refreshTokenEnc: string;
   expiresAt: FieldValue;
   isActive: boolean;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  description?: string;
+  ownerId: string;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
+  settings: {
+    allowMemberInvites: boolean;
+    requireApprovalForPosts: boolean;
+    allowMemberAccountConnections: boolean;
+  };
+}
+
+export interface WorkspaceMember {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  role: 'owner' | 'admin' | 'editor' | 'viewer';
+  status: 'active' | 'pending' | 'suspended';
+  invitedBy: string;
+  joinedAt?: FieldValue;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
+}
+
+export interface WorkspaceInvitation {
+  id: string;
+  workspaceId: string;
+  email: string;
+  invitedBy: string;
+  role: 'admin' | 'editor' | 'viewer';
+  status: 'pending' | 'accepted' | 'declined' | 'expired';
+  token: string;
+  expiresAt: FieldValue;
   createdAt: FieldValue;
   updatedAt: FieldValue;
 }
@@ -252,7 +297,226 @@ export class TikTokAccountService {
   }
 }
 
+// Service pour les workspaces
+export class WorkspaceService {
+  private collection = 'workspaces';
+
+  async create(workspace: Omit<Workspace, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = FieldValue.serverTimestamp();
+    const docRef = await adminDb.collection(this.collection).add({
+      ...workspace,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return docRef.id;
+  }
+
+  async getById(id: string): Promise<Workspace | null> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    const docSnap = await docRef.get();
+    
+    if (docSnap.exists) {
+      return { id: docSnap.id, ...docSnap.data() } as Workspace;
+    }
+    return null;
+  }
+
+  async getByOwnerId(ownerId: string): Promise<Workspace[]> {
+    const q = adminDb.collection(this.collection)
+      .where('ownerId', '==', ownerId)
+      .orderBy('createdAt', 'desc');
+
+    const querySnapshot = await q.get();
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Workspace[];
+  }
+
+  async update(id: string, updates: Partial<Workspace>): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
+      ...updates,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.delete();
+  }
+}
+
+// Service pour les membres de workspace
+export class WorkspaceMemberService {
+  private collection = 'workspaceMembers';
+
+  async create(member: Omit<WorkspaceMember, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = FieldValue.serverTimestamp();
+    const docRef = await adminDb.collection(this.collection).add({
+      ...member,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return docRef.id;
+  }
+
+  async getByWorkspaceId(workspaceId: string): Promise<WorkspaceMember[]> {
+    const q = adminDb.collection(this.collection)
+      .where('workspaceId', '==', workspaceId)
+      .orderBy('createdAt', 'asc');
+
+    const querySnapshot = await q.get();
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as WorkspaceMember[];
+  }
+
+  async getByUserId(userId: string): Promise<WorkspaceMember[]> {
+    const q = adminDb.collection(this.collection)
+      .where('userId', '==', userId)
+      .where('status', '==', 'active')
+      .orderBy('createdAt', 'desc');
+
+    const querySnapshot = await q.get();
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as WorkspaceMember[];
+  }
+
+  async getByWorkspaceAndUser(workspaceId: string, userId: string): Promise<WorkspaceMember | null> {
+    const q = adminDb.collection(this.collection)
+      .where('workspaceId', '==', workspaceId)
+      .where('userId', '==', userId)
+      .limit(1);
+
+    const querySnapshot = await q.get();
+    if (querySnapshot.empty) return null;
+    
+    const doc = querySnapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as WorkspaceMember;
+  }
+
+  async update(id: string, updates: Partial<WorkspaceMember>): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
+      ...updates,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.delete();
+  }
+}
+
+// Service pour les utilisateurs
+export class UserService {
+  private collection = 'users';
+
+  async getUserByEmail(email: string): Promise<{ uid: string; email: string; displayName: string; photoURL?: string } | null> {
+    try {
+      // Vérifier si l'utilisateur existe dans Firebase Auth
+      const { adminAuth } = await import('./firebase');
+      const userRecord = await adminAuth.getUserByEmail(email);
+      
+      if (userRecord) {
+        return {
+          uid: userRecord.uid,
+          email: userRecord.email || email,
+          displayName: userRecord.displayName || email.split('@')[0],
+          photoURL: userRecord.photoURL
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'utilisateur:', error);
+      return null;
+    }
+  }
+
+  async getUserById(uid: string): Promise<{ uid: string; email: string; displayName: string; photoURL?: string } | null> {
+    try {
+      const { adminAuth } = await import('./firebase');
+      const userRecord = await adminAuth.getUser(uid);
+      
+      if (userRecord) {
+        return {
+          uid: userRecord.uid,
+          email: userRecord.email || '',
+          displayName: userRecord.displayName || userRecord.email?.split('@')[0] || 'Utilisateur',
+          photoURL: userRecord.photoURL
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+      return null;
+    }
+  }
+}
+
+// Service pour les invitations de workspace
+export class WorkspaceInvitationService {
+  private collection = 'workspaceInvitations';
+
+  async create(invitation: Omit<WorkspaceInvitation, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = FieldValue.serverTimestamp();
+    const docRef = await adminDb.collection(this.collection).add({
+      ...invitation,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return docRef.id;
+  }
+
+  async getByToken(token: string): Promise<WorkspaceInvitation | null> {
+    const q = adminDb.collection(this.collection)
+      .where('token', '==', token)
+      .where('status', '==', 'pending')
+      .limit(1);
+
+    const querySnapshot = await q.get();
+    if (querySnapshot.empty) return null;
+    
+    const doc = querySnapshot.docs[0];
+    return { id: doc.id, ...doc.data() } as WorkspaceInvitation;
+  }
+
+  async getByEmail(email: string): Promise<WorkspaceInvitation[]> {
+    const q = adminDb.collection(this.collection)
+      .where('email', '==', email)
+      .orderBy('createdAt', 'desc');
+
+    const querySnapshot = await q.get();
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as WorkspaceInvitation[];
+  }
+
+  async update(id: string, updates: Partial<WorkspaceInvitation>): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.update({
+      ...updates,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(id);
+    await docRef.delete();
+  }
+}
+
 // Instances des services
 export const videoService = new VideoService();
 export const scheduleService = new ScheduleService();
 export const tiktokAccountService = new TikTokAccountService();
+export const workspaceService = new WorkspaceService();
+export const workspaceMemberService = new WorkspaceMemberService();
+export const workspaceInvitationService = new WorkspaceInvitationService();
+export const userService = new UserService();

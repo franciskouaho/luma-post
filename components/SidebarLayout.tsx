@@ -4,8 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { WorkspaceSelector } from '@/components/workspace/workspace-selector';
+import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog';
+import { useWorkspaceContext } from '@/contexts/workspace-context';
+import { useAuth } from '@/hooks/use-auth';
 import { 
-  Home, 
   Plus, 
   Calendar, 
   Clock, 
@@ -14,10 +17,10 @@ import {
   Link2, 
   Settings, 
   HelpCircle,
-  ChevronDown,
   User,
   BarChart3,
-  LogOut
+  LogOut,
+  Users
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -25,22 +28,10 @@ interface SidebarProps {
 }
 
 export default function SidebarLayout({ children }: SidebarProps) {
-  const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { selectedWorkspace, setSelectedWorkspace } = useWorkspaceContext();
+  const { user, logout } = useAuth();
   const pathname = usePathname();
-
-  const handleLogout = async () => {
-    try {
-      // Import dynamique pour éviter les erreurs côté serveur
-      const { signOut } = await import('firebase/auth');
-      const { auth } = await import('@/lib/firebaseClient');
-      
-      await signOut(auth);
-      // Rediriger vers la page de connexion
-      window.location.href = '/auth';
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    }
-  };
 
   const navigation = [
     {
@@ -62,6 +53,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
       name: 'Configuration',
       items: [
         { name: 'Connections', href: '/dashboard/accounts', icon: Link2 },
+        { name: 'Workspaces', href: '/dashboard/workspaces', icon: Users },
         { name: 'Settings', href: '/dashboard/settings', icon: Settings },
       ]
     },
@@ -91,18 +83,13 @@ export default function SidebarLayout({ children }: SidebarProps) {
           </div>
         </div>
 
-        {/* Workspace */}
+        {/* Workspace Selector */}
         <div className="p-4 border-b border-gray-200">
-          <button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            className="flex items-center justify-between w-full text-left"
-          >
-            <div className="flex items-center">
-              <Home className="h-5 w-5 text-gray-500 mr-2" />
-              <span className="font-medium text-gray-900">main</span>
-            </div>
-            <ChevronDown className="h-4 w-4 text-gray-500" />
-          </button>
+          <WorkspaceSelector
+            selectedWorkspace={selectedWorkspace}
+            onWorkspaceChange={setSelectedWorkspace}
+            onCreateWorkspace={() => setShowCreateDialog(true)}
+          />
         </div>
 
         {/* Create Post Button */}
@@ -168,12 +155,12 @@ export default function SidebarLayout({ children }: SidebarProps) {
                 <User className="h-5 w-5 text-gray-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Francis</p>
+                <p className="text-sm font-medium text-gray-900">{user?.displayName || 'Utilisateur'}</p>
                 <p className="text-xs text-gray-500">Pro Plan</p>
               </div>
             </div>
             <button
-              onClick={handleLogout}
+              onClick={logout}
               className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
               title="Se déconnecter"
             >
@@ -189,6 +176,12 @@ export default function SidebarLayout({ children }: SidebarProps) {
           {children}
         </main>
       </div>
+
+      {/* Create Workspace Dialog */}
+      <CreateWorkspaceDialog
+        isOpen={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+      />
     </div>
   );
 }
