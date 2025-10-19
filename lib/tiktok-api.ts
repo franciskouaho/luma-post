@@ -114,7 +114,7 @@ class TikTokAPIService {
     
     const params = new URLSearchParams({
       client_key: this.clientId,
-      scope: 'user.info.basic,video.publish',
+      scope: 'user.info.basic,video.publish,video.upload',
       response_type: 'code',
       redirect_uri: cleanRedirectUri,
       state: userId, // Utiliser userId comme state pour CSRF
@@ -623,11 +623,22 @@ class TikTokAPIService {
     // ÉTAPE 3: Upload du fichier vers TikTok (si upload_url fourni)
 
     if (upload_url) {
+      // Déterminer le Content-Type selon l'URL de la vidéo
+      let contentType = 'video/mp4'; // Par défaut MP4
+      if (videoData.videoUrl.toLowerCase().includes('.mov')) {
+        contentType = 'video/quicktime';
+      } else if (videoData.videoUrl.toLowerCase().includes('.avi')) {
+        contentType = 'video/avi';
+      } else if (videoData.videoUrl.toLowerCase().includes('.webm')) {
+        contentType = 'video/webm';
+      }
+      
+      console.log(`📤 Upload vidéo avec Content-Type: ${contentType}`);
       
       const uploadResponse = await fetch(upload_url, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'video/quicktime', // Format MOV
+          'Content-Type': contentType,
           'Content-Length': videoSize.toString(),
           'Content-Range': `bytes 0-${videoSize - 1}/${videoSize}`,
         },
