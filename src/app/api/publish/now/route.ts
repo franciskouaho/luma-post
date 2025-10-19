@@ -11,7 +11,8 @@ export async function POST(request: NextRequest) {
       videoUrl,
       thumbnailUrl,
       platforms, 
-      mediaType = 'video'
+      mediaType = 'video',
+      tiktokSettings
     } = await request.json();
 
     console.log('=== Publication immédiate ===');
@@ -58,6 +59,16 @@ export async function POST(request: NextRequest) {
       title: caption,
       description: caption,
       hashtags: [], // Vous pouvez extraire les hashtags du caption si nécessaire
+    }, tiktokSettings || {
+      privacyLevel: 'PUBLIC_TO_EVERYONE',
+      allowComments: true,
+      allowDuet: true,
+      allowStitch: true,
+      commercialContent: {
+        enabled: false,
+        yourBrand: false,
+        brandedContent: false,
+      }
     }, accountService);
 
     if (!publishResult.success) {

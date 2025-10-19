@@ -28,6 +28,29 @@ interface TikTokAccount {
   userId: string;
 }
 
+interface TikTokPostSettings {
+  privacyLevel: 'PUBLIC_TO_EVERYONE' | 'MUTUAL_FOLLOW_FRIENDS' | 'SELF_ONLY';
+  allowComments: boolean;
+  allowDuet: boolean;
+  allowStitch: boolean;
+  commercialContent: {
+    enabled: boolean;
+    yourBrand: boolean;
+    brandedContent: boolean;
+  };
+}
+
+interface CreatorInfo {
+  nickname: string;
+  privacy_level_options: string[];
+  max_video_post_duration_sec: number;
+  can_post: boolean;
+  max_posts_reached: boolean;
+  duet_disabled: boolean;
+  stitch_disabled: boolean;
+  comment_disabled: boolean;
+}
+
 class TikTokAPIService {
   private clientId: string;
   private clientSecret: string;
@@ -168,12 +191,57 @@ class TikTokAPIService {
     return data;
   }
 
+  // Nouvelle méthode pour récupérer les informations du créateur
+  async getCreatorInfo(account: TikTokAccount): Promise<CreatorInfo | null> {
+    try {
+      const accessToken = this.decryptToken(account.accessTokenEnc);
+      
+      const creatorResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!creatorResponse.ok) {
+        const errorText = await creatorResponse.text();
+        console.error('Erreur lors de la récupération des infos créateur:', errorText);
+        return null;
+      }
+
+      const creatorResult = await creatorResponse.json();
+      console.log('Infos créateur:', creatorResult);
+
+      if (creatorResult.error && creatorResult.error.code !== 'ok') {
+        console.error(`Erreur TikTok Creator Info: ${creatorResult.error.message || creatorResult.error}`);
+        return null;
+      }
+
+      const { nickname, privacy_level_options, max_video_post_duration_sec, can_post, max_posts_reached, duet_disabled, stitch_disabled, comment_disabled } = creatorResult.data;
+      
+      return {
+        nickname,
+        privacy_level_options,
+        max_video_post_duration_sec,
+        can_post,
+        max_posts_reached,
+        duet_disabled,
+        stitch_disabled,
+        comment_disabled
+      };
+    } catch (error) {
+      console.error('Erreur lors de la récupération des infos créateur:', error);
+      return null;
+    }
+  }
+
   async publishVideoComplete(account: TikTokAccount, videoData: {
     videoUrl: string;
     title?: string;
     description?: string;
     hashtags?: string[];
-  }, accountService?: { update: (id: string, updates: Record<string, unknown>) => Promise<void> }) {
+  }, settings: TikTokPostSettings, accountService?: { update: (id: string, updates: Record<string, unknown>) => Promise<void> }) {
     try {
       console.log('Publication de vidéo TikTok...');
       console.log('Account:', account.username);
@@ -242,7 +310,7 @@ class TikTokAPIService {
             console.log('Options de confidentialité disponibles:', privacy_level_options);
             
             // Continuer avec la publication...
-            return this.continuePublishing(account, accessToken, privacy_level_options, videoData);
+            return this.continuePublishing(account, accessToken, privacy_level_options, videoData, settings);
             
           } catch (refreshError) {
             console.error('Échec du rafraîchissement du token:', refreshError);
@@ -265,7 +333,7 @@ class TikTokAPIService {
       console.log('Options de confidentialité disponibles:', privacy_level_options);
 
       // Continuer avec la publication
-      return this.continuePublishing(account, accessToken, privacy_level_options, videoData);
+      return this.continuePublishing(account, accessToken, privacy_level_options, videoData, settings);
 
     } catch (error) {
       console.error('Erreur lors de la publication TikTok:', error);
@@ -281,7 +349,7 @@ class TikTokAPIService {
     title?: string;
     description?: string;
     hashtags?: string[];
-  }) {
+  }, settings: TikTokPostSettings) {
     // Construire la description avec hashtags
     let description = videoData.description || videoData.title || '';
     if (videoData.hashtags && videoData.hashtags.length > 0) {
@@ -342,8 +410,10 @@ class TikTokAPIService {
       console.log('Tentative avec l\'endpoint Direct Post...');
       const directPostUrl = 'https://open.tiktokapis.com/v2/post/publish/video/init/';
       
-      // Utiliser les options de confidentialité disponibles du créateur
-      const privacyLevel = privacyLevelOptions.includes('PUBLIC_TO_EVERYONE') 
+      // Utiliser les paramètres utilisateur pour la confidentialité
+      const privacyLevel = privacyLevelOptions.includes(settings.privacyLevel) 
+        ? settings.privacyLevel 
+        : privacyLevelOptions.includes('PUBLIC_TO_EVERYONE')
         ? 'PUBLIC_TO_EVERYONE' 
         : privacyLevelOptions.includes('MUTUAL_FOLLOW_FRIENDS')
         ? 'MUTUAL_FOLLOW_FRIENDS'
@@ -353,11 +423,11 @@ class TikTokAPIService {
         post_info: {
           title: description,
           privacy_level: privacyLevel,
-          disable_duet: false,
-          disable_comment: false,
-          disable_stitch: false,
-          brand_content_toggle: false,
-          brand_organic_toggle: false,
+          disable_duet: !settings.allowDuet,
+          disable_comment: !settings.allowComments,
+          disable_stitch: !settings.allowStitch,
+          brand_content_toggle: settings.commercialContent.brandedContent,
+          brand_organic_toggle: settings.commercialContent.yourBrand,
           video_cover_timestamp_ms: 1000, // Utiliser la première seconde comme couverture
         },
         source_info: sourceInfo

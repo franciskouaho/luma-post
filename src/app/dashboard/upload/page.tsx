@@ -17,6 +17,8 @@ import {
   History,
   Wand2
 } from 'lucide-react';
+import TikTokSettings, { TikTokPostSettings } from '@/components/tiktok/TikTokSettings';
+import { useAuth } from '@/hooks/use-auth';
 import { PlatformIcon } from '@/components/ui/platform-icon';
 
 interface TikTokAccount {
@@ -60,9 +62,64 @@ function CreateVideoPostPageContent() {
   const [editingScheduleData, setEditingScheduleData] = useState<{id: string, videoUrl: string, caption: string, thumbnailUrl?: string, scheduledAt: string} | null>(null);
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string | null>(null);
   const [isGeneratingFrames, setIsGeneratingFrames] = useState(false);
+  const [tiktokSettings, setTiktokSettings] = useState<TikTokPostSettings>({
+    privacyLevel: 'PUBLIC_TO_EVERYONE',
+    allowComments: true,
+    allowDuet: true,
+    allowStitch: true,
+    commercialContent: {
+      enabled: false,
+      yourBrand: false,
+      brandedContent: false,
+    }
+  });
+  const [creatorInfo, setCreatorInfo] = useState<any>(null);
+  const [loadingCreatorInfo, setLoadingCreatorInfo] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
+
+  // Fonction pour charger les informations du créateur TikTok
+  const loadCreatorInfo = async (accountId: string) => {
+    if (!user) return;
+    
+    setLoadingCreatorInfo(true);
+    try {
+      const response = await fetch(`/api/tiktok/creator-info?userId=${user.uid}&accountId=${accountId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setCreatorInfo(data.creatorInfo);
+      } else {
+        console.error('Erreur lors du chargement des infos créateur:', data.error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les informations du créateur TikTok",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des infos créateur:', error);
+      toast({
+        title: "Erreur",
+        description: "Erreur lors du chargement des informations du créateur",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingCreatorInfo(false);
+    }
+  };
+
+  // Charger les informations du créateur quand un compte TikTok est sélectionné
+  useEffect(() => {
+    if (selectedPlatforms.length > 0 && accounts.length > 0) {
+      const tiktokAccount = accounts.find(acc => selectedPlatforms.includes(acc.id));
+      if (tiktokAccount) {
+        loadCreatorInfo(tiktokAccount.id);
+      }
+    }
+  }, [selectedPlatforms, accounts, user]);
 
   // Initialiser les dates par défaut
   useEffect(() => {
@@ -542,7 +599,10 @@ function CreateVideoPostPageContent() {
         platforms: selectedPlatforms,
         scheduledAt: new Date(),
         status: 'pending',
-        mediaType: 'video'
+        mediaType: 'video',
+        tiktokSettings: selectedPlatforms.some(id => 
+          accounts.find(acc => acc.id === id)?.platform === 'tiktok'
+        ) ? tiktokSettings : undefined
       };
 
       const response = await fetch('/api/publish/now', {
@@ -632,7 +692,10 @@ function CreateVideoPostPageContent() {
         platforms: selectedPlatforms,
         scheduledAt: scheduledDateTime,
         status: scheduleEnabled ? 'scheduled' : 'pending',
-        mediaType: 'video'
+        mediaType: 'video',
+        tiktokSettings: selectedPlatforms.some(id => 
+          accounts.find(acc => acc.id === id)?.platform === 'tiktok'
+        ) ? tiktokSettings : undefined
       };
 
       const isEditing = editingScheduleData?.id;
@@ -917,6 +980,20 @@ function CreateVideoPostPageContent() {
       {/* Right Sidebar */}
       <div className="w-80 bg-white border-l border-gray-200 p-6">
         <div className="space-y-6">
+          {/* TikTok Settings */}
+          {selectedPlatforms.length > 0 && selectedPlatforms.some(id => 
+            accounts.find(acc => acc.id === id)?.platform === 'tiktok'
+          ) && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-4">Paramètres TikTok</h3>
+              <TikTokSettings
+                creatorInfo={creatorInfo}
+                onSettingsChange={setTiktokSettings}
+                initialSettings={tiktokSettings}
+              />
+            </div>
+          )}
+
           {/* Schedule Post */}
           <div>
             <div className="flex items-center justify-between mb-4">
