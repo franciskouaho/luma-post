@@ -1,5 +1,5 @@
 // Firebase Admin SDK (pour le backend/API routes uniquement)
-import { initializeApp as initializeAdminApp, getApps, cert } from 'firebase-admin/app';
+import { initializeApp as initializeAdminApp, getApps, cert, ServiceAccount } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import { getAuth as getAdminAuth } from 'firebase-admin/auth';
@@ -11,10 +11,10 @@ const firebaseAdminConfig = {
 };
 
 // Credentials Firebase Admin SDK (service account)
-const firebaseCredentials = {
-  project_id: process.env.FIREBASE_PROJECT_ID,
-  private_key: process.env.FIREBASE_PRIVATE_KEY,
-  client_email: process.env.FIREBASE_CLIENT_EMAIL
+const firebaseCredentials: ServiceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID!,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY!,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL!
 };
 
 // Configuration Firebase Admin pour la production
