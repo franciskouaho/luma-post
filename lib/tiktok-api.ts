@@ -420,20 +420,20 @@ class TikTokAPIService {
     const videoBuffer = Buffer.from(videoArrayBuffer);
     const videoSize = videoBuffer.length;
     
-    // Calculer le chunking selon les spécifications TikTok
-    // chunk_size entre 5 MB et 64 MB, dernier chunk jusqu'à 128 MB
-    const maxChunkSize = 64 * 1024 * 1024; // 64 MB
-    const minChunkSize = 5 * 1024 * 1024;  // 5 MB
-    
-    let chunkSize = maxChunkSize;
-    if (videoSize < minChunkSize) {
-      // Fichier petit : un seul chunk
-      chunkSize = videoSize;
-    }
-    
-    // IMPORTANT: TikTok spécifie Math.floor pour total_chunk_count
-    // Le dernier chunk peut dépasser (trailing bytes) jusqu'à 128MB
-    const totalChunkCount = Math.floor(videoSize / chunkSize) + (videoSize % chunkSize > 0 ? 1 : 0);
+    // Calculer le chunking selon les spécifications TikTok (patch fiable)
+    const KB = 1024;
+    const MB = 1024 * KB;
+
+    // Règle simple et robuste:
+    // - Si la vidéo < 64MB, prends 8MB pour éviter "chunk size invalid"
+    // - Sinon, prends 64MB
+    const smallChunkSize = 8 * MB;   // 8 MB
+    const largeChunkSize = 64 * MB;  // 64 MB
+
+    const chunkSize = videoSize < largeChunkSize ? smallChunkSize : largeChunkSize;
+
+    // total_chunk_count = nombre de morceaux nécessaires
+    const totalChunkCount = Math.ceil(videoSize / chunkSize);
     
     console.log(`📊 Chunking: ${videoSize} bytes en ${totalChunkCount} chunk(s) de ${chunkSize} bytes`);
 
