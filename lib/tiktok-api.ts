@@ -423,10 +423,20 @@ class TikTokAPIService {
     const videoBuffer = Buffer.from(videoArrayBuffer);
     const videoSize = videoBuffer.length;
     
-    // Pour l'instant, utilisons un seul chunk pour éviter les problèmes de chunking
-    // TikTok devrait accepter les fichiers de 57MB en un seul chunk
-    const chunkSize = videoSize; // Un seul chunk de la taille totale
-    const totalChunkCount = 1;
+    // Calculer le chunking selon les spécifications TikTok
+    // chunk_size entre 5 MB et 64 MB, dernier chunk jusqu'à 128 MB
+    const maxChunkSize = 64 * 1024 * 1024; // 64 MB
+    const minChunkSize = 5 * 1024 * 1024;  // 5 MB
+    
+    let chunkSize = maxChunkSize;
+    if (videoSize < minChunkSize) {
+      // Fichier petit : un seul chunk
+      chunkSize = videoSize;
+    }
+    
+    const totalChunkCount = Math.ceil(videoSize / chunkSize);
+    
+    console.log(`📊 Chunking: ${videoSize} bytes en ${totalChunkCount} chunk(s) de ${chunkSize} bytes`);
 
     
     const sourceInfo = {
@@ -620,37 +630,58 @@ class TikTokAPIService {
 
     const { publish_id, upload_url } = initResult.data;
 
-    // ÉTAPE 3: Upload du fichier vers TikTok (si upload_url fourni)
+    // ÉTAPE 3: Upload du fichier vers TikTok en chunks (si upload_url fourni)
 
     if (upload_url) {
-      // Déterminer le Content-Type selon l'URL de la vidéo
+      // Déterminer le Content-Type selon l'extension de la vidéo
       let contentType = 'video/mp4'; // Par défaut MP4
-      if (videoData.videoUrl.toLowerCase().includes('.mov')) {
+      const url = videoData.videoUrl.toLowerCase();
+      
+      if (url.includes('.mov')) {
         contentType = 'video/quicktime';
-      } else if (videoData.videoUrl.toLowerCase().includes('.avi')) {
+      } else if (url.includes('.avi')) {
         contentType = 'video/avi';
-      } else if (videoData.videoUrl.toLowerCase().includes('.webm')) {
+      } else if (url.includes('.webm')) {
         contentType = 'video/webm';
+      } else if (url.includes('.wmv')) {
+        contentType = 'video/x-ms-wmv';
+      } else if (url.includes('.mkv')) {
+        contentType = 'video/x-matroska';
+      } else if (url.includes('.flv')) {
+        contentType = 'video/x-flv';
       }
       
       console.log(`📤 Upload vidéo avec Content-Type: ${contentType}`);
       
-      const uploadResponse = await fetch(upload_url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': contentType,
-          'Content-Length': videoSize.toString(),
-          'Content-Range': `bytes 0-${videoSize - 1}/${videoSize}`,
-        },
-        body: videoBuffer,
-      });
+      // Upload en chunks selon les spécifications TikTok
+      for (let i = 0; i < totalChunkCount; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, videoSize);
+        const chunk = videoBuffer.slice(start, end);
+        const chunkLength = chunk.length;
+        
+        console.log(`📤 Upload chunk ${i + 1}/${totalChunkCount}: bytes ${start}-${end - 1}/${videoSize}`);
+        
+        const uploadResponse = await fetch(upload_url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': contentType,
+            'Content-Length': chunkLength.toString(),
+            'Content-Range': `bytes ${start}-${end - 1}/${videoSize}`,
+          },
+          body: chunk,
+        });
 
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('Erreur lors de l\'upload:', errorText);
-        throw new Error(`Erreur upload ${uploadResponse.status}: ${errorText}`);
+        if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          console.error(`Erreur upload chunk ${i + 1}:`, errorText);
+          throw new Error(`Erreur upload chunk ${i + 1} (${uploadResponse.status}): ${errorText}`);
+        }
+        
+        console.log(`✅ Chunk ${i + 1}/${totalChunkCount} uploadé avec succès`);
       }
-
+      
+      console.log('✅ Upload complet terminé');
     }
 
     // ÉTAPE 4: Vérifier le statut seulement pour Direct Post
