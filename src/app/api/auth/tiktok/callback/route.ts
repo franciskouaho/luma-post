@@ -87,8 +87,9 @@ export async function GET(request: NextRequest) {
 
 
     // Rediriger vers le dashboard avec un message de succès
-    // Utiliser l'URL ngrok depuis les paramètres de redirection TikTok
-    const redirectUrl = `https://dispraisingly-unleased-mila.ngrok-free.dev/dashboard/accounts?connected=true`;
+    // Utiliser TIKTOK_REDIRECT_URI pour construire l'URL de base
+    const baseUrl = process.env.TIKTOK_REDIRECT_URI?.replace('/api/auth/tiktok/callback', '') || 'http://localhost:3000';
+    const redirectUrl = `${baseUrl}/dashboard/accounts?connected=true`;
     
     return NextResponse.redirect(redirectUrl);
 
@@ -100,7 +101,8 @@ export async function GET(request: NextRequest) {
     console.error('=== Fin de l\'erreur ===');
     
     // Rediriger vers le dashboard avec un message d'erreur
-    const redirectUrl = `https://dispraisingly-unleased-mila.ngrok-free.dev/dashboard/accounts?error=connection_failed`;
+    const baseUrl = process.env.TIKTOK_REDIRECT_URI?.replace('/api/auth/tiktok/callback', '') || 'http://localhost:3000';
+    const redirectUrl = `${baseUrl}/dashboard/accounts?error=connection_failed`;
     
     return NextResponse.redirect(redirectUrl);
   }
