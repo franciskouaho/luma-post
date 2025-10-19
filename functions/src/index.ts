@@ -1,32 +1,113 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-import {setGlobalOptions} from "firebase-functions";
-import {onRequest} from "firebase-functions/https";
+import { setGlobalOptions } from "firebase-functions";
+import { onRequest, onCall } from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+// Configuration globale des fonctions
+setGlobalOptions({ 
+  maxInstances: 10,
+  region: 'europe-west1'
+});
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// Fonction de test pour vérifier que les fonctions sont actives
+export const healthCheck = onRequest(
+  {
+    region: 'europe-west1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  (request, response) => {
+    logger.info("Health check appelé", { structuredData: true });
+    
+    response.status(200).json({
+      success: true,
+      message: "LumaPost Functions are running!",
+      timestamp: new Date().toISOString(),
+      region: 'europe-west1'
+    });
+  }
+);
+
+// Fonction pour publier immédiatement une vidéo
+export const publishVideoNow = onCall(
+  {
+    region: 'europe-west1',
+    memory: '512MiB',
+    timeoutSeconds: 300,
+  },
+  async (request) => {
+    try {
+      const { videoId, accountId, userId } = request.data;
+      
+      if (!videoId || !accountId || !userId) {
+        throw new Error('Paramètres manquants');
+      }
+
+      logger.info(`Publication immédiate demandée pour videoId: ${videoId}`);
+      
+      // Pour l'instant, on retourne un succès simulé
+      // La vraie logique de publication sera implémentée plus tard
+      return {
+        success: true,
+        message: 'Publication simulée avec succès',
+        videoId,
+        accountId,
+        userId
+      };
+
+    } catch (error) {
+      logger.error('Erreur lors de la publication immédiate:', error);
+      throw new Error(`Erreur lors de la publication: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+    }
+  }
+);
+
+// Fonction planifiée qui vérifie les publications en attente toutes les minutes
+export const checkScheduledPosts = onSchedule(
+  {
+    schedule: 'every 1 minutes',
+    region: 'europe-west1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  async (event) => {
+    try {
+      logger.info('Vérification des publications planifiées', { structuredData: true });
+      
+      // Cette fonction sera implémentée pour vérifier les schedules
+      // et déclencher les publications quand c'est le moment
+      
+      logger.info('Vérification terminée');
+    } catch (error) {
+      logger.error('Erreur lors de la vérification des publications:', error);
+    }
+  }
+);
+
+// Trigger Firestore pour les nouvelles planifications
+export const onScheduleCreated = onDocumentCreated(
+  {
+    document: 'schedules/{scheduleId}',
+    region: 'europe-west1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  async (event) => {
+    try {
+      const scheduleId = event.params.scheduleId;
+      const scheduleData = event.data?.data();
+      
+      if (!scheduleData) return;
+      
+      logger.info(`Nouvelle planification créée: ${scheduleId}`, { structuredData: true });
+      
+      // Ici on peut ajouter la logique pour traiter la nouvelle planification
+      // Par exemple, programmer une tâche ou vérifier si c'est pour maintenant
+      
+    } catch (error) {
+      logger.error('Erreur lors du traitement de la nouvelle planification:', error);
+    }
+  }
+);
