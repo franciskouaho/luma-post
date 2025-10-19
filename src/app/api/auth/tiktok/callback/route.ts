@@ -4,8 +4,6 @@ import { tiktokAccountService } from '@/lib/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
 import { EncryptionService } from '@/lib/encryption';
 
-const PLATFORM = 'tiktok' as const;
-
 export async function GET(request: NextRequest) {
   try {
     
@@ -13,6 +11,10 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code');
     const state = searchParams.get('state'); // userId
     const error = searchParams.get('error');
+    
+    // Extraire la plateforme dynamiquement depuis l'URL
+    const url = new URL(request.url);
+    const platform = url.pathname.split('/')[3]; // /api/auth/[platform]/callback
 
 
     if (error) {
@@ -75,7 +77,7 @@ export async function GET(request: NextRequest) {
     // Créer le compte TikTok avec le vrai userId (state contient le userId)
     await tiktokAccountService.create({
       userId: state, // Le state contient le userId de l'utilisateur connecté
-      platform: PLATFORM, // Plateforme TikTok (constante définie)
+      platform: platform as 'tiktok', // Plateforme extraite dynamiquement de l'URL
       tiktokUserId: userInfo.data.user.open_id,
       username: userInfo.data.user.display_name,
       displayName: userInfo.data.user.display_name,
