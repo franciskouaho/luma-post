@@ -308,7 +308,7 @@ class TikTokAPIService {
 
       if (!creatorResponse.ok) {
         const errorText = await creatorResponse.text();
-        const errorData = JSON.parse(errorText);
+        const errorData = this.safeJsonParse(errorText);
         
         // Si le token est invalide, essayer de le rafraîchir
         if (errorData.error?.code === 'access_token_invalid' && account.refreshTokenEnc && accountService) {
@@ -438,6 +438,22 @@ class TikTokAPIService {
     if (!videoUrl || !videoUrl.startsWith('https://')) {
       throw new Error('URL vidéo invalide pour PULL_FROM_URL - doit être HTTPS');
     }
+    
+    // Validation domaine vérifié (doit correspondre au domaine configuré dans TikTok Dev)
+    const allowedDomains = [
+      'luma-post.emplica.fr',
+      'firebasestorage.googleapis.com', // Firebase Storage
+      // Ajoutez d'autres domaines vérifiés si nécessaire
+    ];
+    
+    const urlObj = new URL(videoUrl);
+    const isAllowedDomain = allowedDomains.some(domain => 
+      urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain)
+    );
+    
+    if (!isAllowedDomain) {
+      throw new Error(`Domaine non vérifié pour PULL_FROM_URL: ${urlObj.hostname}. Domaines autorisés: ${allowedDomains.join(', ')}`);
+    }
 
     const sourceInfo = {
       source: 'PULL_FROM_URL',
@@ -491,7 +507,7 @@ class TikTokAPIService {
 
       if (!directPostResponse.ok) {
         const errorText = await directPostResponse.text();
-        const errorData = JSON.parse(errorText);
+        const errorData = this.safeJsonParse(errorText);
         
         
         // Gestion des erreurs - FORCER Direct Post (pas de fallback inbox)
