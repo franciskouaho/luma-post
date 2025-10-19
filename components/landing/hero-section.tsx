@@ -10,11 +10,6 @@ export default function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Content */}
           <div className="space-y-8">
-            {/* Demo Video Link */}
-            <div className="flex items-center space-x-2" style={{ color: 'var(--luma-purple)' }}>
-              <Play className="w-4 h-4" />
-              <span className="text-sm font-medium">Watch demo video</span>
-            </div>
 
             {/* Main Headline */}
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--luma-dark)' }}>
