@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -34,6 +34,27 @@ export default function SidebarLayout({ children }: SidebarProps) {
   const { user, logout } = useAuth();
   const { workspaces, loading } = useWorkspaces();
   const pathname = usePathname();
+
+  // Charger le workspace sauvegardé quand les workspaces sont disponibles
+  useEffect(() => {
+    if (!loading && workspaces.length > 0 && !selectedWorkspace) {
+      const savedWorkspaceId = localStorage.getItem('selectedWorkspaceId');
+      if (savedWorkspaceId) {
+        const savedWorkspace = workspaces.find(w => w.id === savedWorkspaceId);
+        if (savedWorkspace) {
+          console.log('Restauration du workspace sauvegardé:', savedWorkspace.name);
+          setSelectedWorkspace(savedWorkspace);
+        } else {
+          // Si le workspace sauvegardé n'existe plus, le supprimer du localStorage
+          localStorage.removeItem('selectedWorkspaceId');
+        }
+      } else if (workspaces.length > 0) {
+        // Si aucun workspace n'est sauvegardé, sélectionner le premier par défaut
+        console.log('Sélection du premier workspace par défaut:', workspaces[0].name);
+        setSelectedWorkspace(workspaces[0]);
+      }
+    }
+  }, [loading, workspaces, selectedWorkspace, setSelectedWorkspace]);
 
   const navigation = [
     {

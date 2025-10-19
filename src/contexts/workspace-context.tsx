@@ -12,6 +12,20 @@ const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefin
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Charger le workspace sélectionné depuis localStorage au démarrage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedWorkspaceId = localStorage.getItem('selectedWorkspaceId');
+      if (savedWorkspaceId) {
+        // Le workspace sera chargé par le composant parent qui a accès à la liste des workspaces
+        // On marque juste qu'on a une sélection sauvegardée
+        console.log('Workspace ID sauvegardé trouvé:', savedWorkspaceId);
+      }
+      setIsInitialized(true);
+    }
+  }, []);
 
   // Sauvegarder dans localStorage quand le workspace change
   useEffect(() => {

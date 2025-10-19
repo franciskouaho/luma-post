@@ -44,9 +44,66 @@ function CreateVideoPostPageContent() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [caption, setCaption] = useState('');
+  const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
+  const [hashtagInput, setHashtagInput] = useState('');
+  const [showHashtagSuggestions, setShowHashtagSuggestions] = useState(false);
   const [showCoverModal, setShowCoverModal] = useState(false);
+
+  // Hashtags populaires par catégorie
+  const popularHashtags = {
+    general: ['#fyp', '#viral', '#trending', '#foryou', '#explore', '#reels', '#tiktok', '#funny', '#comedy', '#dance'],
+    lifestyle: ['#lifestyle', '#motivation', '#inspiration', '#selfcare', '#wellness', '#mindfulness', '#positivity', '#growth', '#success', '#happiness'],
+    tech: ['#tech', '#innovation', '#ai', '#coding', '#programming', '#startup', '#entrepreneur', '#business', '#digital', '#future'],
+    food: ['#food', '#cooking', '#recipe', '#delicious', '#yummy', '#foodie', '#homemade', '#healthy', '#tasty', '#chef'],
+    travel: ['#travel', '#wanderlust', '#adventure', '#explore', '#vacation', '#trip', '#journey', '#destination', '#world', '#nature'],
+    fashion: ['#fashion', '#style', '#outfit', '#ootd', '#trendy', '#beauty', '#makeup', '#skincare', '#glam', '#chic']
+  };
+
+  // Fonctions pour gérer les hashtags
+  const addHashtag = (hashtag: string) => {
+    const cleanHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
+    if (!selectedHashtags.includes(cleanHashtag) && selectedHashtags.length < 5) {
+      setSelectedHashtags([...selectedHashtags, cleanHashtag]);
+    }
+    setHashtagInput('');
+    setShowHashtagSuggestions(false);
+  };
+
+  const removeHashtag = (hashtag: string) => {
+    setSelectedHashtags(selectedHashtags.filter(h => h !== hashtag));
+  };
+
+  const handleHashtagInputKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && hashtagInput.trim()) {
+      e.preventDefault();
+      addHashtag(hashtagInput.trim());
+    }
+  };
+
+  // Fermer les suggestions quand on clique ailleurs
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.hashtag-suggestions') && !target.closest('.hashtag-input')) {
+        setShowHashtagSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Mettre à jour le caption avec les hashtags
+  const updateCaptionWithHashtags = () => {
+    const hashtagsText = selectedHashtags.join(' ');
+    const baseCaption = caption.replace(/\s*#\w+/g, '').trim(); // Supprimer les anciens hashtags
+    return baseCaption + (hashtagsText ? `\n\n${hashtagsText}` : '');
+  };
+
   const [selectedCoverFrame, setSelectedCoverFrame] = useState<number>(0);
-  const [videoDuration, setVideoDuration] = useState<number>(0);
+  const [videoDuration] = useState<number>(0);
   const [coverFrames, setCoverFrames] = useState<string[]>([]);
   const [scheduleEnabled, setScheduleEnabled] = useState(true);
   const [scheduleDate, setScheduleDate] = useState('');
@@ -72,7 +129,7 @@ function CreateVideoPostPageContent() {
     }
   });
   const [creatorInfo, setCreatorInfo] = useState<any>(null);
-  const [loadingCreatorInfo, setLoadingCreatorInfo] = useState(false);
+  const [, setLoadingCreatorInfo] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -334,7 +391,6 @@ function CreateVideoPostPageContent() {
       
       await new Promise<void>((resolve, reject) => {
         video.addEventListener('loadedmetadata', () => {
-          setVideoDuration(video.duration);
           resolve();
         }, { once: true });
         
@@ -936,14 +992,83 @@ function CreateVideoPostPageContent() {
               <h3 className="text-lg font-semibold">Main Caption</h3>
             </div>
             <textarea
-              value={caption}
+              value={updateCaptionWithHashtags()}
               onChange={(e) => setCaption(e.target.value)}
               placeholder="Écrivez votre description ici (optionnel)..."
               className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 resize-none" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               maxLength={2200}
             />
             <div className="flex justify-end mt-2">
-              <span className="text-sm text-gray-500">{caption.length}/2200</span>
+              <span className="text-sm text-gray-500">{updateCaptionWithHashtags().length}/2200</span>
+            </div>
+
+            {/* Système de hashtags */}
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-md font-medium text-gray-700">Hashtags</h4>
+                <span className="text-sm text-gray-500">{selectedHashtags.length}/5</span>
+              </div>
+              
+              {/* Hashtags sélectionnés */}
+              {selectedHashtags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {selectedHashtags.map((hashtag, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800 border border-purple-200"
+                    >
+                      {hashtag}
+                      <button
+                        onClick={() => removeHashtag(hashtag)}
+                        className="ml-2 text-purple-600 hover:text-purple-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Input pour ajouter des hashtags */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={hashtagInput}
+                  onChange={(e) => setHashtagInput(e.target.value)}
+                  onKeyPress={handleHashtagInputKeyPress}
+                  onFocus={() => setShowHashtagSuggestions(true)}
+                  placeholder="Tapez un hashtag et appuyez sur Entrée..."
+                  className="hashtag-input w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
+                />
+                
+                {/* Suggestions de hashtags */}
+                {showHashtagSuggestions && (
+                  <div className="hashtag-suggestions absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    <div className="p-3">
+                      <h5 className="text-sm font-medium text-gray-700 mb-2">Hashtags populaires</h5>
+                      {Object.entries(popularHashtags).map(([category, hashtags]) => (
+                        <div key={category} className="mb-3">
+                          <h6 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                            {category}
+                          </h6>
+                          <div className="flex flex-wrap gap-1">
+                            {hashtags.map((hashtag) => (
+                              <button
+                                key={hashtag}
+                                onClick={() => addHashtag(hashtag)}
+                                disabled={selectedHashtags.includes(hashtag) || selectedHashtags.length >= 5}
+                                className="px-2 py-1 text-xs bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {hashtag}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
