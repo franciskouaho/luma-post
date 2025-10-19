@@ -50,12 +50,26 @@ export async function POST(request: NextRequest) {
     const scopes: string[] = Array.isArray(tiktokAccount.scopes) ? tiktokAccount.scopes : [];
     const hasUpload = scopes.includes('video.upload');
     const hasPublish = scopes.includes('video.publish');
-    if (!hasUpload || !hasPublish) {
+    const hasBasic = scopes.includes('user.info.basic');
+    
+    if (!hasUpload || !hasPublish || !hasBasic) {
+      const missingScopes = [];
+      if (!hasUpload) missingScopes.push('video.upload');
+      if (!hasPublish) missingScopes.push('video.publish');
+      if (!hasBasic) missingScopes.push('user.info.basic');
+      
       return NextResponse.json(
-        { error: 'Le compte TikTok n\'a pas autorisé les scopes requis (video.upload + video.publish)' },
+        { 
+          error: `Scopes manquants: ${missingScopes.join(', ')}`,
+          details: 'Veuillez révoquer l\'accès à cette application depuis TikTok et refaire le login pour autoriser tous les scopes requis.',
+          missingScopes,
+          currentScopes: scopes
+        },
         { status: 403 }
       );
     }
+    
+    console.log('✅ Validation scopes côté serveur réussie:', scopes);
 
     // Publier sur TikTok
     const publishResult = await tiktokAPIService.publishVideoComplete(tiktokAccount, {

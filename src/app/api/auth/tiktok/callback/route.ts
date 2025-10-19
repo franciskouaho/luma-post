@@ -30,8 +30,36 @@ export async function GET(request: NextRequest) {
     // Échanger le code contre des tokens
     const tokenResponse = await tiktokAPIService.exchangeCodeForTokens(code);
 
+    // VALIDATION STRICTE DES SCOPES - FORCER LES 3 SCOPES REQUIS
+    console.log('🔍 Validation des scopes TikTok reçus:', tokenResponse.scope);
+    const scopes = new Set(tokenResponse.scope.split(',').map((s: string) => s.trim()));
+    const requiredScopes = ['user.info.basic', 'video.upload', 'video.publish'];
+    const missingScopes = requiredScopes.filter(s => !scopes.has(s));
+    
+    if (missingScopes.length > 0) {
+      console.error('❌ Scopes manquants:', missingScopes);
+      return NextResponse.json(
+        { 
+          error: `Scopes manquants: ${missingScopes.join(', ')}`,
+          details: 'Veuillez révoquer l\'accès à cette application depuis TikTok et refaire le login pour autoriser tous les scopes requis.',
+          missingScopes,
+          requiredScopes,
+          receivedScopes: Array.from(scopes)
+        },
+        { status: 403 }
+      );
+    }
+    
+    console.log('✅ Tous les scopes requis sont présents:', Array.from(scopes));
+
     // Obtenir les informations de l'utilisateur TikTok
     const userInfo = await tiktokAPIService.getUserInfo(tokenResponse.access_token);
+    
+    // VÉRIFICATION OPEN_ID DANS TARGET USERS
+    const openId = userInfo.data.user.open_id;
+    console.log('🔍 Open ID TikTok:', openId);
+    console.log('⚠️  IMPORTANT: Vérifiez que cet open_id est dans vos Target Users en sandbox TikTok');
+    console.log('⚠️  Si ce n\'est pas le cas, ajoutez ce compte dans Target Users pour permettre la publication');
 
     if (userInfo.error && userInfo.error.code !== 'ok') {
       return NextResponse.json(
