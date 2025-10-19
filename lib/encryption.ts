@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 
 export class EncryptionService {
-  private static readonly ALGORITHM = 'aes-256-cbc';
+  private static readonly ALGORITHM = 'aes-256-gcm';
+  private static readonly IV_LENGTH = 16;
+  private static readonly TAG_LENGTH = 16;
   
   private static getKey(): Buffer {
     const encryptionKey = process.env.ENCRYPTION_KEY || 'default-key-change-in-prod';
@@ -11,14 +13,17 @@ export class EncryptionService {
   static encrypt(plaintext: string): string {
     try {
       const key = this.getKey();
-      const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipher(this.ALGORITHM, key);
+      const iv = crypto.randomBytes(this.IV_LENGTH);
+      const cipher = crypto.createCipheriv(this.ALGORITHM, key, iv);
       
       let encrypted = cipher.update(plaintext, 'utf8', 'hex');
       encrypted += cipher.final('hex');
       
-      // Retourner IV + Encrypted en base64
-      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'hex')]);
+      // Obtenir le tag d'authentification
+      const tag = cipher.getAuthTag();
+      
+      // Retourner IV + Tag + Encrypted en base64
+      const combined = Buffer.concat([iv, tag, Buffer.from(encrypted, 'hex')]);
       return combined.toString('base64');
     } catch (error) {
       console.error('Erreur chiffrement:', error);
@@ -31,11 +36,13 @@ export class EncryptionService {
       const key = this.getKey();
       const combined = Buffer.from(encryptedData, 'base64');
       
-      // Extraire IV (16 bytes) et données chiffrées
-      const iv = combined.subarray(0, 16);
-      const encrypted = combined.subarray(16);
+      // Extraire IV, Tag et données chiffrées
+      const iv = combined.subarray(0, this.IV_LENGTH);
+      const tag = combined.subarray(this.IV_LENGTH, this.IV_LENGTH + this.TAG_LENGTH);
+      const encrypted = combined.subarray(this.IV_LENGTH + this.TAG_LENGTH);
       
-      const decipher = crypto.createDecipher(this.ALGORITHM, key);
+      const decipher = crypto.createDecipheriv(this.ALGORITHM, key, iv);
+      decipher.setAuthTag(tag);
       
       let decrypted = decipher.update(encrypted, undefined, 'utf8');
       decrypted += decipher.final('utf8');
