@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { workspaceMemberService, workspaceService, userService } from '@/lib/firestore';
 import { adminAuth } from '@/lib/firebase';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: workspaceId } = await params;
     const authHeader = request.headers.get('authorization');
     let userId = null;
 
@@ -26,8 +28,6 @@ export async function GET(
         { status: 401 }
       );
     }
-
-    const workspaceId = params.id;
 
     // Vérifier que l'utilisateur a accès au workspace
     const member = await workspaceMemberService.getByWorkspaceAndUser(workspaceId, userId);
@@ -58,9 +58,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: workspaceId } = await params;
     const authHeader = request.headers.get('authorization');
     let userId = null;
 
@@ -80,8 +81,6 @@ export async function POST(
         { status: 401 }
       );
     }
-
-    const workspaceId = params.id;
     const body = await request.json();
     const { email, role = 'editor' } = body;
 
@@ -129,7 +128,7 @@ export async function POST(
       role: role as 'admin' | 'editor' | 'viewer',
       status: 'active',
       invitedBy: userId,
-      joinedAt: new Date()
+      joinedAt: FieldValue.serverTimestamp()
     });
 
     return NextResponse.json({

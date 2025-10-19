@@ -4,13 +4,6 @@ export async function POST(request: NextRequest) {
   try {
     const { publish_id, status, error_message, video_id, share_url } = await request.json();
     
-      publish_id,
-      status,
-      error_message,
-      video_id,
-      share_url
-    });
-
     // Simuler l'appel du webhook
     const testBody = {
       publish_id: publish_id || 'test_publish_123',

@@ -6,6 +6,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
+    // Log du webhook reçu
+    console.log('Webhook TikTok reçu:', {
       headers: Object.fromEntries(request.headers.entries()),
       body: body,
       timestamp: new Date().toISOString()
@@ -55,6 +57,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Log des données du webhook
+    console.log('Données du webhook TikTok:', {
       publish_id,
       status,
       error_message,
@@ -111,14 +115,6 @@ export async function POST(request: NextRequest) {
       if (!schedule) {
         const allSchedules = await scheduleService.getAll();
         
-        // Log tous les schedules pour déboguer
-          id: s.id,
-          publishId: s.publishId,
-          userId: s.userId,
-          status: s.status,
-          createdAt: s.createdAt
-        })));
-        
         schedule = allSchedules.find(s => 
           s.tiktokUrl?.includes(publish_id) || 
           s.id === publish_id ||
@@ -161,6 +157,8 @@ export async function POST(request: NextRequest) {
           updatedAt: FieldValue.serverTimestamp()
         });
 
+        // Log de la mise à jour réussie
+        console.log('Schedule mis à jour avec succès:', {
           id: schedule.id,
           newStatus,
           tiktokUrl,
@@ -168,6 +166,7 @@ export async function POST(request: NextRequest) {
         });
 
       } else {
+        console.log('Aucun schedule trouvé pour la mise à jour');
       }
 
     } catch (updateError) {
@@ -203,6 +202,8 @@ export async function PUT(request: NextRequest) {
   try {
     const { publish_id, status, error_message, video_id, share_url } = await request.json();
     
+    // Log des paramètres de test
+    console.log('Test webhook TikTok avec paramètres:', {
       publish_id,
       status,
       error_message,

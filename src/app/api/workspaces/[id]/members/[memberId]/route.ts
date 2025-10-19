@@ -4,9 +4,10 @@ import { adminAuth } from '@/lib/firebase';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; memberId: string } }
+  { params }: { params: Promise<{ id: string; memberId: string }> }
 ) {
   try {
+    const { id: workspaceId, memberId } = await params;
     const authHeader = request.headers.get('authorization');
     let userId = null;
 
@@ -27,7 +28,6 @@ export async function PUT(
       );
     }
 
-    const { id: workspaceId, memberId } = params;
     const body = await request.json();
     const { role, status } = body;
 
@@ -80,9 +80,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; memberId: string } }
+  { params }: { params: Promise<{ id: string; memberId: string }> }
 ) {
   try {
+    const { id: workspaceId, memberId } = await params;
     const authHeader = request.headers.get('authorization');
     let userId = null;
 
@@ -102,8 +103,6 @@ export async function DELETE(
         { status: 401 }
       );
     }
-
-    const { id: workspaceId, memberId } = params;
 
     // Vérifier que l'utilisateur est propriétaire ou admin du workspace
     const currentMember = await workspaceMemberService.getByWorkspaceAndUser(workspaceId, userId);

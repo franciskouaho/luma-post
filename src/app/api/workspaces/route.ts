@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { workspaceService, workspaceMemberService } from '@/lib/firestore';
 import { adminAuth } from '@/lib/firebase';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function GET(request: NextRequest) {
       try {
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
     const allWorkspaces = [
       ...ownedWorkspaces.map(ws => ({ ...ws, memberRole: 'owner' as const })),
       ...memberWorkspaceDetails.filter(Boolean)
-    ];
+    ].filter(Boolean) as NonNullable<typeof memberWorkspaceDetails[0]>[];
 
     // Déduplication des workspaces (au cas où l'utilisateur serait à la fois propriétaire et membre)
     const uniqueWorkspaces = allWorkspaces.reduce((acc, workspace) => {
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
       role: 'owner',
       status: 'active',
       invitedBy: userId,
-      joinedAt: new Date()
+      joinedAt: FieldValue.serverTimestamp()
     });
 
     return NextResponse.json({

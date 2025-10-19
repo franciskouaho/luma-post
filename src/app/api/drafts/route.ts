@@ -19,12 +19,6 @@ export async function GET(request: NextRequest) {
 
     const drafts = draftsSnapshot.docs.map(doc => {
       const data = doc.data();
-        id: doc.id,
-        caption: data.caption,
-        thumbnailUrl: data.thumbnailUrl,
-        videoUrl: data.videoUrl,
-        platforms: data.platforms
-      });
       return {
         id: doc.id,
         ...data,
@@ -124,6 +118,8 @@ export async function DELETE(request: NextRequest) {
     // Supprimer la vidéo et la thumbnail du Firebase Storage si elles existent
     const { storageService } = await import('@/lib/storage');
     
+    // Log des fichiers à supprimer
+    console.log('Suppression des fichiers du draft:', {
       videoUrl: draftData?.videoUrl,
       thumbnailUrl: draftData?.thumbnailUrl,
       caption: draftData?.caption
