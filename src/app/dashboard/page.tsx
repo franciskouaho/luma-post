@@ -108,7 +108,12 @@ export default function DashboardPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold mb-2" style={{ 
+                background: 'var(--luma-gradient-primary)', 
+                WebkitBackgroundClip: 'text', 
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
                 Analytics
               </h1>
               <p className="text-gray-600">
@@ -247,8 +252,8 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="p-2 bg-green-50 rounded-lg">
-                        <Icon className="h-6 w-6 text-green-600" />
+                      <div className="p-2 rounded-lg" style={{ background: 'var(--luma-purple-light)' }}>
+                        <Icon className="h-6 w-6" style={{ color: 'var(--luma-purple)' }} />
                       </div>
                       <span className={`text-sm font-medium px-2 py-1 rounded-full ${
                         stat.changeType === 'positive' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'

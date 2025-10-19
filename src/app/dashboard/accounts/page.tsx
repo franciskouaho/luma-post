@@ -225,7 +225,12 @@ function AccountsPageContent() {
       <div className="max-w-7xl mx-auto px-6 py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Connected Accounts</h1>
+        <h1 className="text-2xl font-bold" style={{ 
+          background: 'var(--luma-gradient-primary)', 
+          WebkitBackgroundClip: 'text', 
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>Connected Accounts</h1>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-gray-600">all accounts</span>
           <ChevronDown className="h-4 w-4 text-gray-400" />

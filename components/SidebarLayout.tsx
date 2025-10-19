@@ -80,7 +80,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
       {/* Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
         {/* Logo */}
-        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100">
+        <div className="p-6 border-b border-gray-200" style={{ background: 'var(--luma-gradient-light)' }}>
           <div className="flex items-center space-x-3">
             <Image 
               src="/logo.png" 
@@ -89,7 +89,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
               height={32}
               className="h-8 w-8"
             />
-            <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Luma Post</h1>
+            <h1 className="text-xl font-bold" style={{ color: 'var(--luma-dark)' }}>Luma Post</h1>
           </div>
         </div>
 
@@ -110,7 +110,16 @@ export default function SidebarLayout({ children }: SidebarProps) {
         {/* Create Post Button */}
         <div className="p-4">
           <Link href="/dashboard/create-post">
-            <button className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+            <button 
+              className="w-full text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+              style={{ background: 'var(--luma-gradient-primary)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--luma-purple-dark)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--luma-gradient-primary)';
+              }}
+            >
               <Plus className="h-5 w-5 mr-2" />
               Create post
             </button>
@@ -133,9 +142,14 @@ export default function SidebarLayout({ children }: SidebarProps) {
                         href={item.href}
                         className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                           pathname === item.href
-                            ? 'bg-green-50 text-green-700 border-l-4 border-green-500 shadow-sm'
+                            ? 'shadow-sm'
                             : 'text-gray-700 hover:bg-gray-100 hover:shadow-sm'
                         }`}
+                        style={pathname === item.href ? {
+                          background: 'var(--luma-gradient-light)',
+                          color: 'var(--luma-dark)',
+                          borderLeft: '4px solid var(--luma-purple)'
+                        } : {}}
                       >
                         <Icon className="h-5 w-5 mr-3" />
                         {item.name}

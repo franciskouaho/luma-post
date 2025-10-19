@@ -51,6 +51,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Couleurs personnalisées Luma Post
+        luma: {
+          purple: "var(--luma-purple)",
+          "purple-dark": "var(--luma-purple-dark)",
+          "purple-light": "var(--luma-purple-light)",
+          dark: "var(--luma-dark)",
+          white: "var(--luma-white)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
