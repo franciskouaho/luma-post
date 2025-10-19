@@ -61,7 +61,7 @@ class TikTokAPIService {
   constructor() {
     this.clientId = process.env.TIKTOK_CLIENT_ID || '';
     this.clientSecret = process.env.TIKTOK_CLIENT_SECRET || '';
-    this.redirectUri = process.env.TIKTOK_REDIRECT_URI || '';
+    this.redirectUri = process.env.TIKTOK_REDIRECT_URI || 'https://luma-post.emplica.fr/api/auth/tiktok/callback';
   }
 
   // Fonction de déchiffrement avec AES-256-GCM
