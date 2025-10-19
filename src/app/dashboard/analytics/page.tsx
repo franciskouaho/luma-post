@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" style={{ color: 'var(--luma-purple)' }} />
           <p className="text-gray-600">Chargement des analytics...</p>
         </div>
       </div>
@@ -169,10 +169,14 @@ export default function AnalyticsPage() {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Icon className="h-8 w-8 text-green-600" />
+                      <Icon className="h-8 w-8" style={{ color: 'var(--luma-purple)' }} />
                       <span className={`text-sm font-medium ${
-                        stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                      }`}>
+                        stat.changeType === 'positive' ? '' : 'text-red-600'
+                      }`}
+                      style={stat.changeType === 'positive' ? {
+                        color: 'var(--luma-purple)'
+                      } : {}}
+                      >
                         {stat.change}
                       </span>
                     </div>
@@ -204,7 +208,7 @@ export default function AnalyticsPage() {
                       return (
                         <div key={index} className="flex flex-col items-center flex-1">
                           <div 
-                            className="bg-green-500 rounded-t w-full transition-all duration-300 hover:bg-green-600"
+                            className="rounded-t w-full transition-all duration-300" style={{ background: 'var(--luma-purple)' }}
                             style={{ height: `${height}px` }}
                           />
                           <div className="mt-2 text-xs text-gray-600 text-center">
@@ -243,13 +247,13 @@ export default function AnalyticsPage() {
                       return (
                         <div key={platform} className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <div className="w-3 h-3 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
                             <span className="text-sm font-medium capitalize">{platform}</span>
                           </div>
                           <div className="flex items-center space-x-2">
                             <div className="w-24 bg-gray-200 rounded-full h-2">
                               <div 
-                                className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                className="h-2 rounded-full transition-all duration-300" style={{ background: 'var(--luma-purple)' }}
                                 style={{ width: `${percentage}%` }}
                               />
                             </div>
@@ -300,7 +304,7 @@ export default function AnalyticsPage() {
                       <p className="text-xs text-gray-500">Partages</p>
                     </div>
                     <div className="text-center">
-                      <p className="font-medium text-green-600">{post.engagement}%</p>
+                      <p className="font-medium" style={{ color: 'var(--luma-purple)' }}>{post.engagement}%</p>
                       <p className="text-xs text-gray-500">Engagement</p>
                     </div>
                   </div>

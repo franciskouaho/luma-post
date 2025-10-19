@@ -842,10 +842,14 @@ function CreateVideoPostPageContent() {
                       className={`transition-all duration-200 aspect-square rounded-full ${
                         platform.connected 
                           ? selectedPlatforms.includes(platform.id)
-                            ? 'ring-4 ring-green-500 shadow-lg scale-105 border-2 border-green-500'
+                            ? 'ring-4 shadow-lg scale-105 border-2'
                             : 'shadow-md hover:shadow-lg'
                           : 'opacity-50'
                       }`}
+                      style={selectedPlatforms.includes(platform.id) ? {
+                        ringColor: 'var(--luma-purple)',
+                        borderColor: 'var(--luma-purple)'
+                      } : {}}
                     />
                     <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
                       {platform.connected ? platform.username : `${platform.name} - Non connecté`}
@@ -859,7 +863,7 @@ function CreateVideoPostPageContent() {
           {/* Video Upload Area */}
           <div className="mb-8">
             <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-green-500 transition-colors cursor-pointer"
+              className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center transition-colors cursor-pointer"
               onClick={() => !videoFile && fileInputRef.current?.click()}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
@@ -911,8 +915,8 @@ function CreateVideoPostPageContent() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="w-16 h-16 bg-green-100 rounded-lg mx-auto flex items-center justify-center">
-                    <Upload className="h-8 w-8 text-green-600" />
+                  <div className="w-16 h-16 rounded-lg mx-auto flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
+                    <Upload className="h-8 w-8" style={{ color: 'var(--luma-purple)' }} />
                   </div>
                   <div>
                     <p className="text-lg font-medium mb-2">
@@ -941,7 +945,7 @@ function CreateVideoPostPageContent() {
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               placeholder="Écrivez votre description ici (optionnel)..."
-              className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+              className="w-full h-32 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 resize-none" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               maxLength={2200}
             />
             <div className="flex justify-end mt-2">
@@ -1001,8 +1005,11 @@ function CreateVideoPostPageContent() {
               <button
                 onClick={() => setScheduleEnabled(!scheduleEnabled)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  scheduleEnabled ? 'bg-green-600' : 'bg-gray-200'
+                  scheduleEnabled ? '' : 'bg-gray-200'
                 }`}
+                style={scheduleEnabled ? {
+                  background: 'var(--luma-purple)'
+                } : {}}
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -1021,7 +1028,7 @@ function CreateVideoPostPageContent() {
                     value={scheduleDate}
                     onChange={(e) => setScheduleDate(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
                   />
                 </div>
 
@@ -1031,7 +1038,7 @@ function CreateVideoPostPageContent() {
                     type="time"
                     value={scheduleTime}
                     onChange={(e) => setScheduleTime(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
                   />
                 </div>
 
@@ -1044,7 +1051,7 @@ function CreateVideoPostPageContent() {
             <div className="space-y-3">
               {scheduleEnabled ? (
                 <Button 
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  className="w-full text-white transition-all duration-200 shadow-md hover:shadow-lg" style={{ background: 'var(--luma-gradient-primary)' }}
                   onClick={handleSchedule}
                   disabled={!videoFile || selectedPlatforms.length === 0}
                 >
@@ -1162,7 +1169,7 @@ function CreateVideoPostPageContent() {
             {coverFrames.length > 0 && (
               <div className="mb-6">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Info className="h-4 w-4 text-green-500" />
+                  <Info className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />
                   <p className="text-sm text-gray-600">Use this bar to select your cover frame</p>
                 </div>
                 <input
@@ -1185,7 +1192,7 @@ function CreateVideoPostPageContent() {
                 Cancel
               </Button>
               <Button 
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="text-white transition-all duration-200 shadow-md hover:shadow-lg" style={{ background: 'var(--luma-gradient-primary)' }}
                 onClick={handleSetCover}
                 disabled={coverFrames.length === 0}
               >

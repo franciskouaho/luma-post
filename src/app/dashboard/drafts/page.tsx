@@ -201,7 +201,7 @@ export default function DraftsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -213,7 +213,7 @@ export default function DraftsPage() {
               <select
                 value={filterPlatform}
                 onChange={(e) => setFilterPlatform(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="all">All Platforms</option>
                 <option value="tiktok">TikTok</option>
@@ -228,7 +228,7 @@ export default function DraftsPage() {
               <select
                 value={filterTime}
                 onChange={(e) => setFilterTime(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -242,7 +242,7 @@ export default function DraftsPage() {
               <select
                 value={filterAccount}
                 onChange={(e) => setFilterAccount(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="all">All Accounts</option>
                 <option value="FGcdXcRXVoVfsSwJIciurCeuCXz1">My Account</option>
@@ -329,7 +329,7 @@ export default function DraftsPage() {
                   <div className="flex space-x-2">
                     <Button 
                       size="sm" 
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                      className="flex-1 text-white transition-all duration-200 shadow-md hover:shadow-lg" style={{ background: 'var(--luma-gradient-primary)' }}
                       onClick={() => handlePublishDraft(draft.id)}
                     >
                       <Send className="h-4 w-4 mr-1" />

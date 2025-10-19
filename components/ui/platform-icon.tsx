@@ -63,8 +63,8 @@ export function PlatformIcon({ platform, size = 'md', className = '', profileIma
       case 'tiktok':
         return (
           <div className={`${finalSizeClass} relative aspect-square rounded-full ${styleClasses}`}>
-            {/* Cercle de fond vert */}
-            <div className="w-full h-full rounded-full bg-green-500 flex items-center justify-center overflow-hidden relative">
+            {/* Cercle de fond violet */}
+            <div className="w-full h-full rounded-full flex items-center justify-center overflow-hidden relative" style={{ background: 'var(--luma-purple)' }}>
               {getProfileImage()}
               <div className="w-full h-full rounded-full bg-gray-300 flex items-center justify-center hidden">
                 <svg className="w-2/3 h-2/3 text-gray-600" fill="currentColor" viewBox="0 0 24 24">

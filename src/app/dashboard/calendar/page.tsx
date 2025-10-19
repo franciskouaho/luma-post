@@ -192,7 +192,7 @@ export default function CalendarPage() {
       case 'video':
         return <Video className="h-3 w-3 text-blue-600" />;
       case 'image':
-        return <Image className="h-3 w-3 text-green-600" />;
+        return <Image className="h-3 w-3" style={{ color: 'var(--luma-purple)' }} />;
       case 'text':
         return <FileText className="h-3 w-3 text-gray-600" />;
       default:
@@ -323,18 +323,20 @@ export default function CalendarPage() {
                   key={index}
                   className={`min-h-40 border-r border-b border-gray-200 p-2 ${
                     day.isCurrentMonth ? 'bg-white' : 'bg-gray-50'
-                  } ${day.isToday ? 'bg-green-50' : ''}`}
+                  } ${day.isToday ? '' : ''}`}
+                  style={day.isToday ? { background: 'var(--luma-purple-light)' } : {}}
                 >
                   {/* Date */}
                   <div className="flex items-center justify-between mb-2">
                     <span className={`text-sm font-medium ${
                       day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
-                    } ${day.isToday ? 'text-green-600 font-bold' : ''}`}>
+                    } ${day.isToday ? 'font-bold' : ''}`}
+                    style={day.isToday ? { color: 'var(--luma-purple)' } : {}}>
                       {day.date.getDate()}
                     </span>
                     {day.isCurrentMonth && (
                       <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                        <Plus className="h-3 w-3 text-green-600" />
+                        <Plus className="h-3 w-3" style={{ color: 'var(--luma-purple)' }} />
                       </Button>
                     )}
                   </div>
@@ -392,7 +394,7 @@ export default function CalendarPage() {
             <span>Scheduled</span>
           </div>
           <div className="flex items-center space-x-2">
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />
             <span>Posted</span>
           </div>
           <div className="flex items-center space-x-2">
