@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     // Utiliser le service de chiffrement pour les tokens
 
     // Créer le compte TikTok avec le vrai userId
-    const accountId = await tiktokAccountService.create({
+    await tiktokAccountService.create({
       userId: 'FGcdXcRXVoVfsSwJIciurCeuCXz1', // Votre userId de test
       platform: 'tiktok',
       tiktokUserId: userInfo.data.user.open_id,
