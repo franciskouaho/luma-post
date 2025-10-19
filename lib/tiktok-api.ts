@@ -420,29 +420,12 @@ class TikTokAPIService {
     const videoBuffer = Buffer.from(videoArrayBuffer);
     const videoSize = videoBuffer.length;
     
-    // Calculer le chunking selon les spécifications TikTok (patch fiable)
-    const KB = 1024;
-    const MB = 1024 * KB;
+    // Utiliser PULL_FROM_URL pour domaine vérifié (plus simple et fiable)
+    console.log(`📊 PULL_FROM_URL: ${videoSize} bytes depuis ${videoData.videoUrl}`);
 
-    // Règle simple et robuste:
-    // - Si la vidéo < 64MB, prends 8MB pour éviter "chunk size invalid"
-    // - Sinon, prends 64MB
-    const smallChunkSize = 8 * MB;   // 8 MB
-    const largeChunkSize = 64 * MB;  // 64 MB
-
-    const chunkSize = videoSize < largeChunkSize ? smallChunkSize : largeChunkSize;
-
-    // total_chunk_count = nombre de morceaux nécessaires
-    const totalChunkCount = Math.ceil(videoSize / chunkSize);
-    
-    console.log(`📊 Chunking: ${videoSize} bytes en ${totalChunkCount} chunk(s) de ${chunkSize} bytes`);
-
-    
     const sourceInfo = {
-      source: 'FILE_UPLOAD',
-      video_size: videoSize,
-      chunk_size: chunkSize,
-      total_chunk_count: totalChunkCount,
+      source: 'PULL_FROM_URL',
+      video_url: videoData.videoUrl,
     };
 
     // ÉTAPE 2: Initialisation - FORCER Direct Post uniquement
@@ -631,50 +614,10 @@ class TikTokAPIService {
 
     // ÉTAPE 3: Upload du fichier vers TikTok en chunks (si upload_url fourni)
 
-    if (upload_url) {
-      // Déterminer le Content-Type selon les formats TikTok supportés uniquement
-      let contentType = 'video/mp4'; // Par défaut MP4 (format recommandé)
-      const url = videoData.videoUrl.toLowerCase();
-      
-      // Formats TikTok officiellement supportés uniquement
-      if (url.includes('.mov')) {
-        contentType = 'video/quicktime';
-      } else if (url.includes('.webm')) {
-        contentType = 'video/webm';
-      }
-      // Note: AVI, WMV, MKV, FLV ne sont pas supportés par TikTok
-      
-      console.log(`📤 Upload vidéo avec Content-Type: ${contentType}`);
-      
-      // Upload en chunks selon les spécifications TikTok
-      for (let i = 0; i < totalChunkCount; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(start + chunkSize, videoSize);
-        const chunk = videoBuffer.slice(start, end);
-        const chunkLength = chunk.length;
-        
-        console.log(`📤 Upload chunk ${i + 1}/${totalChunkCount}: bytes ${start}-${end - 1}/${videoSize}`);
-        
-        const uploadResponse = await fetch(upload_url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': contentType,
-            'Content-Length': chunkLength.toString(),
-            'Content-Range': `bytes ${start}-${end - 1}/${videoSize}`,
-          },
-          body: chunk,
-        });
-
-        if (!uploadResponse.ok) {
-          const errorText = await uploadResponse.text();
-          console.error(`Erreur upload chunk ${i + 1}:`, errorText);
-          throw new Error(`Erreur upload chunk ${i + 1} (${uploadResponse.status}): ${errorText}`);
-        }
-        
-        console.log(`✅ Chunk ${i + 1}/${totalChunkCount} uploadé avec succès`);
-      }
-      
-      console.log('✅ Upload complet terminé');
+    // Avec PULL_FROM_URL, TikTok récupère automatiquement la vidéo depuis l'URL
+    // Pas besoin d'upload manuel en chunks
+    if (!initResult.data.upload_url) {
+      console.log('✅ PULL_FROM_URL: TikTok va récupérer la vidéo automatiquement');
     }
 
     // ÉTAPE 4: Vérifier le statut seulement pour Direct Post
