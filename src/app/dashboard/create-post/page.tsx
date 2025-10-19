@@ -88,26 +88,39 @@ export default function DashboardPage() {
                 <div className={`
                   relative p-8 border-2 border-dashed rounded-xl transition-all duration-200 hover:shadow-lg
                   ${hoveredCard === postType.id 
-                    ? 'border-green-300 bg-green-50 shadow-lg scale-105' 
+                    ? 'shadow-lg scale-105' 
                     : 'border-gray-300 hover:border-gray-400 hover:scale-105'
                   }
-                `}>
+                `}
+                style={hoveredCard === postType.id ? {
+                  borderColor: 'var(--luma-purple-light)',
+                  background: 'var(--luma-purple-light)',
+                  opacity: '0.1'
+                } : {}}
+                >
                   {/* Icon */}
                   <div className="flex justify-center mb-4">
                     <div className={`
                       p-4 rounded-full transition-colors
                       ${hoveredCard === postType.id 
-                        ? 'bg-green-100' 
+                        ? '' 
                         : 'bg-gray-100'
                       }
-                    `}>
+                    `}
+                    style={hoveredCard === postType.id ? {
+                      background: 'var(--luma-purple-light)'
+                    } : {}}
+                    >
                       <Icon className={`
                         h-8 w-8 transition-colors
                         ${hoveredCard === postType.id 
-                          ? 'text-green-600' 
+                          ? '' 
                           : 'text-gray-600'
                         }
-                      `} />
+                      `}
+                      style={hoveredCard === postType.id ? {
+                        color: 'var(--luma-purple)'
+                      } : {}} />
                     </div>
                   </div>
 
@@ -144,9 +157,9 @@ export default function DashboardPage() {
 
         {/* Connect More Accounts */}
         <div className="text-center">
-          <p className="text-green-600 text-sm">
+          <p className="text-sm" style={{ color: 'var(--luma-purple)' }}>
             You can{' '}
-            <Link href="/dashboard/accounts" className="underline hover:text-green-700">
+            <Link href="/dashboard/accounts" className="underline" style={{ color: 'var(--luma-purple-dark)' }}>
               connect more accounts here
             </Link>
           </p>

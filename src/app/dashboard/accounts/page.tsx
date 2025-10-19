@@ -239,13 +239,13 @@ function AccountsPageContent() {
 
       {/* Messages de statut */}
       {connected === 'true' && (
-        <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+        <div className='rounded-md p-4 mb-6' style={{ background: 'var(--luma-purple-light)', border: '1px solid var(--luma-purple)' }}>
           <div className="flex">
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">
+              <h3 className="text-sm font-medium" style={{ color: 'var(--luma-purple-dark)' }}>
                 Compte TikTok connecté avec succès !
               </h3>
-              <div className="mt-2 text-sm text-green-700">
+              <div className="mt-2 text-sm" style={{ color: 'var(--luma-purple-dark)' }}>
                 <p>Votre compte TikTok a été connecté et est maintenant disponible pour la publication.</p>
               </div>
             </div>

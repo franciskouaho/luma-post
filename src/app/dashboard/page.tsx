@@ -80,7 +80,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" style={{ color: 'var(--luma-purple)' }} />
           <p className="text-gray-600">Chargement des analytics...</p>
         </div>
       </div>
@@ -168,10 +168,10 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Publiés</p>
-                    <p className="text-2xl font-bold text-green-600">{data.postsByStatus.published}</p>
+                    <p className="text-2xl font-bold" style={{ color: 'var(--luma-purple)' }}>{data.postsByStatus.published}</p>
                   </div>
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Send className="h-4 w-4 text-green-600" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
+                    <Send className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />
                   </div>
                 </div>
               </CardContent>
@@ -256,8 +256,13 @@ export default function DashboardPage() {
                         <Icon className="h-6 w-6" style={{ color: 'var(--luma-purple)' }} />
                       </div>
                       <span className={`text-sm font-medium px-2 py-1 rounded-full ${
-                        stat.changeType === 'positive' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'
-                      }`}>
+                        stat.changeType === 'positive' ? '' : 'text-red-700 bg-red-100'
+                      }`}
+                      style={stat.changeType === 'positive' ? {
+                        color: 'var(--luma-purple-dark)',
+                        background: 'var(--luma-purple-light)'
+                      } : {}}
+                      >
                         {stat.change}
                       </span>
                     </div>
@@ -362,7 +367,7 @@ export default function DashboardPage() {
                         <p className="text-xs text-gray-500">Partages</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium text-green-600">{post.engagement.toFixed(1)}%</p>
+                        <p className="font-medium" style={{ color: 'var(--luma-purple)' }}>{post.engagement.toFixed(1)}%</p>
                         <p className="text-xs text-gray-500">Engagement</p>
                       </div>
                     </div>

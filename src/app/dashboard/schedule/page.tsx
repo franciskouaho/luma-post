@@ -281,7 +281,7 @@ export default function SchedulePage() {
                     <p className="text-gray-500 mb-4">
                       Créez votre première planification pour commencer
                     </p>
-                    <Button onClick={handleCreateSchedule} className="bg-green-600 hover:bg-green-700">
+                    <Button onClick={handleCreateSchedule} className="text-white transition-all duration-200 shadow-md hover:shadow-lg" style={{ background: 'var(--luma-gradient-primary)' }}>
                       <Plus className="h-4 w-4 mr-2" />
                       Créer une planification
                     </Button>
