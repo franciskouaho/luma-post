@@ -414,14 +414,13 @@ class TikTokAPIService {
       total_chunk_count: totalChunkCount,
     };
 
-    // ÉTAPE 2: Initialisation avec fallback intelligent
+    // ÉTAPE 2: Initialisation - FORCER Direct Post uniquement
     
     
     let initResult;
-    let useInboxEndpoint = false;
-    let needsReconnection = false;
+    const useInboxEndpoint = false; // Toujours false - on force Direct Post
     
-    // Essayer d'abord l'endpoint Direct Post avec gestion intelligente des erreurs
+    // Essayer UNIQUEMENT l'endpoint Direct Post (pas de fallback vers inbox)
     try {
       const directPostUrl = 'https://open.tiktokapis.com/v2/post/publish/video/init/';
       
@@ -463,7 +462,7 @@ class TikTokAPIService {
         const errorData = JSON.parse(errorText);
         
         
-        // Gestion intelligente des erreurs
+        // Gestion des erreurs - FORCER Direct Post (pas de fallback inbox)
         switch (errorData.error?.code) {
           case 'unaudited_client_can_only_post_to_private_accounts':
             
@@ -490,10 +489,14 @@ class TikTokAPIService {
               if (retryResponse.ok) {
                 initResult = await retryResponse.json();
                 break;
+              } else {
+                // Si même SELF_ONLY échoue, on lance une erreur au lieu de basculer vers inbox
+                throw new Error('Impossible de publier directement - même avec SELF_ONLY. Vérifiez les permissions du compte.');
               }
+            } else {
+              // Si déjà SELF_ONLY et ça échoue, on lance une erreur
+              throw new Error('Impossible de publier directement avec SELF_ONLY. Vérifiez les permissions du compte.');
             }
-            
-            useInboxEndpoint = true;
             break;
             
           case 'privacy_level_option_mismatch':
@@ -518,7 +521,8 @@ class TikTokAPIService {
             if (fallbackResponse.ok) {
               initResult = await fallbackResponse.json();
             } else {
-              useInboxEndpoint = true;
+              // Pas de fallback vers inbox - on lance une erreur
+              throw new Error('Erreur de niveau de confidentialité - impossible de publier directement.');
             }
             break;
             
@@ -543,43 +547,12 @@ class TikTokAPIService {
         initResult = await directPostResponse.json();
       }
     } catch (error) {
-      useInboxEndpoint = true;
+      // Pas de fallback vers inbox - on relance l'erreur
+      throw error;
     }
     
-    // Si Direct Post a échoué, essayer l'endpoint inbox
-    if (useInboxEndpoint) {
-      const inboxUrl = 'https://open.tiktokapis.com/v2/post/publish/inbox/video/init/';
-      
-      const inboxData = {
-        source_info: sourceInfo
-      };
-
-
-      const inboxResponse = await fetch(inboxUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: JSON.stringify(inboxData),
-      });
-
-      if (!inboxResponse.ok) {
-        const errorText = await inboxResponse.text();
-        const errorData = JSON.parse(errorText);
-        
-        // Si erreur scope_not_authorized, signaler qu'il faut reconnecter
-        if (errorData.error?.code === 'scope_not_authorized') {
-          needsReconnection = true;
-          throw new Error('SCOPE_NOT_AUTHORIZED: Veuillez reconnecter votre compte TikTok pour autoriser les permissions nécessaires.');
-        } else {
-          console.error('Erreur inbox:', errorText);
-          throw new Error(`Erreur HTTP ${inboxResponse.status}: ${errorText}`);
-        }
-      }
-
-      initResult = await inboxResponse.json();
-    }
+    // Si on arrive ici, c'est que Direct Post a réussi
+    // Plus de fallback vers inbox - on utilise uniquement Direct Post
 
     if (initResult.error && initResult.error.code !== 'ok') {
       const errorCode = initResult.error.code;
@@ -703,34 +676,20 @@ class TikTokAPIService {
       }
     }
 
-    // Retour adapté selon l'endpoint utilisé
-    if (useInboxEndpoint) {
-      // Pour inbox, retour immédiat après upload
-      return {
-        success: true,
-        publishId: publish_id,
-        status: 'UPLOADED',
-        message: 'Vidéo uploadée avec succès dans la boîte de réception TikTok. L\'utilisateur doit finaliser la publication dans l\'application TikTok.',
-        inboxMode: true,
-        privacyLevel: 'SELF_ONLY', // Forcé pour les applications non auditées
-        requiresManualPublish: true
-      };
-    } else {
-      // Pour Direct Post, vérifier le statut final
-      const isPublished = finalStatus === 'PUBLISHED';
-      return {
-        success: isPublished,
-        publishId: publish_id,
-        status: finalStatus,
-        message: isPublished 
-          ? 'Vidéo publiée avec succès sur TikTok !' 
-          : `Publication en cours - Statut: ${finalStatus}`,
-        inboxMode: false,
-        privacyLevel: 'PUBLIC_TO_EVERYONE', // Direct Post réussi
-        requiresManualPublish: false,
-        directPostSuccess: true
-      };
-    }
+    // Retour pour Direct Post uniquement
+    const isPublished = finalStatus === 'PUBLISHED';
+    return {
+      success: isPublished,
+      publishId: publish_id,
+      status: finalStatus,
+      message: isPublished 
+        ? 'Vidéo publiée avec succès sur TikTok !' 
+        : `Publication en cours - Statut: ${finalStatus}`,
+      inboxMode: false, // Toujours false - on force Direct Post
+      privacyLevel: settings.privacyLevel || 'PUBLIC_TO_EVERYONE',
+      requiresManualPublish: false,
+      directPostSuccess: true
+    };
   }
 }
 

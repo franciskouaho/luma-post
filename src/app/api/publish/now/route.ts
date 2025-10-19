@@ -108,21 +108,8 @@ export async function POST(request: NextRequest) {
     let successMessage = 'Vidéo publiée avec succès sur TikTok';
     let additionalInfo = null;
     
-    if ('inboxMode' in publishResult && publishResult.inboxMode) {
-      successMessage = 'Vidéo envoyée dans la boîte de réception TikTok';
-      additionalInfo = {
-        inboxMode: true,
-        instructions: 'Ouvrez l\'application TikTok sur votre téléphone et allez dans la section "Drafts" ou "Boîte de réception" pour finaliser la publication.',
-        nextSteps: [
-          '1. Ouvrez TikTok sur votre téléphone',
-          '2. Allez dans "Drafts" ou "Boîte de réception"',
-          `3. Trouvez votre vidéo "${caption}"`,
-          '4. Ajoutez votre caption finale et publiez'
-        ],
-        privacyLevel: publishResult.privacyLevel || 'SELF_ONLY',
-        requiresManualPublish: true
-      };
-    } else if ('directPostSuccess' in publishResult && publishResult.directPostSuccess) {
+    // Maintenant on utilise toujours Direct Post - plus de mode inbox
+    if ('directPostSuccess' in publishResult && publishResult.directPostSuccess) {
       successMessage = 'Vidéo publiée directement sur TikTok !';
       additionalInfo = {
         inboxMode: false,
@@ -130,6 +117,16 @@ export async function POST(request: NextRequest) {
         privacyLevel: publishResult.privacyLevel,
         requiresManualPublish: false,
         instructions: `Publication directe réussie avec le niveau de confidentialité: ${publishResult.privacyLevel}`
+      };
+    } else {
+      // En cas d'échec de Direct Post
+      successMessage = 'Échec de la publication directe sur TikTok';
+      additionalInfo = {
+        inboxMode: false,
+        directPostSuccess: false,
+        privacyLevel: 'SELF_ONLY', // Valeur par défaut en cas d'échec
+        requiresManualPublish: false,
+        instructions: 'La publication directe a échoué. Vérifiez les permissions de votre compte TikTok.'
       };
     }
 
