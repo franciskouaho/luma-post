@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   Home, 
@@ -80,7 +81,16 @@ export default function SidebarLayout({ children }: SidebarProps) {
       <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
         {/* Logo */}
         <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Luma Post</h1>
+          <div className="flex items-center space-x-3">
+            <Image 
+              src="/logo.png" 
+              alt="Luma Post" 
+              width={32}
+              height={32}
+              className="h-8 w-8"
+            />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Luma Post</h1>
+          </div>
         </div>
 
         {/* Workspace */}

@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Luma Post - Schedule your content everywhere in seconds",
   description: "The simplest way to post and grow on all platforms. Built for creators and small teams without the ridiculous price tag.",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
