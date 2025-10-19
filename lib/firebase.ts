@@ -6,8 +6,15 @@ import { getAuth as getAdminAuth } from 'firebase-admin/auth';
 
 // Configuration Firebase Admin
 const firebaseAdminConfig = {
-  projectId: process.env.FIREBASE_PROJECT_ID || 'lumapost-38e61',
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'lumapost-38e61.firebasestorage.app',
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+};
+
+// Credentials Firebase Admin SDK (service account)
+const firebaseCredentials = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY,
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL
 };
 
 // Configuration Firebase Admin pour la production
@@ -16,21 +23,13 @@ console.log('🔥 Utilisation de Firebase en production');
 let adminApp;
 try {
   if (getApps().length === 0) {
-    // Essayer d'utiliser les credentials Firebase si disponibles
-    if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
-      console.log('🔑 Utilisation des credentials Firebase configurés');
-      adminApp = initializeAdminApp({
-        credential: cert({
-          projectId: firebaseAdminConfig.projectId,
-          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        }),
-        storageBucket: firebaseAdminConfig.storageBucket,
-      });
-    } else {
-      console.log('🔑 Utilisation des credentials par défaut (Railway/Google Cloud)');
-      adminApp = initializeAdminApp(firebaseAdminConfig);
-    }
+    // Utiliser les credentials Firebase service account
+    console.log('🔑 Utilisation des credentials Firebase service account');
+    adminApp = initializeAdminApp({
+      credential: cert(firebaseCredentials),
+      projectId: firebaseAdminConfig.projectId,
+      storageBucket: firebaseAdminConfig.storageBucket,
+    });
   } else {
     adminApp = getApps()[0];
   }

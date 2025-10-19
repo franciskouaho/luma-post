@@ -196,17 +196,64 @@ class TikTokAPIService {
     try {
       const accessToken = this.decryptToken(account.accessTokenEnc);
       
-      const creatorResponse = await fetch('https://open.tiktokapis.com/v2/user/info/', {
-        method: 'GET',
+      // Utiliser l'endpoint creator_info/query/ qui est plus approprié
+      const creatorResponse = await fetch('https://open.tiktokapis.com/v2/post/publish/creator_info/query/', {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
         },
       });
 
       if (!creatorResponse.ok) {
         const errorText = await creatorResponse.text();
         console.error('Erreur lors de la récupération des infos créateur:', errorText);
+        
+        // Si le token est invalide, essayer de le rafraîchir
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error?.code === 'access_token_invalid' && account.refreshTokenEnc) {
+            console.log('Token invalide, tentative de rafraîchissement...');
+            
+            const refreshToken = this.decryptToken(account.refreshTokenEnc);
+            const newTokens = await this.refreshAccessToken(refreshToken);
+            
+            // Retry avec le nouveau token
+            const retryResponse = await fetch('https://open.tiktokapis.com/v2/post/publish/creator_info/query/', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${newTokens.access_token}`,
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+            });
+            
+            if (retryResponse.ok) {
+              const retryResult = await retryResponse.json();
+              console.log('Infos créateur (après refresh):', retryResult);
+              
+              if (retryResult.error && retryResult.error.code !== 'ok') {
+                console.error(`Erreur TikTok Creator Info: ${retryResult.error.message || retryResult.error}`);
+                return null;
+              }
+              
+              const { nickname, privacy_level_options, max_video_post_duration_sec, can_post, max_posts_reached, duet_disabled, stitch_disabled, comment_disabled } = retryResult.data;
+              
+              return {
+                nickname,
+                privacy_level_options,
+                max_video_post_duration_sec,
+                can_post,
+                max_posts_reached,
+                duet_disabled,
+                stitch_disabled,
+                comment_disabled
+              };
+            }
+          }
+        } catch (refreshError) {
+          console.error('Erreur lors du rafraîchissement:', refreshError);
+        }
+        
         return null;
       }
 
