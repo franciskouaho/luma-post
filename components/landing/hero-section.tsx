@@ -124,6 +124,15 @@ export default function HeroSection() {
               </div>
             </div>
 
+            {/* Platform Icons Image */}
+            <div className="mt-8 flex justify-center">
+              <img 
+                src="/icons.png" 
+                alt="Social media platforms" 
+                className="max-w-full h-auto"
+              />
+            </div>
+
             {/* Scheduled Status Box */}
             <div className="mt-8 rounded-lg p-4 max-w-xs mx-auto" style={{ background: 'var(--luma-purple-light)' }}>
               <div className="flex items-center space-x-2">
