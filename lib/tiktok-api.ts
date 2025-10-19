@@ -58,6 +58,16 @@ class TikTokAPIService {
   private clientSecret: string;
   private redirectUri: string;
 
+  // Helper pour parsing sécurisé des erreurs TikTok
+  private safeJsonParse(text: string): any {
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      console.warn('⚠️ Réponse TikTok non-JSON:', text);
+      return { error: { message: text, code: 'invalid_response' } };
+    }
+  }
+
   constructor() {
     this.clientId = process.env.TIKTOK_CLIENT_ID || '';
     this.clientSecret = process.env.TIKTOK_CLIENT_SECRET || '';
@@ -205,7 +215,7 @@ class TikTokAPIService {
         
         // Si le token est invalide, essayer de le rafraîchir
         try {
-          const errorData = JSON.parse(errorText);
+          const errorData = this.safeJsonParse(errorText);
           if (errorData.error?.code === 'access_token_invalid' && account.refreshTokenEnc) {
             
             const refreshToken = this.decryptToken(account.refreshTokenEnc);
@@ -423,9 +433,15 @@ class TikTokAPIService {
     // Utiliser PULL_FROM_URL pour domaine vérifié (plus simple et fiable)
     console.log(`📊 PULL_FROM_URL: ${videoSize} bytes depuis ${videoData.videoUrl}`);
 
+    // Validation de l'URL PULL_FROM_URL
+    const videoUrl = videoData.videoUrl;
+    if (!videoUrl || !videoUrl.startsWith('https://')) {
+      throw new Error('URL vidéo invalide pour PULL_FROM_URL - doit être HTTPS');
+    }
+
     const sourceInfo = {
       source: 'PULL_FROM_URL',
-      video_url: videoData.videoUrl,
+      video_url: videoUrl,
     };
 
     // ÉTAPE 2: Initialisation - FORCER Direct Post uniquement
