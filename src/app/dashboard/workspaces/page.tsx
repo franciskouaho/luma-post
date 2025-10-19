@@ -6,6 +6,7 @@ import { WorkspaceSelector } from '@/components/workspace/workspace-selector';
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog';
 import { TeamManagement } from '@/components/workspace/team-management';
 import { RegistrationNotice } from '@/components/workspace/registration-notice';
+import { useWorkspaceContext } from '@/contexts/workspace-context';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,40 +22,47 @@ import {
 
 export default function WorkspacesPage() {
   const { workspaces, loading, error } = useWorkspaces();
-  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
+  const { selectedWorkspace, setSelectedWorkspace } = useWorkspaceContext();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Debug: afficher les workspaces dans la console
   console.log('Workspaces récupérés:', workspaces);
   console.log('État de chargement:', loading);
   console.log('Erreur:', error);
 
-  // Sélectionner automatiquement le workspace sauvegardé ou le premier disponible
+  // Initialiser la sélection du workspace quand les workspaces sont chargés
   React.useEffect(() => {
-    if (workspaces.length > 0 && !selectedWorkspace) {
-      // Récupérer l'ID du workspace sauvegardé
-      const savedWorkspaceId = localStorage.getItem('selectedWorkspaceId');
+    console.log('🔍 useEffect workspaces - workspaces:', workspaces.length, 'isInitialized:', isInitialized, 'selectedWorkspace:', !!selectedWorkspace);
+    
+    if (workspaces.length > 0 && !selectedWorkspace && !isInitialized) {
+      console.log('🚀 Initialisation de la sélection du workspace');
       
-      if (savedWorkspaceId) {
-        // Chercher le workspace sauvegardé
-        const savedWorkspace = workspaces.find(ws => ws.id === savedWorkspaceId);
-        if (savedWorkspace) {
-          setSelectedWorkspace(savedWorkspace);
-          return;
+      // Vérifier que nous sommes côté client
+      if (typeof window !== 'undefined') {
+        // Récupérer l'ID du workspace sauvegardé
+        const savedWorkspaceId = localStorage.getItem('selectedWorkspaceId');
+        console.log('🔍 Workspace sauvegardé:', savedWorkspaceId);
+        
+        if (savedWorkspaceId) {
+          // Chercher le workspace sauvegardé
+          const savedWorkspace = workspaces.find(ws => ws.id === savedWorkspaceId);
+          console.log('🔍 Workspace trouvé:', savedWorkspace);
+          if (savedWorkspace) {
+            console.log('✅ Restauration du workspace sauvegardé');
+            setSelectedWorkspace(savedWorkspace);
+            setIsInitialized(true);
+            return;
+          }
         }
       }
       
       // Si aucun workspace sauvegardé trouvé, sélectionner le premier
+      console.log('🔍 Sélection du premier workspace:', workspaces[0]);
       setSelectedWorkspace(workspaces[0]);
+      setIsInitialized(true);
     }
-  }, [workspaces, selectedWorkspace]);
-
-  // Sauvegarder le workspace sélectionné dans localStorage
-  React.useEffect(() => {
-    if (selectedWorkspace) {
-      localStorage.setItem('selectedWorkspaceId', selectedWorkspace.id);
-    }
-  }, [selectedWorkspace]);
+  }, [workspaces, selectedWorkspace, isInitialized, setSelectedWorkspace]);
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -129,6 +137,8 @@ export default function WorkspacesPage() {
                 selectedWorkspace={selectedWorkspace}
                 onWorkspaceChange={setSelectedWorkspace}
                 onCreateWorkspace={() => setShowCreateDialog(true)}
+                workspaces={workspaces}
+                loading={loading}
               />
             </div>
             <Button

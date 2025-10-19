@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Workspace } from '@/hooks/use-workspaces';
 
 interface WorkspaceContextType {
@@ -12,6 +12,15 @@ const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefin
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
+
+  // Sauvegarder dans localStorage quand le workspace change
+  useEffect(() => {
+    if (selectedWorkspace && typeof window !== 'undefined') {
+      localStorage.setItem('selectedWorkspaceId', selectedWorkspace.id);
+    } else if (typeof window !== 'undefined') {
+      localStorage.removeItem('selectedWorkspaceId');
+    }
+  }, [selectedWorkspace]);
 
   return (
     <WorkspaceContext.Provider value={{ selectedWorkspace, setSelectedWorkspace }}>

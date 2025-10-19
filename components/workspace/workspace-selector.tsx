@@ -11,15 +11,23 @@ interface WorkspaceSelectorProps {
   selectedWorkspace: Workspace | null;
   onWorkspaceChange: (workspace: Workspace | null) => void;
   onCreateWorkspace: () => void;
+  workspaces?: Workspace[];
+  loading?: boolean;
 }
 
 export function WorkspaceSelector({
   selectedWorkspace,
   onWorkspaceChange,
-  onCreateWorkspace
+  onCreateWorkspace,
+  workspaces: propWorkspaces,
+  loading: propLoading
 }: WorkspaceSelectorProps) {
-  const { workspaces, loading } = useWorkspaces();
+  const { workspaces: hookWorkspaces, loading: hookLoading } = useWorkspaces();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Utiliser les workspaces passés en props ou ceux du hook
+  const workspaces = propWorkspaces || hookWorkspaces;
+  const loading = propLoading !== undefined ? propLoading : hookLoading;
 
   // Déduplication côté client pour éviter les doublons
   const uniqueWorkspaces = workspaces.reduce((acc, workspace) => {
@@ -33,6 +41,7 @@ export function WorkspaceSelector({
   // Debug: afficher les workspaces
   console.log('WorkspaceSelector - workspaces originaux:', workspaces.length);
   console.log('WorkspaceSelector - workspaces uniques:', uniqueWorkspaces.length);
+  console.log('WorkspaceSelector - selectedWorkspace reçu:', selectedWorkspace);
   console.log('WorkspaceSelector - workspaces détaillés:', JSON.stringify(workspaces, null, 2));
   console.log('WorkspaceSelector - uniqueWorkspaces détaillés:', JSON.stringify(uniqueWorkspaces, null, 2));
 

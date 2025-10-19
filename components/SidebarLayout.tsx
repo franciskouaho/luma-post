@@ -8,6 +8,7 @@ import { WorkspaceSelector } from '@/components/workspace/workspace-selector';
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog';
 import { useWorkspaceContext } from '@/contexts/workspace-context';
 import { useAuth } from '@/hooks/use-auth';
+import { useWorkspaces } from '@/hooks/use-workspaces';
 import { 
   Plus, 
   Calendar, 
@@ -31,6 +32,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { selectedWorkspace, setSelectedWorkspace } = useWorkspaceContext();
   const { user, logout } = useAuth();
+  const { workspaces, loading } = useWorkspaces();
   const pathname = usePathname();
 
   const navigation = [
@@ -89,6 +91,8 @@ export default function SidebarLayout({ children }: SidebarProps) {
             selectedWorkspace={selectedWorkspace}
             onWorkspaceChange={setSelectedWorkspace}
             onCreateWorkspace={() => setShowCreateDialog(true)}
+            workspaces={workspaces}
+            loading={loading}
           />
         </div>
 
