@@ -92,7 +92,7 @@ export default function AllPostsPage() {
       case 'video':
         return <Video className="h-4 w-4 text-blue-600" />;
       case 'image':
-        return <ImageIcon className="h-4 w-4 text-green-600" />;
+        return <ImageIcon className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />;
       case 'text':
         return <FileText className="h-4 w-4 text-gray-600" />;
       default:
@@ -105,7 +105,7 @@ export default function AllPostsPage() {
       case 'scheduled':
         return <Clock className="h-4 w-4 text-blue-600" />;
       case 'published':
-        return <Send className="h-4 w-4 text-green-600" />;
+        return <Send className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />;
       case 'draft':
         return <FileText className="h-4 w-4 text-gray-600" />;
       default:
@@ -118,7 +118,7 @@ export default function AllPostsPage() {
       case 'scheduled':
         return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">scheduled</Badge>;
       case 'published':
-        return <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">posted</Badge>;
+        return <Badge variant="secondary" className="text-xs" style={{ background: 'var(--luma-purple-light)', color: 'var(--luma-purple-dark)' }}>posted</Badge>;
       case 'draft':
         return <Badge variant="secondary" className="bg-gray-100 text-gray-800 text-xs">draft</Badge>;
       default:
@@ -149,7 +149,7 @@ export default function AllPostsPage() {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style={{ borderBottomColor: 'var(--luma-purple)' }}></div>
               <p className="text-gray-500">Chargement des posts publiés...</p>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function AllPostsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -187,7 +187,7 @@ export default function AllPostsPage() {
               <select
                 value={filterPlatform}
                 onChange={(e) => setFilterPlatform(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="all">All Platforms</option>
                 <option value="tiktok">TikTok</option>
@@ -203,7 +203,7 @@ export default function AllPostsPage() {
               <select
                 value={filterTime}
                 onChange={(e) => setFilterTime(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -217,7 +217,7 @@ export default function AllPostsPage() {
               <select
                 value={filterAccount}
                 onChange={(e) => setFilterAccount(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2" style={{ '--tw-ring-color': 'var(--luma-purple)' } as React.CSSProperties}
               >
                 <option value="all">All Accounts</option>
                 <option value="FGcdXcRXVoVfsSwJIciurCeuCXz1">My Account</option>
