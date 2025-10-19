@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   BarChart3, 
   TrendingUp, 
-  Users, 
   Eye, 
   Heart, 
   MessageCircle, 
@@ -208,8 +207,8 @@ export default function AnalyticsPage() {
                       return (
                         <div key={index} className="flex flex-col items-center flex-1">
                           <div 
-                            className="rounded-t w-full transition-all duration-300" style={{ background: 'var(--luma-purple)' }}
-                            style={{ height: `${height}px` }}
+                            className="rounded-t w-full transition-all duration-300" 
+                            style={{ background: 'var(--luma-purple)', height: `${height}px` }}
                           />
                           <div className="mt-2 text-xs text-gray-600 text-center">
                             <div className="font-medium">{day.date}</div>
@@ -253,8 +252,8 @@ export default function AnalyticsPage() {
                           <div className="flex items-center space-x-2">
                             <div className="w-24 bg-gray-200 rounded-full h-2">
                               <div 
-                                className="h-2 rounded-full transition-all duration-300" style={{ background: 'var(--luma-purple)' }}
-                                style={{ width: `${percentage}%` }}
+                                className="h-2 rounded-full transition-all duration-300" 
+                                style={{ background: 'var(--luma-purple)', width: `${percentage}%` }}
                               />
                             </div>
                             <span className="text-sm text-gray-600 w-8 text-right">{count}</span>

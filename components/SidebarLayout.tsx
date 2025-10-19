@@ -8,7 +8,6 @@ import {
   Home, 
   Plus, 
   Calendar, 
-  Grid3X3, 
   Clock, 
   Send, 
   FileEdit,

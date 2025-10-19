@@ -7,8 +7,6 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Upload, 
-  Calendar, 
-  Clock, 
   Play, 
   Settings,
   X,

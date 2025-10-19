@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Check, Play } from "lucide-react";
+import { Check } from "lucide-react";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
@@ -96,14 +97,16 @@ export default function HeroSection() {
           {/* Right Column - Platform Icons */}
           <div className="relative">
 
-            {/* Platform Icons Image */}
-            <div className="mt-8 flex justify-center">
-              <img 
-                src="/icons.png" 
-                alt="Social media platforms" 
-                className="w-64 h-auto max-w-full"
-              />
-            </div>
+        {/* Platform Icons Image */}
+        <div className="mt-8 flex justify-center">
+          <Image
+            src="/icons.png"
+            alt="Social media platforms"
+            width={256}
+            height={64}
+            className="max-w-full h-auto"
+          />
+        </div>
 
             {/* Scheduled Status Box */}
             <div className="mt-8 rounded-lg p-4 max-w-xs mx-auto" style={{ background: 'var(--luma-purple-light)' }}>
