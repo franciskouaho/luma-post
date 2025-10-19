@@ -70,9 +70,9 @@ export async function GET(request: NextRequest) {
 
     // Utiliser le service de chiffrement pour les tokens
 
-    // Créer le compte TikTok avec le vrai userId
+    // Créer le compte TikTok avec le vrai userId (state contient le userId)
     await tiktokAccountService.create({
-      userId: 'FGcdXcRXVoVfsSwJIciurCeuCXz1', // Votre userId de test
+      userId: state, // Le state contient le userId de l'utilisateur connecté
       platform: 'tiktok',
       tiktokUserId: userInfo.data.user.open_id,
       username: userInfo.data.user.display_name,
