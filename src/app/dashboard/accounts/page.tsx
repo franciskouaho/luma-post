@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import { useAuth } from '@/hooks/use-auth';
-import { useTikTokAccounts } from '@/hooks/use-tiktok-accounts';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  RefreshCw, 
-  ChevronDown, 
-  X, 
-  HelpCircle, 
+import { useState, useEffect, Suspense } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { useTikTokAccounts } from "@/hooks/use-tiktok-accounts";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  RefreshCw,
+  ChevronDown,
+  X,
+  HelpCircle,
   Plus,
   Users,
   CheckCircle,
@@ -24,14 +24,14 @@ import {
   TrendingUp,
   Globe,
   Shield,
-  Zap
-} from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+  Zap,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 interface TikTokAccount {
   id: string;
   userId: string;
-  platform: 'tiktok';
+  platform: "tiktok";
   tiktokUserId: string;
   username: string;
   displayName: string;
@@ -56,373 +56,417 @@ interface Platform {
 
 function AccountsPageContent() {
   const { user, loading: authLoading } = useAuth();
-  const { accounts, loading, error, deleteAccount } = useTikTokAccounts({ userId: user?.uid || '' });
+  const { accounts, loading, error, deleteAccount } = useTikTokAccounts({
+    userId: user?.uid || "",
+  });
   const [isConnecting, setIsConnecting] = useState(false);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const searchParams = useSearchParams();
-  
-  // Vérifier les paramètres de redirection
-  const connected = searchParams?.get('connected');
-  const connectionError = searchParams?.get('error');
+
+  const connected = searchParams?.get("connected");
+  const connectionError = searchParams?.get("error");
 
   useEffect(() => {
-    if (connected === 'true') {
+    if (connected === "true") {
       // Afficher un message de succès
-    } else if (connectionError === 'connection_failed') {
+    } else if (connectionError === "connection_failed") {
       // Afficher un message d'erreur
     }
   }, [connected, connectionError]);
 
   useEffect(() => {
-    // Initialiser seulement TikTok pour l'instant
     const initialPlatforms: Platform[] = [
       {
-        name: 'TikTok',
-        icon: '♪',
-        color: 'bg-black',
+        name: "TikTok",
+        icon: "♪",
+        color: "bg-black",
         connected: accounts.length > 0,
-        accounts: accounts.map(account => ({
+        accounts: accounts.map((account) => ({
           id: account.id,
           username: account.username,
           displayName: account.displayName,
-          avatarUrl: account.avatarUrl
-        }))
-      }
+          avatarUrl: account.avatarUrl,
+        })),
+      },
     ];
-    
+
     setPlatforms(initialPlatforms);
   }, [accounts]);
 
   const handleConnectTikTok = async () => {
     if (!user?.uid) {
-      console.error('Utilisateur non authentifié');
+      console.error("Utilisateur non authentifié");
       return;
     }
 
     setIsConnecting(true);
     try {
-      // Récupérer l'URL d'autorisation depuis l'API
-      const response = await fetch(`/api/auth/tiktok/authorize?userId=${user.uid}`);
+      const response = await fetch(
+        `/api/auth/tiktok/authorize?userId=${user.uid}`,
+      );
       if (!response.ok) {
-        throw new Error('Erreur lors de la récupération de l\'URL d\'autorisation');
+        throw new Error(
+          "Erreur lors de la récupération de l'URL d'autorisation",
+        );
       }
-      
+
       const data = await response.json();
-      
-      // Rediriger vers TikTok
       window.location.href = data.authUrl;
     } catch (error) {
-      console.error('Erreur lors de la connexion TikTok:', error);
+      console.error("Erreur lors de la connexion TikTok:", error);
       setIsConnecting(false);
     }
   };
 
   const handleConnectPlatform = async (platformName: string) => {
-    if (platformName === 'TikTok') {
+    if (platformName === "TikTok") {
       await handleConnectTikTok();
     }
   };
 
-  const handleDisconnectAccount = async (platformName: string, accountId: string) => {
-    if (platformName === 'TikTok') {
-      if (confirm('Êtes-vous sûr de vouloir déconnecter ce compte TikTok ?')) {
+  const handleDisconnectAccount = async (
+    platformName: string,
+    accountId: string,
+  ) => {
+    if (platformName === "TikTok") {
+      if (confirm("Êtes-vous sûr de vouloir déconnecter ce compte TikTok ?")) {
         await deleteAccount(accountId);
       }
     }
   };
 
   const handleRefreshPlatform = async (platformName: string) => {
-    if (platformName === 'TikTok') {
-      // Recharger les comptes TikTok
+    if (platformName === "TikTok") {
       window.location.reload();
     }
   };
 
   if (authLoading || loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-100 rounded-full mx-auto animate-ping"></div>
+          </div>
+          <p className="text-slate-700 font-medium">Loading accounts...</p>
+          <p className="text-slate-500 text-sm mt-2">Please wait a moment</p>
+        </div>
       </div>
     );
   }
 
-  // Calculer les statistiques
-  const connectedPlatforms = platforms.filter(p => p.connected).length;
-  const totalAccounts = platforms.reduce((sum, p) => sum + p.accounts.length, 0);
-  const activePlatforms = platforms.filter(p => p.connected && p.accounts.length > 0).length;
+  const connectedPlatforms = platforms.filter((p) => p.connected).length;
+  const totalAccounts = platforms.reduce(
+    (sum, p) => sum + p.accounts.length,
+    0,
+  );
+  const activePlatforms = platforms.filter(
+    (p) => p.connected && p.accounts.length > 0,
+  ).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+      {/* Modern Sticky Header */}
+      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                Connected Accounts
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">
+                Manage your social media connections
+              </p>
+            </div>
+            <button
+              onClick={() => (window.location.href = "/dashboard/upload")}
+              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              New Post
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header moderne avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-            <div className="mb-6 lg:mb-0">
-              <div className="flex items-center space-x-3 mb-2">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-teal-900 to-teal-600 bg-clip-text text-transparent">
-                  Connexions
-                </h1>
-                <Info className="h-6 w-6 text-gray-400" />
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-teal-600 uppercase tracking-wide mb-1">
+                  Connected Platforms
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {connectedPlatforms}
+                </p>
               </div>
-              <p className="text-gray-600 text-lg">Gérez vos comptes connectés sur les réseaux sociaux</p>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button 
-                onClick={() => window.location.href = '/dashboard/upload'}
-                className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                style={{ background: 'var(--luma-gradient-primary)' }}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nouvelle Publication
-              </Button>
+              <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Globe className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
-          {/* Statistiques */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-teal-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-teal-600">Plateformes Connectées</p>
-                    <p className="text-2xl font-bold text-teal-900">{connectedPlatforms}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center">
-                    <Globe className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-blue-600">Total Comptes</p>
-                    <p className="text-2xl font-bold text-blue-900">{totalAccounts}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-green-600">Actifs</p>
-                    <p className="text-2xl font-bold text-green-900">{activePlatforms}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-purple-600">Sécurisé</p>
-                    <p className="text-2xl font-bold text-purple-900">{connectedPlatforms}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                    <Shield className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                  Total Accounts
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {totalAccounts}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </div>
 
-          {/* Actions et filtres combinés */}
-          <Card className="border-0 shadow-lg bg-gradient-to-r from-teal-50 to-white">
-            <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
-                {/* Section Actions */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                    <RefreshCw className="h-5 w-5 text-teal-600" />
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={() => handleConnectPlatform('TikTok')}
-                      className="flex items-center space-x-2 border-teal-200 text-teal-600 hover:bg-teal-50"
-                    >
-                      <Plus className="h-4 w-4" />
-                      <span>Connecter un compte TikTok</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleRefreshPlatform('TikTok')}
-                      className="flex items-center space-x-2 border-gray-200 text-gray-600 hover:bg-gray-50"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                      <span>Actualiser</span>
-                    </Button>
-                  </div>
-                </div>
-                
-                {/* Section Filtres */}
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Filter className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Filtres:</span>
-                  </div>
-                  
-                  <select className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white shadow-sm">
-                    <option value="all">Toutes les plateformes</option>
-                    <option value="connected">Connectées</option>
-                    <option value="available">Disponibles</option>
-                  </select>
-                </div>
-                
-                {/* Section Vue */}
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center bg-gray-100 rounded-lg p-1">
-                    <button className="p-2 rounded-md transition-colors bg-white shadow-sm text-teal-600">
-                      <Grid3X3 className="h-4 w-4" />
-                    </button>
-                    <button className="p-2 rounded-md transition-colors text-gray-500 hover:text-gray-700">
-                      <List className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">
+                  Active
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {activePlatforms}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                  Secured
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {connectedPlatforms}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Messages de statut modernisés */}
-        {connected === 'true' && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 mb-6">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-green-800">
-                    Compte TikTok connecté avec succès !
-                  </h3>
-                  <p className="text-green-700">
-                    Votre compte TikTok a été connecté et est maintenant disponible pour la publication.
-                  </p>
-                </div>
+        {/* Actions Bar */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => handleConnectPlatform("TikTok")}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+                disabled={isConnecting}
+              >
+                {isConnecting ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    Connect TikTok
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => handleRefreshPlatform("TikTok")}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-slate-500" />
+                <select className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200">
+                  <option value="all">All Platforms</option>
+                  <option value="connected">Connected</option>
+                  <option value="available">Available</option>
+                </select>
               </div>
-            </CardContent>
-          </Card>
+
+              <div className="flex items-center bg-slate-100 rounded-xl p-1">
+                <button className="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-white shadow-sm text-purple-600">
+                  <Grid3X3 className="w-4 h-4" />
+                </button>
+                <button className="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-slate-600 hover:text-slate-900">
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Status Messages */}
+        {connected === "true" && (
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-6 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-green-800">
+                  TikTok Account Connected Successfully!
+                </h3>
+                <p className="text-green-700 text-sm mt-1">
+                  Your TikTok account is now available for publishing.
+                </p>
+              </div>
+            </div>
+          </div>
         )}
 
-        {connectionError === 'connection_failed' && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-red-50 to-red-100 mb-6">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-red-800">
-                    Échec de la connexion TikTok
-                  </h3>
-                  <p className="text-red-700">
-                    Une erreur s'est produite lors de la connexion de votre compte TikTok. Veuillez réessayer.
-                  </p>
-                </div>
+        {connectionError === "connection_failed" && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30">
+                <AlertCircle className="w-6 h-6 text-white" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h3 className="text-lg font-bold text-red-800">
+                  TikTok Connection Failed
+                </h3>
+                <p className="text-red-700 text-sm mt-1">
+                  An error occurred while connecting your TikTok account. Please
+                  try again.
+                </p>
+              </div>
+            </div>
+          </div>
         )}
 
-        {/* Grille des plateformes modernisée */}
+        {/* Platform Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {platforms.map((platform) => {
-            const isDisabled = platform.name !== 'TikTok';
+            const isDisabled = platform.name !== "TikTok";
             return (
-              <Card key={platform.name} className={`group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 ${isDisabled ? 'opacity-50' : 'hover:scale-[1.02]'} bg-white`}>
-                <CardContent className="p-6">
-                  {/* Header avec gradient */}
+              <div
+                key={platform.name}
+                className={`bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 ${isDisabled ? "opacity-50" : "hover:shadow-xl"} transition-all duration-300 ${!isDisabled && "hover:scale-[1.02]"} group`}
+              >
+                <div className="p-6">
+                  {/* Header */}
                   <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center space-x-4">
-                      <div className={`w-12 h-12 rounded-xl ${platform.color} flex items-center justify-center text-white font-bold text-xl shadow-lg ${isDisabled ? 'grayscale' : ''}`}>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`w-14 h-14 rounded-xl ${platform.color} flex items-center justify-center text-white font-bold text-2xl shadow-lg ${isDisabled ? "grayscale" : ""}`}
+                      >
                         {platform.icon}
                       </div>
                       <div>
-                        <h3 className={`text-lg font-bold ${isDisabled ? 'text-gray-400' : 'text-gray-900'}`}>
+                        <h3
+                          className={`text-lg font-bold ${isDisabled ? "text-slate-400" : "text-slate-900"}`}
+                        >
                           {platform.name}
                         </h3>
-                        <p className={`text-sm ${isDisabled ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {platform.accounts.length} compte(s)
+                        <p
+                          className={`text-sm ${isDisabled ? "text-slate-400" : "text-slate-500"}`}
+                        >
+                          {platform.accounts.length} account(s)
                         </p>
                       </div>
                     </div>
-                    <div className={`w-3 h-3 rounded-full ${platform.connected ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                    <div
+                      className={`w-3 h-3 rounded-full ${platform.connected ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-slate-300"}`}
+                    ></div>
                   </div>
 
-                  {/* Bouton de connexion */}
+                  {/* Connect Button */}
                   <div className="mb-6">
-                    <Button
+                    <button
                       onClick={() => handleConnectPlatform(platform.name)}
-                      variant={platform.connected ? "outline" : "default"}
-                      size="sm"
-                      disabled={isConnecting && platform.name === 'TikTok' || isDisabled}
-                      className={`w-full ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${platform.connected ? 'border-teal-200 text-teal-600 hover:bg-teal-50' : 'text-white shadow-md hover:shadow-lg'}`}
-                      style={!platform.connected && !isDisabled ? { background: 'var(--luma-gradient-primary)' } : {}}
+                      disabled={
+                        (isConnecting && platform.name === "TikTok") ||
+                        isDisabled
+                      }
+                      className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                        isDisabled
+                          ? "opacity-50 cursor-not-allowed bg-slate-100 text-slate-400"
+                          : platform.connected
+                            ? "bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200"
+                            : "bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:shadow-lg hover:shadow-purple-500/30 hover:scale-105"
+                      }`}
                     >
-                      {isConnecting && platform.name === 'TikTok' ? (
+                      {isConnecting && platform.name === "TikTok" ? (
                         <>
-                          <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                          Connexion...
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          Connecting...
                         </>
                       ) : platform.connected ? (
                         <>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Connecter un autre compte
+                          <Plus className="w-4 h-4" />
+                          Connect Another
                         </>
                       ) : (
                         <>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Connecter TikTok
+                          <Plus className="w-4 h-4" />
+                          Connect TikTok
                         </>
                       )}
-                    </Button>
+                    </button>
                   </div>
 
-                  {/* Comptes connectés */}
+                  {/* Connected Accounts */}
                   {platform.connected && platform.accounts.length > 0 && (
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-600">Comptes connectés</span>
-                        <span className="text-xs text-gray-400">{platform.accounts.length}</span>
+                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                          Connected Accounts
+                        </span>
+                        <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full font-medium">
+                          {platform.accounts.length}
+                        </span>
                       </div>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
                         {platform.accounts.map((account) => (
-                          <div key={account.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200 group/account">
-                            <div className="flex items-center space-x-3">
-                              <Avatar className="h-8 w-8">
-                                <AvatarImage src={account.avatarUrl} alt={account.displayName} />
-                                <AvatarFallback className="text-sm bg-white">
+                          <div
+                            key={account.id}
+                            className="flex items-center justify-between p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors duration-200 group/account"
+                          >
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-10 w-10 border-2 border-white shadow-md">
+                                <AvatarImage
+                                  src={account.avatarUrl}
+                                  alt={account.displayName}
+                                />
+                                <AvatarFallback className="text-sm bg-gradient-to-br from-purple-500 to-purple-600 text-white font-semibold">
                                   {account.displayName.charAt(0)}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="text-sm font-medium text-gray-900">{account.displayName}</p>
-                                <p className="text-xs text-gray-500">@{account.username}</p>
+                                <p className="text-sm font-semibold text-slate-900">
+                                  {account.displayName}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                  @{account.username}
+                                </p>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDisconnectAccount(platform.name, account.id)}
-                              className="opacity-0 group-hover/account:opacity-100 text-red-600 hover:text-red-700 hover:bg-red-50 p-2 transition-opacity duration-200"
+                            <button
+                              onClick={() =>
+                                handleDisconnectAccount(
+                                  platform.name,
+                                  account.id,
+                                )
+                              }
                               disabled={isDisabled}
+                              className="opacity-0 group-hover/account:opacity-100 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-50 transition-all duration-200 group/delete"
                             >
-                              <X className="h-4 w-4" />
-                            </Button>
+                              <X className="w-4 h-4 text-slate-400 group-hover/delete:text-red-600 transition-colors" />
+                            </button>
                           </div>
                         ))}
                       </div>
@@ -430,57 +474,73 @@ function AccountsPageContent() {
                   )}
 
                   {platform.connected && platform.accounts.length === 0 && (
-                    <div className="text-center py-6">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Users className="h-8 w-8 text-gray-400" />
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Users className="w-8 h-8 text-slate-400" />
                       </div>
-                      <p className="text-sm text-gray-500">Aucun compte connecté</p>
+                      <p className="text-sm text-slate-500 font-medium">
+                        No accounts connected
+                      </p>
                     </div>
                   )}
 
                   {!platform.connected && (
-                    <div className="text-center py-6">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Globe className="h-8 w-8 text-gray-400" />
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Globe className="w-8 h-8 text-slate-400" />
                       </div>
-                      <p className="text-sm text-gray-500">Plateforme non connectée</p>
+                      <p className="text-sm text-slate-500 font-medium">
+                        Platform not connected
+                      </p>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* Section d'aide */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-white">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-                <HelpCircle className="h-5 w-5 text-teal-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Besoin d'aide ?</h3>
-                <p className="text-sm text-gray-600">Connexion et gestion des comptes</p>
-              </div>
+        {/* Help Section */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+              <HelpCircle className="w-6 h-6 text-white" />
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <Button variant="outline" className="justify-start border-teal-200 text-teal-600 hover:bg-teal-50">
-                <Zap className="h-4 w-4 mr-2" />
-                Guide de connexion TikTok
-              </Button>
-              <Button variant="outline" className="justify-start border-gray-200 text-gray-600 hover:bg-gray-50">
-                <Settings className="h-4 w-4 mr-2" />
-                Paramètres de sécurité
-              </Button>
-              <Button variant="outline" className="justify-start border-gray-200 text-gray-600 hover:bg-gray-50">
-                <Shield className="h-4 w-4 mr-2" />
-                Confidentialité des données
-              </Button>
+            <div>
+              <h3 className="text-lg font-bold text-slate-900">Need Help?</h3>
+              <p className="text-sm text-slate-500">
+                Account connection and management
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <button className="flex items-center justify-start gap-3 px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 group">
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                <Zap className="w-5 h-5 text-purple-600" />
+              </div>
+              <span className="text-sm font-medium text-slate-700">
+                TikTok Connection Guide
+              </span>
+            </button>
+            <button className="flex items-center justify-start gap-3 px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 group">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                <Settings className="w-5 h-5 text-blue-600" />
+              </div>
+              <span className="text-sm font-medium text-slate-700">
+                Security Settings
+              </span>
+            </button>
+            <button className="flex items-center justify-start gap-3 px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200 group">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                <Shield className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-sm font-medium text-slate-700">
+                Data Privacy
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -488,7 +548,16 @@ function AccountsPageContent() {
 
 export default function AccountsPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-sm text-slate-600">Loading...</p>
+          </div>
+        </div>
+      }
+    >
       <AccountsPageContent />
     </Suspense>
   );

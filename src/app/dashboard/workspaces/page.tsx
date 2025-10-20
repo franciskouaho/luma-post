@@ -1,51 +1,50 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useWorkspaces, Workspace } from '@/hooks/use-workspaces';
-import { useWorkspaceStats } from '@/hooks/use-workspace-stats';
-import { WorkspaceSelector } from '@/components/workspace/workspace-selector';
-import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog';
-import { TeamManagement } from '@/components/workspace/team-management';
-import { RegistrationNotice } from '@/components/workspace/registration-notice';
-import { useWorkspaceContext } from '@/contexts/workspace-context';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  Plus, 
-  Settings, 
-  Calendar, 
-  BarChart3, 
+import React, { useState } from "react";
+import { useWorkspaces, Workspace } from "@/hooks/use-workspaces";
+import { useWorkspaceStats } from "@/hooks/use-workspace-stats";
+import { WorkspaceSelector } from "@/components/workspace/workspace-selector";
+import { CreateWorkspaceDialog } from "@/components/workspace/create-workspace-dialog";
+import { TeamManagement } from "@/components/workspace/team-management";
+import { RegistrationNotice } from "@/components/workspace/registration-notice";
+import { useWorkspaceContext } from "@/contexts/workspace-context";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Users,
+  Plus,
+  Settings,
+  Calendar,
+  BarChart3,
   FileText,
   Loader2,
   Info,
   TrendingUp,
   Shield,
-  Zap
-} from 'lucide-react';
+  Zap,
+  Crown,
+} from "lucide-react";
 
 export default function WorkspacesPage() {
   const { workspaces, loading, error } = useWorkspaces();
   const { selectedWorkspace, setSelectedWorkspace } = useWorkspaceContext();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
-  
-  // Récupérer les statistiques du workspace sélectionné
-  const { stats, loading: statsLoading } = useWorkspaceStats(selectedWorkspace?.id || null);
 
+  const { stats, loading: statsLoading } = useWorkspaceStats(
+    selectedWorkspace?.id || null,
+  );
 
-  // Initialiser la sélection du workspace quand les workspaces sont chargés
   React.useEffect(() => {
     if (workspaces.length > 0 && !selectedWorkspace && !isInitialized) {
-      // Vérifier que nous sommes côté client
-      if (typeof window !== 'undefined') {
-        // Récupérer l'ID du workspace sauvegardé
-        const savedWorkspaceId = localStorage.getItem('selectedWorkspaceId');
-        
+      if (typeof window !== "undefined") {
+        const savedWorkspaceId = localStorage.getItem("selectedWorkspaceId");
+
         if (savedWorkspaceId) {
-          // Chercher le workspace sauvegardé
-          const savedWorkspace = workspaces.find(ws => ws.id === savedWorkspaceId);
+          const savedWorkspace = workspaces.find(
+            (ws) => ws.id === savedWorkspaceId,
+          );
           if (savedWorkspace) {
             setSelectedWorkspace(savedWorkspace);
             setIsInitialized(true);
@@ -53,8 +52,7 @@ export default function WorkspacesPage() {
           }
         }
       }
-      
-      // Si aucun workspace sauvegardé trouvé, sélectionner le premier
+
       setSelectedWorkspace(workspaces[0]);
       setIsInitialized(true);
     }
@@ -62,32 +60,74 @@ export default function WorkspacesPage() {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'owner': return 'bg-purple-100 text-purple-800';
-      case 'admin': return 'bg-blue-100 text-blue-800';
-      case 'editor': return 'bg-green-100 text-green-800';
-      case 'viewer': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "owner":
+        return "from-purple-500 to-purple-600";
+      case "admin":
+        return "from-blue-500 to-blue-600";
+      case "editor":
+        return "from-green-500 to-green-600";
+      case "viewer":
+        return "from-slate-400 to-slate-500";
+      default:
+        return "from-slate-400 to-slate-500";
+    }
+  };
+
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+      case "owner":
+        return "bg-purple-100 text-purple-700";
+      case "admin":
+        return "bg-blue-100 text-blue-700";
+      case "editor":
+        return "bg-green-100 text-green-700";
+      case "viewer":
+        return "bg-slate-100 text-slate-700";
+      default:
+        return "bg-slate-100 text-slate-700";
     }
   };
 
   const getRoleLabel = (role: string) => {
     switch (role) {
-      case 'owner': return 'Propriétaire';
-      case 'admin': return 'Administrateur';
-      case 'editor': return 'Éditeur';
-      case 'viewer': return 'Observateur';
-      default: return role;
+      case "owner":
+        return "Owner";
+      case "admin":
+        return "Admin";
+      case "editor":
+        return "Editor";
+      case "viewer":
+        return "Viewer";
+      default:
+        return role;
+    }
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "owner":
+        return <Crown className="w-4 h-4" />;
+      case "admin":
+        return <Shield className="w-4 h-4" />;
+      case "editor":
+        return <FileText className="w-4 h-4" />;
+      case "viewer":
+        return <Users className="w-4 h-4" />;
+      default:
+        return <Users className="w-4 h-4" />;
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <span className="ml-2">Chargement des workspaces...</span>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-100 rounded-full mx-auto animate-ping"></div>
           </div>
+          <p className="text-slate-700 font-medium">Loading workspaces...</p>
+          <p className="text-slate-500 text-sm mt-2">Please wait a moment</p>
         </div>
       </div>
     );
@@ -95,168 +135,189 @@ export default function WorkspacesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="text-red-600 mb-4">
-                <FileText className="h-16 w-16 mx-auto mb-2" />
-                <h3 className="text-xl font-semibold">Erreur de chargement</h3>
-              </div>
-              <p className="text-gray-600 mb-4">{error}</p>
-              <Button onClick={() => window.location.reload()}>
-                Réessayer
-              </Button>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/60">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileText className="h-8 w-8 text-red-600" />
           </div>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">
+            Loading Error
+          </h3>
+          <p className="text-slate-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Header modernisé */}
-        <div className="mb-8">
-          <div className="flex items-center space-x-3 mb-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-emerald-900 to-emerald-600 bg-clip-text text-transparent">
-              Workspaces
-            </h1>
-            <Info className="h-6 w-6 text-gray-400" />
-          </div>
-          <p className="text-gray-600 text-lg">
-            Gérez vos équipes et collaborez sur vos contenus
-          </p>
-        </div>
-
-        {/* Workspace Selector */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <WorkspaceSelector
-                selectedWorkspace={selectedWorkspace}
-                onWorkspaceChange={setSelectedWorkspace}
-                onCreateWorkspace={() => setShowCreateDialog(true)}
-                workspaces={workspaces}
-                loading={loading}
-              />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+      {/* Modern Sticky Header */}
+      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                Workspaces
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">
+                Manage your teams and collaborate on content
+              </p>
             </div>
-            <Button
+            <button
               onClick={() => setShowCreateDialog(true)}
-              className="shrink-0"
+              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau workspace
-            </Button>
+              <Plus className="w-4 h-4" />
+              New Workspace
+            </button>
           </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Workspace Selector */}
+        <div className="mb-6">
+          <WorkspaceSelector
+            selectedWorkspace={selectedWorkspace}
+            onWorkspaceChange={setSelectedWorkspace}
+            onCreateWorkspace={() => setShowCreateDialog(true)}
+            workspaces={workspaces}
+            loading={loading}
+          />
         </div>
 
         {selectedWorkspace ? (
           <div className="space-y-6">
-            {/* Workspace Info */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-emerald-50 to-white">
-              <div className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <Users className="h-6 w-6 text-emerald-600" />
-                    </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                        {selectedWorkspace.name}
-                      </h2>
-                      {selectedWorkspace.description && (
-                        <p className="text-gray-600 mb-4">{selectedWorkspace.description}</p>
-                      )}
-                      <div className="flex items-center gap-3">
-                        <Badge className={`${getRoleColor(selectedWorkspace.memberRole)} border-0 shadow-sm`}>
-                          {getRoleLabel(selectedWorkspace.memberRole)}
-                        </Badge>
-                        <span className="text-sm text-gray-500 flex items-center">
-                          <Shield className="h-4 w-4 mr-1" />
-                          Vous êtes {getRoleLabel(selectedWorkspace.memberRole).toLowerCase()} de ce workspace
-                        </span>
-                      </div>
+            {/* Workspace Info Card */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-4 flex-1">
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-br ${getRoleColor(selectedWorkspace.memberRole)} rounded-2xl flex items-center justify-center shadow-lg`}
+                  >
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                      {selectedWorkspace.name}
+                    </h2>
+                    {selectedWorkspace.description && (
+                      <p className="text-slate-600 mb-4 max-w-2xl">
+                        {selectedWorkspace.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 ${getRoleBadgeColor(selectedWorkspace.memberRole)} rounded-full text-xs font-semibold`}
+                      >
+                        {getRoleIcon(selectedWorkspace.memberRole)}
+                        {getRoleLabel(selectedWorkspace.memberRole)}
+                      </span>
+                      <span className="text-sm text-slate-500 flex items-center gap-1.5">
+                        <Shield className="w-4 h-4" />
+                        You are{" "}
+                        {getRoleLabel(
+                          selectedWorkspace.memberRole,
+                        ).toLowerCase()}{" "}
+                        of this workspace
+                      </span>
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 shadow-sm"
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    Paramètres
-                  </Button>
+                </div>
+                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200">
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </button>
+              </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                      Members
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {statsLoading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                      ) : (
+                        stats.members
+                      )}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
                 </div>
               </div>
-            </Card>
 
-            {/* Quick Stats modernisées */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-blue-100">
-                <div className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-blue-600">Membres</p>
-                      <p className="text-2xl font-bold text-blue-900">
-                        {statsLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.members}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">
+                      Posts
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {statsLoading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-green-600" />
+                      ) : (
+                        stats.posts
+                      )}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="w-6 h-6 text-white" />
                   </div>
                 </div>
-              </Card>
+              </div>
 
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-50 to-green-100">
-                <div className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-green-600">Posts</p>
-                      <p className="text-2xl font-bold text-green-900">
-                        {statsLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.posts}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                      <FileText className="h-6 w-6 text-white" />
-                    </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                      Scheduled
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {statsLoading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
+                      ) : (
+                        stats.scheduled
+                      )}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                    <Calendar className="w-6 h-6 text-white" />
                   </div>
                 </div>
-              </Card>
+              </div>
 
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-purple-100">
-                <div className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-purple-600">Planifiés</p>
-                      <p className="text-2xl font-bold text-purple-900">
-                        {statsLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.scheduled}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                      <Calendar className="h-6 w-6 text-white" />
-                    </div>
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-1">
+                      Views
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {statsLoading ? (
+                        <Loader2 className="w-6 h-6 animate-spin text-orange-600" />
+                      ) : (
+                        stats.views
+                      )}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform duration-300">
+                    <TrendingUp className="w-6 h-6 text-white" />
                   </div>
                 </div>
-              </Card>
-
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-50 to-orange-100">
-                <div className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-orange-600">Vues</p>
-                      <p className="text-2xl font-bold text-orange-900">
-                        {statsLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.views}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                      <TrendingUp className="h-6 w-6 text-white" />
-                    </div>
-                  </div>
-                </div>
-              </Card>
+              </div>
             </div>
 
             {/* Registration Notice */}
@@ -269,27 +330,25 @@ export default function WorkspacesPage() {
             />
           </div>
         ) : (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50 to-white">
-            <div className="p-12 text-center">
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="h-10 w-10 text-emerald-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                Aucun workspace sélectionné
-              </h3>
-              <p className="text-gray-600 mb-8 text-lg max-w-md mx-auto">
-                Sélectionnez un workspace existant ou créez-en un nouveau pour commencer à collaborer
-              </p>
-              <Button 
-                onClick={() => setShowCreateDialog(true)}
-                className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                style={{ background: 'var(--luma-gradient-primary)' }}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Créer votre premier workspace
-              </Button>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-sm border border-slate-200/60 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-purple-500/30">
+              <Users className="w-10 h-10 text-white" />
             </div>
-          </Card>
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">
+              No Workspace Selected
+            </h3>
+            <p className="text-slate-600 mb-8 text-lg max-w-md mx-auto">
+              Select an existing workspace or create a new one to start
+              collaborating
+            </p>
+            <button
+              onClick={() => setShowCreateDialog(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              Create Your First Workspace
+            </button>
+          </div>
         )}
 
         {/* Create Workspace Dialog */}

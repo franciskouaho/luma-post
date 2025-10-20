@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
   Info,
   CheckCircle,
   Camera,
@@ -25,58 +25,62 @@ import {
   Edit3,
   Trash2,
   Eye,
-  Share2
-} from 'lucide-react';
-import { PlatformIcon } from '@/components/ui/platform-icon';
-import Image from 'next/image';
+  Share2,
+} from "lucide-react";
+import { PlatformIcon } from "@/components/ui/platform-icon";
+import Image from "next/image";
 
 export default function AllPostsPage() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<string>('newest');
-  const [filterPlatform, setFilterPlatform] = useState<string>('all');
-  const [filterTime, setFilterTime] = useState<string>('all');
-  const [filterAccount, setFilterAccount] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState<string>("newest");
+  const [filterPlatform, setFilterPlatform] = useState<string>("all");
+  const [filterTime, setFilterTime] = useState<string>("all");
+  const [filterAccount, setFilterAccount] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Récupérer les schedules
-        const schedulesResponse = await fetch('/api/schedules?userId=FGcdXcRXVoVfsSwJIciurCeuCXz1');
+        const schedulesResponse = await fetch(
+          "/api/schedules?userId=FGcdXcRXVoVfsSwJIciurCeuCXz1",
+        );
         if (schedulesResponse.ok) {
           const schedulesData = await schedulesResponse.json();
-          
+
           // Convertir les dates Firestore
-          const schedulesWithDates = (schedulesData.schedules || []).map((schedule: any) => {
-            let scheduledAt;
-            if (schedule.scheduledAt?._seconds) {
-              scheduledAt = new Date(schedule.scheduledAt._seconds * 1000);
-            } else if (schedule.scheduledAt?.toDate) {
-              scheduledAt = schedule.scheduledAt.toDate();
-            } else {
-              scheduledAt = new Date(schedule.scheduledAt);
-            }
-            
-            return {
-              ...schedule,
-              scheduledAt
-            };
-          });
-          
+          const schedulesWithDates = (schedulesData.schedules || []).map(
+            (schedule: any) => {
+              let scheduledAt;
+              if (schedule.scheduledAt?._seconds) {
+                scheduledAt = new Date(schedule.scheduledAt._seconds * 1000);
+              } else if (schedule.scheduledAt?.toDate) {
+                scheduledAt = schedule.scheduledAt.toDate();
+              } else {
+                scheduledAt = new Date(schedule.scheduledAt);
+              }
+
+              return {
+                ...schedule,
+                scheduledAt,
+              };
+            },
+          );
+
           setSchedules(schedulesWithDates);
         }
 
         // Récupérer les comptes
-        const accountsResponse = await fetch('/api/accounts');
+        const accountsResponse = await fetch("/api/accounts");
         if (accountsResponse.ok) {
           const accountsData = await accountsResponse.json();
           setAccounts(accountsData.accounts || []);
         }
       } catch (error) {
-        console.error('Erreur lors du chargement des données:', error);
+        console.error("Erreur lors du chargement des données:", error);
       } finally {
         setLoading(false);
       }
@@ -87,31 +91,37 @@ export default function AllPostsPage() {
 
   // Filtrer et trier les schedules
   const filteredSchedules = schedules
-    .filter(schedule => {
-      const matchesPlatform = filterPlatform === 'all' || 
+    .filter((schedule) => {
+      const matchesPlatform =
+        filterPlatform === "all" ||
         schedule.platforms.some((platformId: string) => {
-          const account = accounts.find(acc => acc.id === platformId);
+          const account = accounts.find((acc) => acc.id === platformId);
           return account?.platform === filterPlatform;
         });
-      const matchesAccount = filterAccount === 'all' || schedule.userId === filterAccount;
+      const matchesAccount =
+        filterAccount === "all" || schedule.userId === filterAccount;
       return matchesPlatform && matchesAccount;
     })
     .sort((a, b) => {
-      if (sortBy === 'newest') {
-        return new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime();
+      if (sortBy === "newest") {
+        return (
+          new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
+        );
       } else {
-        return new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime();
+        return (
+          new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
+        );
       }
     });
 
   const getContentTypeIcon = (mediaType: string) => {
     switch (mediaType?.toLowerCase()) {
-      case 'video':
+      case "video":
         return <Video className="h-4 w-4 text-blue-600" />;
-      case 'image':
-        return <ImageIcon className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />;
-      case 'text':
-        return <FileText className="h-4 w-4 text-gray-600" />;
+      case "image":
+        return <ImageIcon className="h-4 w-4 text-purple-600" />;
+      case "text":
+        return <FileText className="h-4 w-4 text-slate-600" />;
       default:
         return <Video className="h-4 w-4 text-blue-600" />;
     }
@@ -119,12 +129,12 @@ export default function AllPostsPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'scheduled':
+      case "scheduled":
         return <Clock className="h-4 w-4 text-blue-600" />;
-      case 'published':
-        return <Send className="h-4 w-4" style={{ color: 'var(--luma-purple)' }} />;
-      case 'draft':
-        return <FileText className="h-4 w-4 text-gray-600" />;
+      case "published":
+        return <Send className="h-4 w-4 text-purple-600" />;
+      case "draft":
+        return <FileText className="h-4 w-4 text-slate-600" />;
       default:
         return <Clock className="h-4 w-4 text-blue-600" />;
     }
@@ -132,379 +142,404 @@ export default function AllPostsPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'scheduled':
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">scheduled</Badge>;
-      case 'published':
-        return <Badge variant="secondary" className="text-xs" style={{ background: 'var(--luma-purple-light)', color: 'var(--luma-purple-dark)' }}>posted</Badge>;
-      case 'draft':
-        return <Badge variant="secondary" className="bg-gray-100 text-gray-800 text-xs">draft</Badge>;
+      case "scheduled":
+        return (
+          <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+            Scheduled
+          </span>
+        );
+      case "published":
+        return (
+          <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
+            Published
+          </span>
+        );
+      case "draft":
+        return (
+          <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">
+            Draft
+          </span>
+        );
       default:
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs">scheduled</Badge>;
+        return (
+          <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+            Scheduled
+          </span>
+        );
     }
   };
 
-
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-      year: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style={{ borderBottomColor: 'var(--luma-purple)' }}></div>
-              <p className="text-gray-500">Chargement des posts publiés...</p>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-100 rounded-full mx-auto animate-ping"></div>
           </div>
+          <p className="text-slate-700 font-medium">Loading posts...</p>
+          <p className="text-slate-500 text-sm mt-2">Please wait a moment</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        {/* Header moderne avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-            <div className="mb-6 lg:mb-0">
-              <div className="flex items-center space-x-3 mb-2">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-purple-600 bg-clip-text text-transparent">
-                  Tous les Posts
-                </h1>
-                <Info className="h-6 w-6 text-gray-400" />
-              </div>
-              <p className="text-gray-600 text-lg">Gérez et visualisez tous vos contenus publiés</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+      {/* Modern Sticky Header */}
+      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                All Posts
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">
+                Manage and view all your content
+              </p>
             </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button 
-                onClick={() => window.location.href = '/dashboard/upload'}
-                className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                style={{ background: 'var(--luma-gradient-primary)' }}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nouveau Post
-              </Button>
+            <button
+              onClick={() => (window.location.href = "/dashboard/upload")}
+              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              New Post
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                  Total Posts
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {filteredSchedules.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
-          {/* Statistiques */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-blue-600">Total Posts</p>
-                    <p className="text-2xl font-bold text-blue-900">{filteredSchedules.length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Calendar className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-green-600">Publiés</p>
-                    <p className="text-2xl font-bold text-green-900">{filteredSchedules.filter(s => s.status === 'published').length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-purple-600">Planifiés</p>
-                    <p className="text-2xl font-bold text-purple-900">{filteredSchedules.filter(s => s.status === 'scheduled').length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-orange-600">Brouillons</p>
-                    <p className="text-2xl font-bold text-orange-900">{filteredSchedules.filter(s => s.status === 'draft').length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">
+                  Published
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {
+                    filteredSchedules.filter((s) => s.status === "published")
+                      .length
+                  }
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </div>
 
-          {/* Filtres et contrôles modernisés */}
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Filter className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Filtres:</span>
-                  </div>
-                  
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white shadow-sm"
-                  >
-                    <option value="newest">Plus récents</option>
-                    <option value="oldest">Plus anciens</option>
-                  </select>
-                  
-                  <select
-                    value={filterPlatform}
-                    onChange={(e) => setFilterPlatform(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white shadow-sm"
-                  >
-                    <option value="all">Toutes les plateformes</option>
-                    <option value="tiktok">TikTok</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="twitter">Twitter</option>
-                    <option value="linkedin">LinkedIn</option>
-                    <option value="youtube">YouTube</option>
-                  </select>
-                  
-                  <select
-                    value={filterTime}
-                    onChange={(e) => setFilterTime(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white shadow-sm"
-                  >
-                    <option value="all">Toute la période</option>
-                    <option value="today">Aujourd'hui</option>
-                    <option value="week">Cette semaine</option>
-                    <option value="month">Ce mois</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center bg-gray-100 rounded-lg p-1">
-                    <button
-                      onClick={() => setViewMode('grid')}
-                      className={`p-2 rounded-md transition-colors ${
-                        viewMode === 'grid' 
-                          ? 'bg-white shadow-sm text-purple-600' 
-                          : 'text-gray-500 hover:text-gray-700'
-                      }`}
-                    >
-                      <Grid3X3 className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={`p-2 rounded-md transition-colors ${
-                        viewMode === 'list' 
-                          ? 'bg-white shadow-sm text-purple-600' 
-                          : 'text-gray-500 hover:text-gray-700'
-                      }`}
-                    >
-                      <List className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                  Scheduled
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {
+                    filteredSchedules.filter((s) => s.status === "scheduled")
+                      .length
+                  }
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-1">
+                  Drafts
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {filteredSchedules.filter((s) => s.status === "draft").length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Grille des posts modernisée */}
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        {/* Filters */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-slate-500" />
+                <span className="text-sm font-medium text-slate-700">
+                  Filters:
+                </span>
+              </div>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200"
+              >
+                <option value="newest">Most Recent</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+
+              <select
+                value={filterPlatform}
+                onChange={(e) => setFilterPlatform(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200"
+              >
+                <option value="all">All Platforms</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="twitter">Twitter</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="youtube">YouTube</option>
+              </select>
+
+              <select
+                value={filterTime}
+                onChange={(e) => setFilterTime(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200"
+              >
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center bg-slate-100 rounded-xl p-1">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    viewMode === "grid"
+                      ? "bg-white shadow-sm text-purple-600"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    viewMode === "list"
+                      ? "bg-white shadow-sm text-purple-600"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Posts Grid */}
+        <div
+          className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}
+        >
           {filteredSchedules.map((schedule) => (
-            <Card key={schedule.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white">
-              <CardContent className="p-0">
-                {/* Header avec gradient et date */}
-                <div className="relative p-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-2">
+            <div
+              key={schedule.id}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group"
+            >
+              {/* Header */}
+              <div className="relative p-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg flex items-center justify-center">
                       {getContentTypeIcon(schedule.mediaType)}
-                      <span className="text-sm font-medium text-gray-600 capitalize">{schedule.mediaType || 'video'}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      {getStatusIcon(schedule.status)}
-                      {getStatusBadge(schedule.status)}
-                    </div>
+                    <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide capitalize">
+                      {schedule.mediaType || "video"}
+                    </span>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-lg font-semibold text-gray-900">
-                        {formatDate(schedule.scheduledAt)}
-                      </div>
-                      <div className="text-sm text-gray-500">
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(schedule.status)}
+                    {getStatusBadge(schedule.status)}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-lg font-bold text-slate-900">
+                      {formatDate(schedule.scheduledAt)}
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="text-sm text-slate-600 font-medium">
                         {formatTime(schedule.scheduledAt)}
-                      </div>
+                      </span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white transition-all duration-200">
+                      <Eye className="w-4 h-4 text-slate-600" />
+                    </button>
+                    <button className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white transition-all duration-200">
+                      <Edit3 className="w-4 h-4 text-slate-600" />
+                    </button>
                   </div>
                 </div>
-                
-                {/* Contenu principal */}
-                <div className="p-6">
-                  {/* Caption avec style amélioré */}
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">
-                      {schedule.caption || 'Aucune description disponible'}
-                    </p>
-                  </div>
-                  
-                  {/* Thumbnail avec overlay et effet hover */}
-                  <div className="relative w-full h-40 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-4 overflow-hidden group/thumbnail">
-                    {schedule.thumbnailUrl ? (
-                      <>
-                        <Image 
-                          src={schedule.thumbnailUrl} 
-                          alt="Thumbnail" 
-                          width={400}
-                          height={200}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover/thumbnail:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/thumbnail:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover/thumbnail:opacity-100 transition-opacity duration-300">
-                            <div className="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
-                              <Camera className="h-6 w-6 text-gray-700" />
-                            </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                {/* Caption */}
+                <div className="mb-4">
+                  <p className="text-sm text-slate-700 line-clamp-3 leading-relaxed">
+                    {schedule.caption || "No description available"}
+                  </p>
+                </div>
+
+                {/* Thumbnail */}
+                <div className="relative w-full h-44 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl mb-4 overflow-hidden group/thumbnail">
+                  {schedule.thumbnailUrl ? (
+                    <>
+                      <Image
+                        src={schedule.thumbnailUrl}
+                        alt="Thumbnail"
+                        width={400}
+                        height={200}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover/thumbnail:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover/thumbnail:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                        <div className="opacity-0 group-hover/thumbnail:opacity-100 transition-opacity duration-300">
+                          <div className="w-14 h-14 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
+                            <Camera className="w-7 h-7 text-slate-700" />
                           </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Camera className="h-8 w-8 text-gray-500" />
-                          </div>
-                          <p className="text-sm text-gray-500">Aperçu non disponible</p>
                         </div>
                       </div>
-                    )}
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-slate-300 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Camera className="w-8 h-8 text-slate-600" />
+                        </div>
+                        <p className="text-sm text-slate-500 font-medium">
+                          No preview available
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Platforms */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      Platforms
+                    </span>
+                    <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full font-medium">
+                      {schedule.platforms.length} account(s)
+                    </span>
                   </div>
-                  
-                  {/* Plateformes avec design amélioré */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Plateformes</span>
-                      <span className="text-xs text-gray-400">{schedule.platforms.length} compte(s)</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {schedule.platforms.map((platformId: string) => {
-                        const account = accounts.find(acc => acc.id === platformId);
-                        return account ? (
-                          <div key={platformId} className="relative group/platform">
-                            <PlatformIcon
-                              platform={account.platform}
-                              size="md"
-                              profileImageUrl={account.avatarUrl}
-                              username={account.username}
-                              className="w-10 h-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow duration-200"
-                            />
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full opacity-0 group-hover/platform:opacity-100 transition-opacity duration-200"></div>
-                          </div>
-                        ) : null;
-                      })}
-                    </div>
-                  </div>
-                  
-                  {/* Actions en bas */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        <Share2 className="h-3 w-3 mr-1" />
-                        Partager
-                      </Button>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-gray-100"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    {schedule.platforms.map((platformId: string) => {
+                      const account = accounts.find(
+                        (acc) => acc.id === platformId,
+                      );
+                      return account ? (
+                        <div
+                          key={platformId}
+                          className="relative group/platform"
+                        >
+                          <PlatformIcon
+                            platform={account.platform}
+                            size="md"
+                            profileImageUrl={account.avatarUrl}
+                            username={account.username}
+                            className="w-10 h-10 border-2 border-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+                          />
+                        </div>
+                      ) : null;
+                    })}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                  <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-all duration-200">
+                    <Share2 className="w-3.5 h-3.5" />
+                    Share
+                  </button>
+                  <button className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all duration-200">
+                    <MoreHorizontal className="w-4 h-4 text-slate-600" />
+                  </button>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* État vide amélioré */}
+        {/* Empty State */}
         {filteredSchedules.length === 0 && !loading && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-gray-50 to-white">
-            <CardContent className="text-center py-16 px-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Calendar className="h-12 w-12 text-purple-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Aucun post trouvé</h3>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Créez votre premier post pour commencer à gérer votre contenu sur les réseaux sociaux.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  onClick={() => window.location.href = '/dashboard/upload'}
-                  className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  style={{ background: 'var(--luma-gradient-primary)' }}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Créer un nouveau post
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => window.location.href = '/dashboard/schedule'}
-                  className="border-purple-200 text-purple-600 hover:bg-purple-50"
-                >
-                  <Clock className="h-4 w-4 mr-2" />
-                  Planifier un post
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-sm border border-slate-200/60 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-purple-500/30">
+              <Calendar className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">
+              No posts found
+            </h3>
+            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+              Create your first post to start managing your social media
+              content.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => (window.location.href = "/dashboard/upload")}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+              >
+                <Plus className="w-4 h-4" />
+                Create New Post
+              </button>
+              <button
+                onClick={() => (window.location.href = "/dashboard/schedule")}
+                className="flex items-center justify-center gap-2 px-6 py-3 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-all duration-200"
+              >
+                <Clock className="w-4 h-4" />
+                Schedule Post
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

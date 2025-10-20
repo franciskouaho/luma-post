@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
   Info,
   Edit3,
   Camera,
@@ -24,48 +24,47 @@ import {
   Share2,
   FileText,
   Clock,
-  CheckCircle
-} from 'lucide-react';
-import Image from 'next/image';
-import { PlatformIcon } from '@/components/ui/platform-icon';
+  CheckCircle,
+} from "lucide-react";
+import Image from "next/image";
+import { PlatformIcon } from "@/components/ui/platform-icon";
 
 interface Draft {
   id: string;
   caption: string;
   createdAt: Date | { seconds: number; nanoseconds: number };
-  status: 'draft';
+  status: "draft";
   platforms: string[];
   userId: string;
-  mediaType?: 'video' | 'image' | 'text';
+  mediaType?: "video" | "image" | "text";
   thumbnailUrl?: string;
   videoFile?: string;
-  videoUrl?: string; // URL de la vidéo sur Firebase Storage
+  videoUrl?: string;
 }
 
 export default function DraftsPage() {
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<string>('newest');
-  const [filterPlatform, setFilterPlatform] = useState<string>('all');
-  const [filterTime, setFilterTime] = useState<string>('all');
-  const [filterAccount, setFilterAccount] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>("newest");
+  const [filterPlatform, setFilterPlatform] = useState<string>("all");
+  const [filterTime, setFilterTime] = useState<string>("all");
+  const [filterAccount, setFilterAccount] = useState<string>("all");
   const [accounts, setAccounts] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchDrafts = async () => {
       setLoading(true);
       try {
-        const response = await fetch('/api/drafts');
+        const response = await fetch("/api/drafts");
         if (!response.ok) {
-          throw new Error('Failed to fetch drafts');
+          throw new Error("Failed to fetch drafts");
         }
         const data = await response.json();
         setDrafts(data.drafts || []);
       } catch (error) {
-        console.error('Error fetching drafts:', error);
-        // Fallback to mock data if API fails
+        console.error("Error fetching drafts:", error);
         setDrafts(mockDrafts);
       } finally {
         setLoading(false);
@@ -74,13 +73,13 @@ export default function DraftsPage() {
 
     const fetchAccounts = async () => {
       try {
-        const response = await fetch('/api/accounts');
+        const response = await fetch("/api/accounts");
         if (response.ok) {
           const data = await response.json();
           setAccounts(data.accounts || []);
         }
       } catch (error) {
-        console.error('Error fetching accounts:', error);
+        console.error("Error fetching accounts:", error);
       }
     };
 
@@ -89,461 +88,474 @@ export default function DraftsPage() {
   }, []);
 
   const filteredDrafts = drafts
-    .filter(draft => {
-      const matchesPlatform = filterPlatform === 'all' || draft.platforms.includes(filterPlatform);
-      const matchesAccount = filterAccount === 'all' || draft.userId === filterAccount;
+    .filter((draft) => {
+      const matchesPlatform =
+        filterPlatform === "all" || draft.platforms.includes(filterPlatform);
+      const matchesAccount =
+        filterAccount === "all" || draft.userId === filterAccount;
       return matchesPlatform && matchesAccount;
     })
     .sort((a, b) => {
-      if (sortBy === 'newest') {
-        return new Date(b.createdAt as any).getTime() - new Date(a.createdAt as any).getTime();
+      if (sortBy === "newest") {
+        return (
+          new Date(b.createdAt as any).getTime() -
+          new Date(a.createdAt as any).getTime()
+        );
       } else {
-        return new Date(a.createdAt as any).getTime() - new Date(b.createdAt as any).getTime();
+        return (
+          new Date(a.createdAt as any).getTime() -
+          new Date(b.createdAt as any).getTime()
+        );
       }
     });
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'draft':
-        return <Edit3 className="h-4 w-4 text-gray-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    switch (status) {
-      case 'draft':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const formatDate = (date: Date | { seconds: number; nanoseconds: number } | string) => {
+  const formatDate = (
+    date: Date | { seconds: number; nanoseconds: number } | string,
+  ) => {
     let dateObj: Date;
-    
+
     if (date instanceof Date) {
       dateObj = date;
-    } else if (typeof date === 'object' && 'seconds' in date) {
-      // Firestore timestamp
+    } else if (typeof date === "object" && "seconds" in date) {
       dateObj = new Date(date.seconds * 1000 + date.nanoseconds / 1000000);
-    } else if (typeof date === 'string') {
+    } else if (typeof date === "string") {
       dateObj = new Date(date);
     } else {
       dateObj = new Date();
     }
-    
-    return dateObj.toLocaleDateString('en-US', {
-      month: 'numeric',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
+
+    return dateObj.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
       hour12: true,
     });
   };
 
   const handlePublishDraft = (draftId: string) => {
-    // Ici on pourrait rediriger vers la page de création avec les données du draft
-    alert('Fonctionnalité de publication à venir !');
+    alert("Fonctionnalité de publication à venir !");
   };
 
-         const handleEditDraft = (draft: Draft) => {
-           // Stocker les données du draft dans le localStorage pour un accès rapide
-           localStorage.setItem('editingDraft', JSON.stringify({
-             id: draft.id,
-             caption: draft.caption,
-             platforms: draft.platforms,
-             mediaType: draft.mediaType,
-             thumbnailUrl: draft.thumbnailUrl,
-             videoFile: draft.videoFile,
-             videoUrl: (draft as any).videoUrl // URL de la vidéo sur Firebase Storage
-           }));
-           // Redirection simple
-           window.location.href = '/dashboard/upload?edit=true';
-         };
+  const handleEditDraft = (draft: Draft) => {
+    localStorage.setItem(
+      "editingDraft",
+      JSON.stringify({
+        id: draft.id,
+        caption: draft.caption,
+        platforms: draft.platforms,
+        mediaType: draft.mediaType,
+        thumbnailUrl: draft.thumbnailUrl,
+        videoFile: draft.videoFile,
+        videoUrl: (draft as any).videoUrl,
+      }),
+    );
+    window.location.href = "/dashboard/upload?edit=true";
+  };
 
   const handleDeleteDraft = async (draftId: string) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ?')) {
+    if (confirm("Êtes-vous sûr de vouloir supprimer ce brouillon ?")) {
       try {
         const response = await fetch(`/api/drafts?id=${draftId}`, {
-          method: 'DELETE',
+          method: "DELETE",
         });
 
         if (response.ok) {
-          setDrafts(prev => prev.filter(draft => draft.id !== draftId));
+          setDrafts((prev) => prev.filter((draft) => draft.id !== draftId));
         } else {
-          console.error('Erreur lors de la suppression du draft');
-          alert('Erreur lors de la suppression du brouillon');
+          console.error("Erreur lors de la suppression du draft");
+          alert("Erreur lors de la suppression du brouillon");
         }
       } catch (error) {
-        console.error('Erreur lors de la suppression du draft:', error);
-        alert('Erreur lors de la suppression du brouillon');
+        console.error("Erreur lors de la suppression du draft:", error);
+        alert("Erreur lors de la suppression du brouillon");
       }
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <p>Loading drafts...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-100 rounded-full mx-auto animate-ping"></div>
           </div>
+          <p className="text-slate-700 font-medium">Loading drafts...</p>
+          <p className="text-slate-500 text-sm mt-2">Please wait a moment</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+      {/* Modern Sticky Header */}
+      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+                Drafts
+              </h1>
+              <p className="text-sm text-slate-500 mt-1">
+                Manage and finalize your content in progress
+              </p>
+            </div>
+            <button
+              onClick={() => (window.location.href = "/dashboard/upload")}
+              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+            >
+              <Plus className="w-4 h-4" />
+              New Draft
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Header moderne avec statistiques */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
-            <div className="mb-6 lg:mb-0">
-              <div className="flex items-center space-x-3 mb-2">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-orange-900 to-orange-600 bg-clip-text text-transparent">
-                  Brouillons
-                </h1>
-                <Info className="h-6 w-6 text-gray-400" />
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide mb-1">
+                  Total Drafts
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {filteredDrafts.length}
+                </p>
               </div>
-              <p className="text-gray-600 text-lg">Gérez et finalisez vos contenus en cours de création</p>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button 
-                onClick={() => window.location.href = '/dashboard/upload'}
-                className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                style={{ background: 'var(--luma-gradient-primary)' }}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Nouveau Brouillon
-              </Button>
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
             </div>
           </div>
 
-          {/* Statistiques */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-orange-600">Total Brouillons</p>
-                    <p className="text-2xl font-bold text-orange-900">{filteredDrafts.length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-blue-600">Vidéos</p>
-                    <p className="text-2xl font-bold text-blue-900">{filteredDrafts.filter(d => d.mediaType === 'video').length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Camera className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-green-600">Images</p>
-                    <p className="text-2xl font-bold text-green-900">{filteredDrafts.filter(d => d.mediaType === 'image').length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <Globe className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-purple-600">Textes</p>
-                    <p className="text-2xl font-bold text-purple-900">{filteredDrafts.filter(d => d.mediaType === 'text').length}</p>
-                  </div>
-                  <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                  Videos
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {filteredDrafts.filter((d) => d.mediaType === "video").length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Camera className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </div>
 
-          {/* Filtres et contrôles modernisés */}
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Filter className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Filtres:</span>
-                  </div>
-                  
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white shadow-sm"
-                  >
-                    <option value="newest">Plus récents</option>
-                    <option value="oldest">Plus anciens</option>
-                  </select>
-                  
-                  <select
-                    value={filterPlatform}
-                    onChange={(e) => setFilterPlatform(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white shadow-sm"
-                  >
-                    <option value="all">Toutes les plateformes</option>
-                    <option value="tiktok">TikTok</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="instagram">Instagram</option>
-                    <option value="twitter">Twitter</option>
-                  </select>
-                  
-                  <select
-                    value={filterTime}
-                    onChange={(e) => setFilterTime(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white shadow-sm"
-                  >
-                    <option value="all">Toute la période</option>
-                    <option value="today">Aujourd'hui</option>
-                    <option value="week">Cette semaine</option>
-                    <option value="month">Ce mois</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center bg-gray-100 rounded-lg p-1">
-                    <button
-                      onClick={() => setViewMode('grid')}
-                      className={`p-2 rounded-md transition-colors ${
-                        viewMode === 'grid' 
-                          ? 'bg-white shadow-sm text-orange-600' 
-                          : 'text-gray-500 hover:text-gray-700'
-                      }`}
-                    >
-                      <Grid3X3 className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={`p-2 rounded-md transition-colors ${
-                        viewMode === 'list' 
-                          ? 'bg-white shadow-sm text-orange-600' 
-                          : 'text-gray-500 hover:text-gray-700'
-                      }`}
-                    >
-                      <List className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">
+                  Images
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {filteredDrafts.filter((d) => d.mediaType === "image").length}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300">
+                <Globe className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                  Texts
+                </p>
+                <p className="text-3xl font-bold text-slate-900">
+                  {filteredDrafts.filter((d) => d.mediaType === "text").length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Grille des drafts modernisée */}
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        {/* Filters */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-slate-500" />
+                <span className="text-sm font-medium text-slate-700">
+                  Filters:
+                </span>
+              </div>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200"
+              >
+                <option value="newest">Most Recent</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+
+              <select
+                value={filterPlatform}
+                onChange={(e) => setFilterPlatform(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200"
+              >
+                <option value="all">All Platforms</option>
+                <option value="tiktok">TikTok</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="twitter">Twitter</option>
+              </select>
+
+              <select
+                value={filterTime}
+                onChange={(e) => setFilterTime(e.target.value)}
+                className="px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200"
+              >
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center bg-slate-100 rounded-xl p-1">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    viewMode === "grid"
+                      ? "bg-white shadow-sm text-purple-600"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    viewMode === "list"
+                      ? "bg-white shadow-sm text-purple-600"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Drafts Grid */}
+        <div
+          className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}
+        >
           {filteredDrafts.map((draft) => (
-            <Card key={draft.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white">
-              <CardContent className="p-0">
-                {/* Header avec gradient et date */}
-                <div className="relative p-6 bg-gradient-to-r from-orange-50 to-white border-b border-orange-100">
+            <div
+              key={draft.id}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group"
+            >
+              {/* Header */}
+              <div className="relative p-6 bg-gradient-to-r from-orange-50 to-slate-50 border-b border-slate-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md">
+                      {draft.mediaType === "video" && (
+                        <Camera className="w-4 h-4 text-white" />
+                      )}
+                      {draft.mediaType === "image" && (
+                        <Globe className="w-4 h-4 text-white" />
+                      )}
+                      {draft.mediaType === "text" && (
+                        <FileText className="w-4 h-4 text-white" />
+                      )}
+                    </div>
+                    <span className="text-xs font-semibold text-orange-700 uppercase tracking-wide capitalize">
+                      {draft.mediaType || "text"}
+                    </span>
+                  </div>
+                  <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
+                    Draft
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-lg font-bold text-slate-900">
+                      {formatDate(draft.createdAt).split(",")[0]}
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="text-sm text-slate-600 font-medium">
+                        Created {formatDate(draft.createdAt).split(",")[1]}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white transition-all duration-200">
+                      <Eye className="w-4 h-4 text-slate-600" />
+                    </button>
+                    <button
+                      className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white transition-all duration-200"
+                      onClick={() => handleEditDraft(draft)}
+                    >
+                      <Edit3 className="w-4 h-4 text-slate-600" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                {/* Caption */}
+                <div className="mb-4">
+                  <p className="text-sm text-slate-700 line-clamp-3 leading-relaxed">
+                    {draft.caption || "No description available"}
+                  </p>
+                </div>
+
+                {/* Thumbnail */}
+                <div className="relative w-full h-44 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl mb-4 overflow-hidden group/thumbnail">
+                  {draft.thumbnailUrl &&
+                  (typeof draft.thumbnailUrl === "string"
+                    ? draft.thumbnailUrl.trim() !== ""
+                    : (draft.thumbnailUrl as any).downloadUrl &&
+                      (draft.thumbnailUrl as any).downloadUrl.trim() !== "") ? (
+                    <>
+                      <Image
+                        src={
+                          typeof draft.thumbnailUrl === "string"
+                            ? draft.thumbnailUrl
+                            : (draft.thumbnailUrl as any).downloadUrl
+                        }
+                        alt="Draft thumbnail"
+                        width={400}
+                        height={200}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover/thumbnail:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover/thumbnail:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                        <div className="opacity-0 group-hover/thumbnail:opacity-100 transition-opacity duration-300">
+                          <div className="w-14 h-14 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
+                            <Camera className="w-7 h-7 text-slate-700" />
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-orange-300 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Camera className="w-8 h-8 text-orange-600" />
+                        </div>
+                        <p className="text-sm text-orange-600 font-medium">
+                          No preview available
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Platforms */}
+                <div className="mb-4">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      {draft.mediaType === 'video' && <Camera className="h-4 w-4 text-orange-600" />}
-                      {draft.mediaType === 'image' && <Globe className="h-4 w-4 text-orange-600" />}
-                      {draft.mediaType === 'text' && <FileText className="h-4 w-4 text-orange-600" />}
-                      <span className="text-sm font-medium text-orange-700 capitalize">{draft.mediaType || 'text'}</span>
-                    </div>
-                    <Badge variant="secondary" className="bg-orange-100 text-orange-800 border-orange-200">
-                      Brouillon
-                    </Badge>
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                      Target Platforms
+                    </span>
+                    <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full font-medium">
+                      {draft.platforms.length} account(s)
+                    </span>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-lg font-semibold text-gray-900">
-                        {formatDate(draft.createdAt).split(' ')[0]}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Créé le {formatDate(draft.createdAt)}
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 h-8 w-8 p-0"
-                        onClick={() => handleEditDraft(draft)}
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    {draft.platforms.map((platformId, index) => {
+                      const account = accounts.find(
+                        (acc) => acc.id === platformId,
+                      );
+                      const platformName = account?.platform || "tiktok";
+                      const username =
+                        account?.displayName || account?.username || "Unknown";
+
+                      return (
+                        <div key={index} className="relative group/platform">
+                          <PlatformIcon
+                            platform={platformName}
+                            size="md"
+                            className="w-10 h-10 border-2 border-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-110"
+                            profileImageUrl={account?.avatarUrl}
+                            username={username}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                
-                {/* Contenu principal */}
-                <div className="p-6">
-                  {/* Caption avec style amélioré */}
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">
-                      {draft.caption || 'Aucune description disponible'}
-                    </p>
+
+                {/* Actions */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-200"
+                      onClick={() => handlePublishDraft(draft.id)}
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      Publish
+                    </button>
+                    <button
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100 rounded-lg transition-all duration-200"
+                      onClick={() => handleEditDraft(draft)}
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
                   </div>
-                  
-                  {/* Thumbnail avec overlay et effet hover */}
-                  <div className="relative w-full h-40 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl mb-4 overflow-hidden group/thumbnail">
-                    {draft.thumbnailUrl && 
-                     (typeof draft.thumbnailUrl === 'string' ? 
-                       draft.thumbnailUrl.trim() !== '' : 
-                        (draft.thumbnailUrl as any).downloadUrl && (draft.thumbnailUrl as any).downloadUrl.trim() !== '') ? (
-                      <>
-                        <Image
-                          src={typeof draft.thumbnailUrl === 'string' ? draft.thumbnailUrl : (draft.thumbnailUrl as any).downloadUrl}
-                          alt="Draft thumbnail"
-                          width={400}
-                          height={200}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover/thumbnail:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/thumbnail:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                          <div className="opacity-0 group-hover/thumbnail:opacity-100 transition-opacity duration-300">
-                            <div className="w-12 h-12 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
-                              <Camera className="h-6 w-6 text-gray-700" />
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-16 h-16 bg-orange-300 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Camera className="h-8 w-8 text-orange-600" />
-                          </div>
-                          <p className="text-sm text-orange-600">Aperçu non disponible</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Plateformes avec design amélioré */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Plateformes ciblées</span>
-                      <span className="text-xs text-gray-400">{draft.platforms.length} compte(s)</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {draft.platforms.map((platformId, index) => {
-                        const account = accounts.find(acc => acc.id === platformId);
-                        const platformName = account?.platform || 'tiktok';
-                        const username = account?.displayName || account?.username || 'Unknown';
-                        
-                        return (
-                          <div key={index} className="relative group/platform">
-                            <PlatformIcon
-                              platform={platformName}
-                              size="md"
-                              className="w-10 h-10 border-2 border-white shadow-md hover:shadow-lg transition-shadow duration-200"
-                              profileImageUrl={account?.avatarUrl}
-                              username={username}
-                            />
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-orange-500 border-2 border-white rounded-full opacity-0 group-hover/platform:opacity-100 transition-opacity duration-200"></div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  
-                  {/* Actions en bas */}
-                  <div className="flex items-center justify-between pt-4 border-t border-orange-100">
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        size="sm" 
-                        className="text-white shadow-md hover:shadow-lg transition-all duration-200"
-                        style={{ background: 'var(--luma-gradient-primary)' }}
-                        onClick={() => handlePublishDraft(draft.id)}
-                      >
-                        <Send className="h-3 w-3 mr-1" />
-                        Publier
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="border-orange-200 text-orange-600 hover:bg-orange-50"
-                        onClick={() => handleEditDraft(draft)}
-                      >
-                        <Edit3 className="h-3 w-3 mr-1" />
-                        Modifier
-                      </Button>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
-                        onClick={() => handleDeleteDraft(draft.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
+                  <button
+                    className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-red-50 transition-all duration-200 group/delete"
+                    onClick={() => handleDeleteDraft(draft.id)}
+                  >
+                    <Trash2 className="w-4 h-4 text-slate-400 group-hover/delete:text-red-600 transition-colors" />
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* État vide amélioré */}
+        {/* Empty State */}
         {filteredDrafts.length === 0 && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-white">
-            <CardContent className="text-center py-16 px-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Edit3 className="h-12 w-12 text-orange-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">Aucun brouillon trouvé</h3>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Commencez par créer votre premier contenu et sauvegardez-le comme brouillon pour le finaliser plus tard.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button 
-                  onClick={() => window.location.href = '/dashboard/upload'}
-                  className="text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-                  style={{ background: 'var(--luma-gradient-primary)' }}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Créer un brouillon
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => window.location.href = '/dashboard/all-posts'}
-                  className="border-orange-200 text-orange-600 hover:bg-orange-50"
-                >
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Voir tous les posts
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-sm border border-slate-200/60 text-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-500/30">
+              <Edit3 className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900 mb-3">
+              No drafts found
+            </h3>
+            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+              Start creating your first content and save it as a draft to
+              finalize later.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => (window.location.href = "/dashboard/upload")}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+              >
+                <Plus className="w-4 h-4" />
+                Create Draft
+              </button>
+              <button
+                onClick={() => (window.location.href = "/dashboard/all-posts")}
+                className="flex items-center justify-center gap-2 px-6 py-3 border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-all duration-200"
+              >
+                <Calendar className="w-4 h-4" />
+                View All Posts
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
@@ -552,33 +564,34 @@ export default function DraftsPage() {
 
 const mockDrafts: Draft[] = [
   {
-    id: '1',
-    caption: 'This is a draft video post about new features!',
-    createdAt: new Date('2025-01-18T10:00:00Z'),
-    status: 'draft',
-    platforms: ['tiktok'],
-    userId: 'FGcdXcRXVoVfsSwJIciurCeuCXz1',
-    mediaType: 'video',
-    thumbnailUrl: 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Draft1',
+    id: "1",
+    caption: "This is a draft video post about new features!",
+    createdAt: new Date("2025-01-18T10:00:00Z"),
+    status: "draft",
+    platforms: ["tiktok"],
+    userId: "FGcdXcRXVoVfsSwJIciurCeuCXz1",
+    mediaType: "video",
+    thumbnailUrl: "https://via.placeholder.com/150/FF0000/FFFFFF?text=Draft1",
   },
   {
-    id: '2',
-    caption: 'Exciting new update coming soon! This is a longer caption to test the line clamp functionality.',
-    createdAt: new Date('2025-01-17T15:30:00Z'),
-    status: 'draft',
-    platforms: ['tiktok', 'facebook'],
-    userId: 'FGcdXcRXVoVfsSwJIciurCeuCXz1',
-    mediaType: 'video',
-    thumbnailUrl: 'https://via.placeholder.com/150/00FF00/FFFFFF?text=Draft2',
+    id: "2",
+    caption:
+      "Exciting new update coming soon! This is a longer caption to test the line clamp functionality.",
+    createdAt: new Date("2025-01-17T15:30:00Z"),
+    status: "draft",
+    platforms: ["tiktok", "facebook"],
+    userId: "FGcdXcRXVoVfsSwJIciurCeuCXz1",
+    mediaType: "video",
+    thumbnailUrl: "https://via.placeholder.com/150/00FF00/FFFFFF?text=Draft2",
   },
   {
-    id: '3',
-    caption: 'Quick tip for better content creation!',
-    createdAt: new Date('2025-01-16T09:15:00Z'),
-    status: 'draft',
-    platforms: ['tiktok'],
-    userId: 'FGcdXcRXVoVfsSwJIciurCeuCXz1',
-    mediaType: 'image',
-    thumbnailUrl: 'https://via.placeholder.com/150/0000FF/FFFFFF?text=Draft3',
+    id: "3",
+    caption: "Quick tip for better content creation!",
+    createdAt: new Date("2025-01-16T09:15:00Z"),
+    status: "draft",
+    platforms: ["tiktok"],
+    userId: "FGcdXcRXVoVfsSwJIciurCeuCXz1",
+    mediaType: "image",
+    thumbnailUrl: "https://via.placeholder.com/150/0000FF/FFFFFF?text=Draft3",
   },
 ];

@@ -103,6 +103,40 @@ export interface WorkspaceInvitation {
   updatedAt: FieldValue;
 }
 
+export interface UserSettings {
+  id: string;
+  userId: string;
+  profile: {
+    name: string;
+    email: string;
+    timezone: string;
+    language: string;
+  };
+  notifications: {
+    emailNotifications: boolean;
+    pushNotifications: boolean;
+    publishSuccess: boolean;
+    publishFailure: boolean;
+    weeklyReport: boolean;
+    newFollower: boolean;
+  };
+  privacy: {
+    dataRetention: string;
+    analyticsSharing: boolean;
+    profileVisibility: string;
+  };
+  integrations: {
+    autoSync: boolean;
+    backupEnabled: boolean;
+    apiAccess: boolean;
+  };
+  apiKey?: string;
+  deleted?: boolean;
+  deletedAt?: FieldValue;
+  createdAt: FieldValue;
+  updatedAt: FieldValue;
+}
+
 // Service pour les vidéos
 export class VideoService {
   private collection = 'videos';
@@ -482,6 +516,54 @@ export class UserService {
   }
 }
 
+// Service pour les paramètres utilisateur
+export class UserSettingsService {
+  private collection = 'userSettings';
+
+  async getByUserId(userId: string): Promise<UserSettings | null> {
+    const docRef = adminDb.collection(this.collection).doc(userId);
+    const docSnap = await docRef.get();
+    
+    if (docSnap.exists) {
+      return { id: docSnap.id, userId, ...docSnap.data() } as UserSettings;
+    }
+    return null;
+  }
+
+  async create(settings: Omit<UserSettings, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    const now = FieldValue.serverTimestamp();
+    const docRef = adminDb.collection(this.collection).doc(settings.userId);
+    await docRef.set({
+      ...settings,
+      createdAt: now,
+      updatedAt: now,
+    });
+    return docRef.id;
+  }
+
+  async update(userId: string, updates: Partial<UserSettings>): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(userId);
+    
+    // Filtrer les valeurs undefined pour éviter les erreurs Firestore
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([, value]) => value !== undefined)
+    );
+    
+    await docRef.set({
+      ...filteredUpdates,
+      updatedAt: FieldValue.serverTimestamp(),
+    }, { merge: true });
+  }
+
+  async delete(userId: string): Promise<void> {
+    const docRef = adminDb.collection(this.collection).doc(userId);
+    await docRef.update({
+      deleted: true,
+      deletedAt: FieldValue.serverTimestamp(),
+    });
+  }
+}
+
 // Service pour les invitations de workspace
 export class WorkspaceInvitationService {
   private collection = 'workspaceInvitations';
@@ -543,3 +625,4 @@ export const workspaceService = new WorkspaceService();
 export const workspaceMemberService = new WorkspaceMemberService();
 export const workspaceInvitationService = new WorkspaceInvitationService();
 export const userService = new UserService();
+export const userSettingsService = new UserSettingsService();
