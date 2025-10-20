@@ -66,11 +66,11 @@ export default function LandingHeader() {
             </div>
           </nav>
 
-          {/* Contact Button */}
+          {/* Login Button */}
           <div className="hidden md:flex items-center">
             <Link href="/auth">
               <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30">
-                Contact Us
+                Login
               </Button>
             </Link>
           </div>
@@ -107,8 +107,8 @@ export default function LandingHeader() {
               </Link>
               <div className="pt-4">
                 <Link href="/auth">
-                  <Button className="bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] hover:from-[#0F3FFF] hover:to-[#194EFF] text-white border-0 rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-[#194EFF]/30 w-full">
-                    Contact Us
+                  <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30 w-full">
+                    Login
                   </Button>
                 </Link>
               </div>
