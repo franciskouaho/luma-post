@@ -123,7 +123,6 @@ export async function POST(request: NextRequest) {
       scheduledAt: FieldValue.serverTimestamp(),
       status: initialStatus,
       mediaType,
-      tiktokUrl: undefined, // Attendre video_id/share_url via webhook post.publish.success
       publishId,
     });
 
