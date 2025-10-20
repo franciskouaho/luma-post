@@ -1,133 +1,215 @@
-'use client';
+"use client";
 
-import { Calendar, Zap, Users, BarChart3, Shield, Smartphone, Palette, Globe } from "lucide-react";
+import { Palette, Zap, Search, Users, Shield, Globe } from "lucide-react";
 
 export default function FeaturesSection() {
   const features = [
     {
-      icon: <Zap className="w-8 h-8" />,
-      title: "One-Click Publishing",
-      description: "Publish to all your social media platforms simultaneously with just one click. Save hours of manual posting every week."
+      icon: Palette,
+      title: "Custom Designs",
+      description: "Tailored websites meticulously crafted to reflect your brand.",
+      gradient: "from-[#194EFF] to-[#0F3FFF]"
     },
     {
-      icon: <Calendar className="w-8 h-8" />,
-      title: "Smart Scheduling",
-      description: "AI-powered optimal posting times based on your audience activity. Schedule weeks or months in advance."
+      icon: Zap,
+      title: "Fast Performance",
+      description: "Optimized for lightning-fast speed to enhance user experience.",
+      gradient: "from-[#0F3FFF] to-[#194EFF]"
     },
     {
-      icon: <Palette className="w-8 h-8" />,
-      title: "Content Templates",
-      description: "Access hundreds of professionally designed templates for Instagram, TikTok, and other platforms. Customize to match your brand."
-    },
-    {
-      icon: <Users className="w-8 h-8" />,
-      title: "Team Collaboration",
-      description: "Invite team members, set approval workflows, and manage content collaboratively. Perfect for agencies and growing teams."
-    },
-    {
-      icon: <BarChart3 className="w-8 h-8" />,
-      title: "Advanced Analytics",
-      description: "Track performance across all platforms with detailed insights, engagement rates, and growth metrics in one dashboard."
-    },
-    {
-      icon: <Smartphone className="w-8 h-8" />,
-      title: "Mobile App",
-      description: "Manage your content on the go with our intuitive mobile app. Post, schedule, and monitor performance from anywhere."
-    },
-    {
-      icon: <Globe className="w-8 h-8" />,
-      title: "Multi-Platform Support",
-      description: "Connect Instagram, TikTok, Facebook, Twitter, LinkedIn, YouTube, Pinterest, and more. New platforms added regularly."
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Enterprise Security",
-      description: "Bank-level security with end-to-end encryption. Your data and content are protected with industry-leading security measures."
+      icon: Search,
+      title: "SEO Friendly",
+      description: "Designed to improve SEO and increase visibility effortlessly.",
+      gradient: "from-[#194EFF] to-[#0F3FFF]"
     }
   ];
 
   return (
-    <section id="features" className="bg-gray-50 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 relative">
+      {/* Background Effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/3 w-64 h-64 bg-gradient-to-r from-[#194EFF]/10 to-[#0F3FFF]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/3 w-80 h-80 bg-gradient-to-r from-[#0F3FFF]/10 to-[#194EFF]/10 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4" style={{ color: 'var(--luma-dark)' }}>
-            Everything you need to grow your audience
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Why Choose{" "}
+            <span className="bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] bg-clip-text text-transparent">
+              Luma Post
+            </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Powerful features designed to save you time and help you create engaging content that drives real results.
+          <p className="text-xl text-white/80 max-w-3xl mx-auto">
+            Our mission is to design websites that attract and engage customers.
+          </p>
+          <p className="text-lg text-white/60 mt-4">
+            However, we approach things a bit differently around here.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           {features.map((feature, index) => (
-            <div key={index} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="mb-4" style={{ color: 'var(--luma-purple)' }}>
-                {feature.icon}
+            <div
+              key={index}
+              className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-2xl p-8 hover:border-[#194EFF]/40 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#194EFF]/20"
+            >
+              <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-2xl flex items-center justify-center mb-6`}>
+                <feature.icon className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                {feature.description}
-              </p>
+              <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
+              <p className="text-white/80 leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>
 
-        {/* Additional benefits section */}
-        <div className="mt-20 bg-white rounded-2xl p-8 lg:p-12">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h3 className="text-3xl font-bold mb-6" style={{ color: 'var(--luma-dark)' }}>
-                Why thousands of creators choose Luma Post
-              </h3>
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ background: 'var(--luma-purple-light)' }}>
-                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Save 10+ hours per week</h4>
-                    <p className="text-gray-600">Automate your posting schedule and focus on creating amazing content instead of managing multiple platforms.</p>
-                  </div>
+        {/* Comparison Section */}
+        <div className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-3xl p-8 md:p-12">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Choosing Luma Post Over Others
+            </h3>
+            <p className="text-white/80 text-lg">
+              See the difference our approach makes
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Other Agencies */}
+            <div className="space-y-6">
+              <h4 className="text-xl font-semibold text-white/90 mb-6">Other Agencies</h4>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70">Experienced team delivering standard solutions</p>
                 </div>
-                <div className="flex items-start space-x-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ background: 'var(--luma-purple-light)' }}>
-                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Increase engagement by 40%</h4>
-                    <p className="text-gray-600">Our AI-powered optimal posting times help you reach your audience when they&apos;re most active.</p>
-                  </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70">Limited post-launch support and updates</p>
                 </div>
-                <div className="flex items-start space-x-4">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1" style={{ background: 'var(--luma-purple-light)' }}>
-                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Grow your following faster</h4>
-                    <p className="text-gray-600">Consistent posting across all platforms with optimized content helps you build a loyal audience.</p>
-                  </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70">Generic templates and designs</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70">Fixed pricing with hidden costs</p>
                 </div>
               </div>
             </div>
-            <div className='rounded-xl p-8' style={{ background: 'var(--luma-gradient-light)' }}>
-              <div className="text-center">
-                <div className="text-4xl font-bold mb-2" style={{ color: 'var(--luma-purple)' }}>98%</div>
-                <div className="text-gray-700 font-semibold mb-4">Customer Satisfaction</div>
-                <div className="text-gray-600 mb-6">
-                  &quot;Luma Post transformed how I manage my social media. I&apos;ve grown my following by 300% in just 3 months!&quot;
+
+            {/* Luma Post */}
+            <div className="space-y-6">
+              <h4 className="text-xl font-semibold text-white mb-6">Luma Post</h4>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90">Highly skilled specialists delivering customized solutions</p>
                 </div>
-                <div className="flex justify-center space-x-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90">Comprehensive post-launch support and updates</p>
                 </div>
-                <div className="text-sm text-gray-600">- Sarah M., Content Creator</div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90">Unique, brand-focused designs tailored to your vision</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/90">Transparent pricing with no hidden fees</p>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Services Section */}
+        <div className="mt-20">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Explore Our Core Services
+            </h3>
+            <p className="text-white/80 text-lg">
+              Comprehensive solutions for your digital presence
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Web Design */}
+            <div className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-2xl p-8">
+              <h4 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Palette className="w-6 h-6 text-[#194EFF]" />
+                Web Design
+              </h4>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Customized visual aesthetics</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">User-centric design approach</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Responsive and mobile-friendly</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Interactive and engaging layouts</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Web Development */}
+            <div className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-2xl p-8">
+              <h4 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <Zap className="w-6 h-6 text-[#0F3FFF]" />
+                Web Development
+              </h4>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#0F3FFF] to-[#194EFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Custom backend development</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#0F3FFF] to-[#194EFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Ongoing maintenance and support</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#0F3FFF] to-[#194EFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Security and data protection</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#0F3FFF] to-[#194EFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">Content management systems (CMS)</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-gradient-to-r from-[#0F3FFF] to-[#194EFF] rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-white/90">API integration and development</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Other Services */}
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: Palette, title: "Logo Design" },
+              { icon: Users, title: "Social Post Design" },
+              { icon: Shield, title: "Branding" },
+              { icon: Globe, title: "Packaging Design" }
+            ].map((service, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-xl p-4 text-center hover:border-[#194EFF]/40 transition-all duration-300 hover:scale-105"
+              >
+                <service.icon className="w-8 h-8 text-[#194EFF] mx-auto mb-2" />
+                <p className="text-white/90 text-sm font-medium">{service.title}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

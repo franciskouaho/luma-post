@@ -11,7 +11,7 @@ import Footer from "@/components/landing/footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#00041F] via-[#00020F] to-[#00041F] text-white overflow-hidden">
       <LandingHeader />
       <HeroSection />
       <FeaturedSection />

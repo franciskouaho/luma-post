@@ -1,128 +1,121 @@
-'use client';
+"use client";
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import Image from "next/image";
+import Link from "next/link";
+import { Play, Star } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Content */}
-          <div className="space-y-8">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0">
+        {/* Animated Background Sphere */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-[#194EFF]/20 to-[#0F3FFF]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-[#0F3FFF]/15 to-[#194EFF]/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-50" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23194EFF' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+      </div>
 
-            {/* Main Headline */}
-            <h1 className="text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'var(--luma-dark)' }}>
-              Schedule your content everywhere in seconds.
-            </h1>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-4xl mx-auto">
+          {/* Main Heading */}
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            Design That Powers{" "}
+            <span className="bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] bg-clip-text text-transparent">
+              Real Business Growth
+            </span>
+          </h1>
 
-            {/* Sub-headline */}
-            <p className="text-xl text-gray-600 leading-relaxed">
-              The simplest way to post and grow on all platforms. Built for creators and small teams without the ridiculous price tag.
-            </p>
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl text-white/80 mb-12 leading-relaxed max-w-3xl mx-auto">
+            Elevating brands through innovative and engaging web solutions.
+          </p>
 
-            {/* Features List */}
-            <ul className="space-y-4">
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
-                <span className="text-gray-700">Post to all major platforms in one click</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
-                <span className="text-gray-700">Schedule content for the perfect posting time</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
-                <span className="text-gray-700">Customize content for each platform</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Check className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--luma-purple)' }} />
-                <span className="text-gray-700">Generate viral videos using our studio templates</span>
-              </li>
-            </ul>
-
-            {/* CTA Buttons */}
-            <div className="pt-4 flex flex-col sm:flex-row gap-4">
-              <Button className="text-white px-8 py-4 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all" style={{ background: 'var(--luma-gradient-primary)' }}>
-                Try it for free - No credit card required
+          {/* CTA Button */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
+            <Link href="/auth">
+              <Button className="bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] hover:from-[#0F3FFF] hover:to-[#194EFF] text-white border-0 rounded-full px-12 py-6 text-lg font-semibold transition-all duration-300 hover:shadow-2xl hover:shadow-[#194EFF]/50 hover:scale-105">
+                Get this Template
               </Button>
-              <Button variant="outline" className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-4 rounded-lg text-lg font-semibold">
-                Watch Demo (2 min)
-              </Button>
+            </Link>
+            <div className="text-sm text-white/60">
+              2 Spots Available
             </div>
+          </div>
 
-            {/* Trust indicators */}
-            <div className="pt-6 flex flex-wrap items-center gap-6 text-sm text-gray-600">
-              <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
-                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                </div>
-                <span>Free 14-day trial</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
-                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                </div>
-                <span>Setup in 2 minutes</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--luma-purple-light)' }}>
-                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--luma-purple)' }}></div>
-                </div>
-                <span>Cancel anytime</span>
-              </div>
-            </div>
-
-            {/* Social Proof */}
-            <div className="pt-8 space-y-4">
-              <div className="flex items-center space-x-1">
+          {/* Rating Section */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-16">
+            <div className="flex items-center gap-2">
+              <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
+                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                 ))}
               </div>
-              <p className="text-gray-700 font-medium">Loved by 8,166 creators</p>
-              <div className="flex -space-x-2">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-white flex items-center justify-center">
-                    <span className="text-xs text-gray-600">👤</span>
-                  </div>
-                ))}
+              <span className="text-white/90 font-semibold">4.9/5</span>
+              <span className="text-white/60">(3,602 clients)</span>
+            </div>
+          </div>
+
+          {/* Featured Projects Preview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {/* Project 1 */}
+            <div className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-2xl p-6 hover:border-[#194EFF]/40 transition-all duration-300 hover:scale-105">
+              <div className="w-full h-32 bg-gradient-to-br from-[#194EFF]/20 to-[#0F3FFF]/20 rounded-lg mb-4 flex items-center justify-center">
+                <div className="w-16 h-16 bg-[#194EFF]/30 rounded-lg"></div>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Explore the World, One Journey at a Time</h3>
+              <div className="flex items-center gap-2 text-white/60 text-sm">
+                <span>Spectrum</span>
+                <span>•</span>
+                <span>Velocity</span>
+              </div>
+            </div>
+
+            {/* Project 2 */}
+            <div className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-2xl p-6 hover:border-[#194EFF]/40 transition-all duration-300 hover:scale-105">
+              <div className="w-full h-32 bg-gradient-to-br from-[#0F3FFF]/20 to-[#194EFF]/20 rounded-lg mb-4 flex items-center justify-center">
+                <div className="w-16 h-16 bg-[#0F3FFF]/30 rounded-lg"></div>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Regulate Your Focus with Inspiring Content</h3>
+              <div className="flex items-center gap-2 text-white/60 text-sm">
+                <span>Enigma</span>
+                <span>•</span>
+                <span>Lumina</span>
+              </div>
+            </div>
+
+            {/* Project 3 */}
+            <div className="bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-2xl p-6 hover:border-[#194EFF]/40 transition-all duration-300 hover:scale-105">
+              <div className="w-full h-32 bg-gradient-to-br from-[#194EFF]/20 to-[#0F3FFF]/20 rounded-lg mb-4 flex items-center justify-center">
+                <div className="w-16 h-16 bg-[#194EFF]/30 rounded-lg"></div>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Connect and Collaborate Seamlessly</h3>
+              <div className="flex items-center gap-2 text-white/60 text-sm">
+                <span>Vortex</span>
+                <span>•</span>
+                <span>Synergy</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Platform Icons */}
-          <div className="relative">
-
-        {/* Platform Icons Image */}
-        <div className="mt-8 flex justify-center">
-          <Image
-            src="/icons.png"
-            alt="Social media platforms"
-            width={256}
-            height={64}
-            className="max-w-full h-auto"
-          />
-        </div>
-
-            {/* Scheduled Status Box */}
-            <div className="mt-8 rounded-lg p-4 max-w-xs mx-auto" style={{ background: 'var(--luma-purple-light)' }}>
-              <div className="flex items-center space-x-2">
-                <Check className="w-5 h-5" style={{ color: 'var(--luma-purple)' }} />
-                <span className="font-medium" style={{ color: 'var(--luma-dark)' }}>Scheduled to all platforms</span>
+          {/* Video Section */}
+          <div className="mt-20 max-w-4xl mx-auto">
+            <div className="relative bg-gradient-to-br from-[#00020F] to-[#00041F] border border-[#194EFF]/20 rounded-3xl overflow-hidden">
+              <div className="aspect-video bg-gradient-to-br from-[#194EFF]/10 to-[#0F3FFF]/10 flex items-center justify-center">
+                <Button className="bg-white/20 hover:bg-white/30 text-white border-0 rounded-full p-6 transition-all duration-300 hover:scale-110">
+                  <Play className="w-8 h-8 ml-1" />
+                </Button>
               </div>
-            </div>
-
-            {/* All Platforms Row */}
-            <div className="mt-6 flex justify-center space-x-3">
-              {['X', '📷', 'in', 'f', '🎵', '📺', '🦋', 'A', '📌'].map((icon, index) => (
-                <div key={index} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs">
-                  {icon}
+              {/* Video Thumbnail Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h3 className="text-2xl font-bold mb-2">Watch Our Success Stories</h3>
+                  <p className="text-white/80">See how we've helped businesses grow</p>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
