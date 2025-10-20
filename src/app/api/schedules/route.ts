@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
     const { 
       userId, 
       caption, 
-      videoFile, 
       videoUrl,
       thumbnailUrl,
       platforms, 
@@ -98,27 +97,29 @@ export async function POST(request: NextRequest) {
 
     // Programmer la tâche Cloud Tasks pour la publication automatique
     try {
-      // Utiliser l'API Cloud Tasks directement via HTTP
-      const cloudTasksResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/cloud-tasks`, {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://luma-post.emplica.fr';
+      const payload = {
+        action: 'scheduleTask',
+        scheduleId: scheduleId,
+        videoId: videoUrl,
+        accountId: platforms[0],
+        userId: userId,
+        scheduledAt: scheduledAt || new Date().toISOString()
+      };
+      const bodyStr = JSON.stringify(payload);
+      const cloudTasksResponse = await fetch(`${appUrl}/api/cloud-tasks`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          action: 'scheduleTask',
-          scheduleId: scheduleId,
-          videoId: videoUrl, // Utiliser l'URL de la vidéo comme ID
-          accountId: platforms[0], // Utiliser le premier compte TikTok
-          userId: userId,
-          scheduledAt: scheduledAt || new Date().toISOString()
-        }),
+        body: bodyStr,
       });
 
       if (!cloudTasksResponse.ok) {
         throw new Error(`Erreur HTTP ${cloudTasksResponse.status}`);
       }
 
-      const taskResult = await cloudTasksResponse.json();
+      await cloudTasksResponse.json();
     } catch (taskError) {
       console.error('Erreur lors de la programmation de la tâche Cloud Tasks:', taskError);
       // Ne pas faire échouer la création du post, juste logger l'erreur

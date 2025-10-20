@@ -77,12 +77,11 @@ exports.checkScheduledPosts = onSchedule(
       const db = admin.firestore();
       const nowTs = admin.firestore.Timestamp.now();
 
-      // Récupérer les schedules arrivés à échéance
+      // Récupérer les schedules arrivés à échéance sans index composite requis
       const snap = await db.collection('schedules')
-        .where('status', '==', 'scheduled')
         .where('scheduledAt', '<=', nowTs)
         .orderBy('scheduledAt', 'asc')
-        .limit(10)
+        .limit(20)
         .get();
 
       if (snap.empty) {
@@ -90,7 +89,8 @@ exports.checkScheduledPosts = onSchedule(
         return;
       }
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      // URL de l'app Next pour appeler l'endpoint /api/publish/now
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://luma-post.emplica.fr';
 
       // Traiter en série pour limiter la pression
       for (const doc of snap.docs) {
@@ -98,6 +98,10 @@ exports.checkScheduledPosts = onSchedule(
         const scheduleId = doc.id;
 
         try {
+          // Ignorer les posts non "scheduled"
+          if (sched.status && sched.status !== 'scheduled') {
+            continue;
+          }
           // Marquer en file d'attente pour éviter le double traitement
           await doc.ref.update({ status: 'queued', updatedAt: admin.firestore.FieldValue.serverTimestamp() });
 
