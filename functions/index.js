@@ -1,6 +1,14 @@
 const {onRequest, onCall} = require("firebase-functions/v2/https");
 const {onSchedule} = require("firebase-functions/v2/scheduler");
 const logger = require("firebase-functions/logger");
+const admin = require("firebase-admin");
+
+// Initialiser Firebase Admin si nécessaire
+try {
+  admin.apps.length === 0 && admin.initializeApp();
+} catch (e) {
+  // noop
+}
 
 // Fonction de test pour vérifier que les fonctions sont actives
 exports.healthCheck = onRequest(
@@ -66,13 +74,105 @@ exports.checkScheduledPosts = onSchedule(
   async (event) => {
     try {
       logger.info('Vérification des publications planifiées', { structuredData: true });
-      
-      // Cette fonction sera implémentée pour vérifier les schedules
-      // et déclencher les publications quand c'est le moment
-      
+      const db = admin.firestore();
+      const nowTs = admin.firestore.Timestamp.now();
+
+      // Récupérer les schedules arrivés à échéance
+      const snap = await db.collection('schedules')
+        .where('status', '==', 'scheduled')
+        .where('scheduledAt', '<=', nowTs)
+        .orderBy('scheduledAt', 'asc')
+        .limit(10)
+        .get();
+
+      if (snap.empty) {
+        logger.info('Aucun post planifié à traiter');
+        return;
+      }
+
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+      // Traiter en série pour limiter la pression
+      for (const doc of snap.docs) {
+        const sched = doc.data();
+        const scheduleId = doc.id;
+
+        try {
+          // Marquer en file d'attente pour éviter le double traitement
+          await doc.ref.update({ status: 'queued', updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+
+          // Construire la requête de publication immédiate
+          const body = {
+            userId: sched.userId,
+            caption: sched.caption || '',
+            videoUrl: sched.videoUrl,
+            thumbnailUrl: sched.thumbnailUrl || undefined,
+            platforms: Array.isArray(sched.platforms) ? sched.platforms : [],
+            mediaType: sched.mediaType || 'video',
+            // Optionnel: vous pouvez stocker tiktokSettings dans le schedule si besoin
+          };
+
+          const res = await fetch(`${appUrl}/api/publish/now`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(`HTTP ${res.status} ${errText}`);
+          }
+
+          const result = await res.json();
+          const publishId = result.publishId || (result.post && result.post.publishId) || null;
+
+          await doc.ref.update({
+            publishId: publishId,
+            status: 'queued',
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+
+          logger.info('Planification envoyée à TikTok (queued)', { scheduleId, publishId });
+        } catch (procErr) {
+          logger.error('Erreur traitement planification', { scheduleId, error: String(procErr) });
+          await doc.ref.update({
+            status: 'failed',
+            lastError: String(procErr),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        }
+      }
+
       logger.info('Vérification terminée');
     } catch (error) {
       logger.error('Erreur lors de la vérification des publications:', error);
+    }
+  }
+);
+
+// Callable pour programmer une tâche (compat avec /api/cloud-tasks)
+exports.schedulePublishTask = onCall(
+  {
+    region: 'europe-west1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  async (request) => {
+    try {
+      const { scheduleId, scheduledAt } = request.data || {};
+      if (!scheduleId) {
+        throw new Error('scheduleId requis');
+      }
+
+      const db = admin.firestore();
+      const ref = db.collection('schedules').doc(scheduleId);
+      const ts = scheduledAt ? admin.firestore.Timestamp.fromDate(new Date(scheduledAt)) : admin.firestore.Timestamp.now();
+      await ref.update({ scheduledAt: ts, status: 'scheduled', updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+
+      return { success: true, scheduleId };
+    } catch (e) {
+      logger.error('Erreur schedulePublishTask:', e);
+      throw e;
     }
   }
 );
