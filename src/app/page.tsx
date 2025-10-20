@@ -3,6 +3,7 @@ import HeroSection from "@/components/landing/hero-section";
 import CrossPostingSection from "@/components/landing/cross-posting-section";
 import ContentManagementSection from "@/components/landing/content-management-section";
 import TestimonialsSection from "@/components/landing/testimonials-section";
+import PricingSection from "@/components/landing/pricing-section";
 import FAQSection from "@/components/landing/faq-section";
 import PlatformsSection from "@/components/landing/platforms-section";
 import CTASection from "@/components/landing/cta-section";
@@ -16,6 +17,7 @@ export default function Home() {
       <CrossPostingSection />
       <ContentManagementSection />
       <TestimonialsSection />
+      <PricingSection />
       <FAQSection />
       <PlatformsSection />
       <CTASection />
