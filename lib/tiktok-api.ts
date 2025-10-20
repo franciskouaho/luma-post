@@ -136,6 +136,8 @@ class TikTokAPIService {
       response_type: 'code',
       redirect_uri: cleanRedirectUri,
       state: userId, // Utiliser userId comme state pour CSRF
+      // Forcer l'écran de consentement pour s'assurer que les scopes sont bien accordés
+      prompt: 'consent'
     });
 
     return `${baseUrl}?${params.toString()}`;
@@ -344,7 +346,7 @@ class TikTokAPIService {
               throw new Error(`Erreur HTTP ${retryResponse.status}: ${retryErrorText}`);
             }
             
-            const creatorResult = await retryResponse.json();
+      const creatorResult = await retryResponse.json();
             
             if (creatorResult.error && creatorResult.error.code !== 'ok') {
               throw new Error(`Erreur TikTok Creator Info: ${creatorResult.error.message || creatorResult.error}`);
@@ -371,7 +373,15 @@ class TikTokAPIService {
         throw new Error(`Erreur TikTok Creator Info: ${creatorResult.error.message || creatorResult.error}`);
       }
 
-      const { privacy_level_options } = creatorResult.data;
+      const { privacy_level_options, can_post, max_video_post_duration_sec, max_posts_reached } = creatorResult.data;
+
+      // Bloquer tôt si l'utilisateur ne peut pas poster ou a atteint la limite
+      if (max_posts_reached === true) {
+        throw new Error('Quota quotidien de posts atteint (max_posts_reached).');
+      }
+      if (can_post === false) {
+        throw new Error('Ce compte ne peut pas publier via API (can_post=false).');
+      }
 
       // Continuer avec la publication
       return this.continuePublishing(account, accessToken, privacy_level_options, videoData, settings);
@@ -515,8 +525,10 @@ class TikTokAPIService {
       });
 
       if (!directPostResponse.ok) {
+        const statusCode = directPostResponse.status;
         const errorText = await directPostResponse.text();
         const errorData = this.safeJsonParse(errorText);
+        console.error('❌ INIT Direct Post échoué:', { statusCode, error: errorData, body: errorText });
         
         
         // Gestion des erreurs - FORCER Direct Post (pas de fallback inbox)
