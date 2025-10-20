@@ -735,6 +735,7 @@ class TikTokAPIService {
           await new Promise(resolve => setTimeout(resolve, waitTime));
         }
       }
+      
 
       if (finalStatus !== 'PUBLISHED') {
         console.warn(`⚠️ Publication non confirmée après ${maxAttempts} tentatives. Statut final: ${finalStatus}`);
