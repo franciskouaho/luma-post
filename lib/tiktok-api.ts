@@ -53,16 +53,19 @@ interface CreatorInfo {
   comment_disabled: boolean;
 }
 
+type TikTokErrorResponse = { error?: { code?: string; message?: string } };
+
 class TikTokAPIService {
   private clientId: string;
   private clientSecret: string;
   private redirectUri: string;
 
   // Helper pour parsing sécurisé des erreurs TikTok
-  private safeJsonParse(text: string): any {
+  private safeJsonParse(text: string): TikTokErrorResponse {
     try {
-      return JSON.parse(text);
-    } catch (error) {
+      const parsed = JSON.parse(text);
+      return (parsed && typeof parsed === 'object') ? parsed as TikTokErrorResponse : {};
+    } catch {
       console.warn('⚠️ Réponse TikTok non-JSON:', text);
       return { error: { message: text, code: 'invalid_response' } };
     }
@@ -85,7 +88,7 @@ class TikTokAPIService {
   }
 
   // Fonction pour vérifier si une URL peut être utilisée avec PULL_FROM_URL
-  private canUsePullFromUrl(_videoUrl: string, _isBusinessAccount: boolean): boolean {
+  private canUsePullFromUrl(): boolean {
     // Google Cloud Storage n'est pas vérifié par TikTok, donc on utilise toujours FILE_UPLOAD
     // pour éviter l'erreur url_ownership_unverified
     return false; // Toujours utiliser FILE_UPLOAD
@@ -430,35 +433,32 @@ class TikTokAPIService {
     const videoBuffer = Buffer.from(videoArrayBuffer);
     const videoSize = videoBuffer.length;
     
-    // Utiliser PULL_FROM_URL pour domaine vérifié (plus simple et fiable)
-    console.log(`📊 PULL_FROM_URL: ${videoSize} bytes depuis ${videoData.videoUrl}`);
-
-    // Validation de l'URL PULL_FROM_URL
     const videoUrl = videoData.videoUrl;
-    if (!videoUrl || !videoUrl.startsWith('https://')) {
-      throw new Error('URL vidéo invalide pour PULL_FROM_URL - doit être HTTPS');
-    }
-    
-    // Validation domaine vérifié (doit correspondre au domaine configuré dans TikTok Dev)
+    const isHttps = !!videoUrl && videoUrl.startsWith('https://');
     const allowedDomains = [
       'luma-post.emplica.fr',
-      'firebasestorage.googleapis.com', // Firebase Storage
-      // Ajoutez d'autres domaines vérifiés si nécessaire
+      'firebasestorage.googleapis.com',
     ];
-    
-    const urlObj = new URL(videoUrl);
-    const isAllowedDomain = allowedDomains.some(domain => 
-      urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain)
-    );
-    
-    if (!isAllowedDomain) {
-      throw new Error(`Domaine non vérifié pour PULL_FROM_URL: ${urlObj.hostname}. Domaines autorisés: ${allowedDomains.join(', ')}`);
+    let useFileUpload = false;
+    let sourceInfo: { source: 'PULL_FROM_URL' | 'FILE_UPLOAD'; video_url?: string };
+
+    if (!isHttps) {
+      useFileUpload = true;
+    } else {
+      const urlObj = new URL(videoUrl);
+      const isAllowedDomain = allowedDomains.some(domain =>
+        urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain)
+      );
+      useFileUpload = !isAllowedDomain;
     }
 
-    const sourceInfo = {
-      source: 'PULL_FROM_URL',
-      video_url: videoUrl,
-    };
+    if (useFileUpload) {
+      console.log(`📦 FILE_UPLOAD: ${videoSize} bytes (domaine non autorisé pour PULL_FROM_URL ou URL non-HTTPS)`);
+      sourceInfo = { source: 'FILE_UPLOAD' };
+    } else {
+      console.log(`📊 PULL_FROM_URL: ${videoSize} bytes depuis ${videoUrl}`);
+      sourceInfo = { source: 'PULL_FROM_URL', video_url: videoUrl };
+    }
 
     // ÉTAPE 2: Initialisation - FORCER Direct Post uniquement
     
@@ -479,7 +479,7 @@ class TikTokAPIService {
         ? 'MUTUAL_FOLLOW_FRIENDS'
         : privacyLevelOptions[0] || 'SELF_ONLY';
       
-      const directPostData = {
+      const directPostData: any = {
         post_info: {
           title: description,
           privacy_level: privacyLevel,
@@ -490,10 +490,19 @@ class TikTokAPIService {
           brand_organic_toggle: settings.commercialContent.yourBrand,
           video_cover_timestamp_ms: 1000, // Utiliser la première seconde comme couverture
         },
-        source_info: sourceInfo,
-        // Forcer le mode Direct Post (pas INBOX_SHARE)
-        publish_type: 'DIRECT_POST'
+        source_info: sourceInfo
       };
+
+      // TikTok exige des métadonnées côté init pour FILE_UPLOAD directement sous source_info
+      if (useFileUpload) {
+        const defaultChunkSize = videoSize; // upload en un seul PUT
+        directPostData.source_info = {
+          source: 'FILE_UPLOAD',
+          video_size: videoSize,
+          chunk_size: defaultChunkSize,
+          total_chunk_count: 1
+        };
+      }
 
 
       const directPostResponse = await fetch(directPostUrl, {
@@ -644,11 +653,33 @@ class TikTokAPIService {
 
     const { publish_id, upload_url } = initResult.data;
 
-    // ÉTAPE 3: Upload du fichier vers TikTok en chunks (si upload_url fourni)
+    // ÉTAPE 3: Upload du fichier vers TikTok si FILE_UPLOAD
+    if (sourceInfo.source === 'FILE_UPLOAD') {
+      if (!upload_url) {
+        throw new Error('URL de téléversement manquante pour FILE_UPLOAD');
+      }
+      const contentType = 'video/mp4';
+      const totalSize = videoBuffer.length;
+      const contentRange = `bytes 0-${totalSize - 1}/${totalSize}`;
 
-    // Avec PULL_FROM_URL, TikTok récupère automatiquement la vidéo depuis l'URL
-    // Pas besoin d'upload manuel en chunks
-    if (!initResult.data.upload_url) {
+      const uploadResponse = await fetch(upload_url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': contentType,
+          'Content-Length': String(totalSize),
+          'Content-Range': contentRange,
+        },
+        body: videoBuffer,
+      });
+
+      if (!uploadResponse.ok) {
+        const uploadErrorText = await uploadResponse.text();
+        console.error('Erreur upload vers TikTok:', uploadErrorText);
+        throw new Error(`Échec de l\'upload vidéo (HTTP ${uploadResponse.status})`);
+      }
+      console.log('✅ FILE_UPLOAD: vidéo transférée à TikTok');
+    } else {
+      // Avec PULL_FROM_URL, TikTok récupère automatiquement la vidéo
       console.log('✅ PULL_FROM_URL: TikTok va récupérer la vidéo automatiquement');
     }
 
