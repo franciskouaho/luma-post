@@ -1,25 +1,23 @@
 import LandingHeader from "@/components/landing/header";
 import HeroSection from "@/components/landing/hero-section";
-import FeaturedSection from "@/components/landing/featured-section";
-import FeaturesSection from "@/components/landing/features-section";
-import PricingSection from "@/components/landing/pricing-section";
-import TrustSection from "@/components/landing/trust-section";
+import CrossPostingSection from "@/components/landing/cross-posting-section";
+import ContentManagementSection from "@/components/landing/content-management-section";
 import TestimonialsSection from "@/components/landing/testimonials-section";
 import FAQSection from "@/components/landing/faq-section";
+import PlatformsSection from "@/components/landing/platforms-section";
 import CTASection from "@/components/landing/cta-section";
 import Footer from "@/components/landing/footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#00041F] via-[#00020F] to-[#00041F] text-white overflow-hidden">
+    <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
       <LandingHeader />
       <HeroSection />
-      <FeaturedSection />
-      <FeaturesSection />
-      <PricingSection />
-      <TrustSection />
+      <CrossPostingSection />
+      <ContentManagementSection />
       <TestimonialsSection />
       <FAQSection />
+      <PlatformsSection />
       <CTASection />
       <Footer />
     </div>

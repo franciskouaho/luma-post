@@ -10,32 +10,32 @@ export default function LandingHeader() {
   const [isPagesOpen, setIsPagesOpen] = useState(false);
 
   return (
-    <header className="w-full bg-gradient-to-r from-[#00041F] to-[#00020F] border-b border-[#194EFF]/20">
+    <header className="w-full bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-6">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-[#194EFF] to-[#0F3FFF]">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-r from-purple-600 to-purple-700">
               <span className="text-white font-bold text-lg">L</span>
             </div>
-            <span className="text-xl font-semibold text-white">Luma Post</span>
+            <span className="text-xl font-semibold text-gray-900">Luma Post</span>
           </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="#home" className="text-white/90 hover:text-white transition-colors">
+            <Link href="#home" className="text-gray-700 hover:text-purple-600 transition-colors">
               Home
             </Link>
-            <Link href="#works" className="text-white/90 hover:text-white transition-colors">
+            <Link href="#works" className="text-gray-700 hover:text-purple-600 transition-colors">
               Works
             </Link>
-            <Link href="#blogs" className="text-white/90 hover:text-white transition-colors">
+            <Link href="#blogs" className="text-gray-700 hover:text-purple-600 transition-colors">
               Blogs
             </Link>
-            <Link href="#timeline" className="text-white/90 hover:text-white transition-colors">
+            <Link href="#timeline" className="text-gray-700 hover:text-purple-600 transition-colors">
               Timeline
             </Link>
-            <Link href="#waitlist" className="text-white/90 hover:text-white transition-colors">
+            <Link href="#waitlist" className="text-gray-700 hover:text-purple-600 transition-colors">
               Waitlist
             </Link>
             
@@ -43,21 +43,21 @@ export default function LandingHeader() {
             <div className="relative">
               <button
                 onClick={() => setIsPagesOpen(!isPagesOpen)}
-                className="flex items-center text-white/90 hover:text-white transition-colors"
+                className="flex items-center text-gray-700 hover:text-purple-600 transition-colors"
               >
                 All Pages
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
               {isPagesOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-[#00020F] border border-[#194EFF]/20 rounded-lg shadow-lg z-50">
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <div className="py-2">
-                    <Link href="/dashboard" className="block px-4 py-2 text-white/90 hover:text-white hover:bg-[#194EFF]/10">
+                    <Link href="/dashboard" className="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50">
                       Dashboard
                     </Link>
-                    <Link href="/dashboard/settings" className="block px-4 py-2 text-white/90 hover:text-white hover:bg-[#194EFF]/10">
+                    <Link href="/dashboard/settings" className="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50">
                       Settings
                     </Link>
-                    <Link href="/dashboard/workspaces" className="block px-4 py-2 text-white/90 hover:text-white hover:bg-[#194EFF]/10">
+                    <Link href="/dashboard/workspaces" className="block px-4 py-2 text-gray-700 hover:text-purple-600 hover:bg-purple-50">
                       Workspaces
                     </Link>
                   </div>
@@ -69,7 +69,7 @@ export default function LandingHeader() {
           {/* Contact Button */}
           <div className="hidden md:flex items-center">
             <Link href="/auth">
-              <Button className="bg-gradient-to-r from-[#194EFF] to-[#0F3FFF] hover:from-[#0F3FFF] hover:to-[#194EFF] text-white border-0 rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-[#194EFF]/30">
+              <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30">
                 Contact Us
               </Button>
             </Link>
