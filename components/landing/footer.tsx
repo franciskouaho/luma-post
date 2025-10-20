@@ -143,11 +143,12 @@ export default function Footer() {
               Get the latest updates on web design trends, tips, and exclusive offers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-white border border-purple-200 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-600 transition-colors"
-              />
+                     <input
+                       type="email"
+                       placeholder="Enter your email"
+                       className="flex-1 px-4 py-3 bg-white border border-purple-200 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:border-purple-600 transition-colors"
+                       suppressHydrationWarning
+                     />
               <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 rounded-full px-8 py-3 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/30">
                 Subscribe
               </Button>
