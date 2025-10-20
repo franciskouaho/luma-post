@@ -373,7 +373,14 @@ class TikTokAPIService {
         throw new Error(`Erreur TikTok Creator Info: ${creatorResult.error.message || creatorResult.error}`);
       }
 
-      const { privacy_level_options, can_post, max_video_post_duration_sec, max_posts_reached } = creatorResult.data;
+      const { privacy_level_options, can_post, max_video_post_duration_sec, max_posts_reached, nickname } = creatorResult.data;
+
+      // Journaliser l'identité créateur pour vérifier Target Users en sandbox
+      try {
+        const userInfoForLog = await this.getUserInfo(accessToken);
+        const openIdForLog = userInfoForLog?.data?.user?.open_id;
+        console.log('👤 Creator identity (sandbox check):', { open_id: openIdForLog, nickname });
+      } catch {}
 
       // Bloquer tôt si l'utilisateur ne peut pas poster ou a atteint la limite
       if (max_posts_reached === true) {
@@ -480,14 +487,15 @@ class TikTokAPIService {
     try {
       const directPostUrl = 'https://open.tiktokapis.com/v2/post/publish/video/init/';
       
-      // Utiliser les paramètres utilisateur pour la confidentialité
-      const privacyLevel = privacyLevelOptions.includes(settings.privacyLevel) 
-        ? settings.privacyLevel 
-        : privacyLevelOptions.includes('PUBLIC_TO_EVERYONE')
-        ? 'PUBLIC_TO_EVERYONE' 
-        : privacyLevelOptions.includes('MUTUAL_FOLLOW_FRIENDS')
-        ? 'MUTUAL_FOLLOW_FRIENDS'
-        : privacyLevelOptions[0] || 'SELF_ONLY';
+      // Choisir un privacy_level strictement autorisé par privacy_level_options
+      let privacyLevel: 'PUBLIC_TO_EVERYONE' | 'MUTUAL_FOLLOW_FRIENDS' | 'SELF_ONLY';
+      if (privacyLevelOptions.includes(settings.privacyLevel)) {
+        privacyLevel = settings.privacyLevel;
+      } else if (privacyLevelOptions.includes('SELF_ONLY')) {
+        privacyLevel = 'SELF_ONLY';
+      } else {
+        throw new Error(`Aucun privacy_level valide disponible. Options autorisées: ${privacyLevelOptions.join(', ')}`);
+      }
       
       const directPostData: any = {
         post_info: {
