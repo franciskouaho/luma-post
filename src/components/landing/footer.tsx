@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, MapPin, Twitter, Linkedin, Github, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
+import { FaXTwitter, FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa6";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -35,10 +36,10 @@ export default function Footer() {
   };
 
   const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Github, href: "#", label: "GitHub" },
-    { icon: Instagram, href: "#", label: "Instagram" }
+    { icon: FaXTwitter, href: "#", label: "Twitter" },
+    { icon: FaLinkedin, href: "#", label: "LinkedIn" },
+    { icon: FaGithub, href: "#", label: "GitHub" },
+    { icon: FaInstagram, href: "#", label: "Instagram" }
   ];
 
   return (

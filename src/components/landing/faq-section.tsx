@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
+import { FaXTwitter, FaInstagram, FaLinkedin, FaFacebook, FaTiktok, FaYoutube, FaPinterest } from "react-icons/fa6";
+import { SiBluesky, SiThreads } from "react-icons/si";
 
 export default function FAQSection() {
   const [openItems, setOpenItems] = useState<number[]>([]);
@@ -66,19 +68,19 @@ export default function FAQSection() {
   ];
 
   const platforms = [
-    { name: "X", icon: "X", color: "bg-black" },
-    { name: "Instagram", icon: "📷", color: "bg-gradient-to-br from-purple-600 to-pink-600" },
-    { name: "LinkedIn", icon: "in", color: "bg-blue-600" },
-    { name: "Facebook", icon: "f", color: "bg-blue-500" },
-    { name: "TikTok", icon: "♪", color: "bg-black" },
-    { name: "YouTube", icon: "▶", color: "bg-red-600" },
-    { name: "Bluesky", icon: "🦋", color: "bg-blue-400" },
-    { name: "Threads", icon: "@", color: "bg-black" },
-    { name: "Pinterest", icon: "P", color: "bg-red-500" }
+    { name: "X", icon: FaXTwitter, bgColor: "bg-gray-900" },
+    { name: "Instagram", icon: FaInstagram, bgColor: "bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500" },
+    { name: "LinkedIn", icon: FaLinkedin, bgColor: "bg-blue-600" },
+    { name: "Facebook", icon: FaFacebook, bgColor: "bg-blue-500" },
+    { name: "TikTok", icon: FaTiktok, bgColor: "bg-gray-900" },
+    { name: "YouTube", icon: FaYoutube, bgColor: "bg-red-600" },
+    { name: "Bluesky", icon: SiBluesky, bgColor: "bg-blue-400" },
+    { name: "Threads", icon: SiThreads, bgColor: "bg-gray-900" },
+    { name: "Pinterest", icon: FaPinterest, bgColor: "bg-red-500" }
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section id="faq" className="py-20 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -92,15 +94,18 @@ export default function FAQSection() {
           {/* Platform Icons */}
           <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
             <span className="text-gray-600 font-medium">Post to:</span>
-            {platforms.map((platform, index) => (
-              <div
-                key={index}
-                className={`w-10 h-10 rounded-lg ${platform.color} flex items-center justify-center text-white text-sm font-semibold`}
-                title={platform.name}
-              >
-                {platform.icon}
-              </div>
-            ))}
+            {platforms.map((platform, index) => {
+              const Icon = platform.icon;
+              return (
+                <div
+                  key={index}
+                  className={`w-10 h-10 rounded-lg ${platform.bgColor} flex items-center justify-center text-white shadow-sm`}
+                  title={platform.name}
+                >
+                  <Icon className="w-5 h-5" />
+                </div>
+              );
+            })}
           </div>
         </div>
 

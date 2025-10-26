@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { WorkspaceSelector } from '@/components/workspace/workspace-selector';
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog';
@@ -91,18 +90,14 @@ export default function SidebarLayout({ children }: SidebarProps) {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
         {/* Logo */}
-        <div className="p-6 border-b border-gray-200" style={{ background: 'var(--luma-gradient-light)' }}>
-          <div className="flex items-center space-x-3">
-            <Image 
-              src="/logo.png" 
-              alt="Luma Post" 
-              width={32}
-              height={32}
-              className="h-8 w-8"
-            />
-            <h1 className="text-xl font-bold" style={{ color: 'var(--luma-dark)' }}>Luma Post</h1>
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-900">
+              <span className="text-white font-bold text-lg">L</span>
+            </div>
+            <h1 className="text-lg font-semibold text-gray-900">Luma Post</h1>
           </div>
         </div>
 
@@ -120,16 +115,7 @@ export default function SidebarLayout({ children }: SidebarProps) {
         {/* Create Post Button */}
         <div className="p-4">
           <Link href="/dashboard/create-post">
-            <button 
-              className="w-full text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
-              style={{ background: 'var(--luma-gradient-primary)' }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--luma-purple-dark)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--luma-gradient-primary)';
-              }}
-            >
+            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 px-4 rounded-lg flex items-center justify-center transition-colors">
               <Plus className="h-5 w-5 mr-2" />
               Create post
             </button>
@@ -150,16 +136,11 @@ export default function SidebarLayout({ children }: SidebarProps) {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                           pathname === item.href
-                            ? 'shadow-sm'
-                            : 'text-gray-700 hover:bg-gray-100 hover:shadow-sm'
+                            ? 'bg-purple-50 text-purple-700'
+                            : 'text-gray-700 hover:bg-gray-100'
                         }`}
-                        style={pathname === item.href ? {
-                          background: 'var(--luma-gradient-light)',
-                          color: 'var(--luma-dark)',
-                          borderLeft: '4px solid var(--luma-purple)'
-                        } : {}}
                       >
                         <Icon className="h-5 w-5 mr-3" />
                         {item.name}

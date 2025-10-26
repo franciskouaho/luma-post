@@ -122,7 +122,6 @@ export default function DashboardPage() {
           change: `${data.changes.posts >= 0 ? "+" : ""}${data.changes.posts}%`,
           changeType: data.changes.posts >= 0 ? "positive" : "negative",
           icon: BarChart3,
-          color: "from-blue-500 to-blue-600",
         },
         {
           title: "Total Views",
@@ -133,7 +132,6 @@ export default function DashboardPage() {
           change: `${data.changes.views >= 0 ? "+" : ""}${data.changes.views}%`,
           changeType: data.changes.views >= 0 ? "positive" : "negative",
           icon: Eye,
-          color: "from-cyan-500 to-cyan-600",
         },
         {
           title: "Total Likes",
@@ -144,7 +142,6 @@ export default function DashboardPage() {
           change: `${data.changes.likes >= 0 ? "+" : ""}${data.changes.likes}%`,
           changeType: data.changes.likes >= 0 ? "positive" : "negative",
           icon: Heart,
-          color: "from-pink-500 to-pink-600",
         },
         {
           title: "Total Comments",
@@ -152,7 +149,6 @@ export default function DashboardPage() {
           change: `${data.changes.comments >= 0 ? "+" : ""}${data.changes.comments}%`,
           changeType: data.changes.comments >= 0 ? "positive" : "negative",
           icon: MessageCircle,
-          color: "from-green-500 to-green-600",
         },
         {
           title: "Total Shares",
@@ -160,7 +156,6 @@ export default function DashboardPage() {
           change: `${data.changes.shares >= 0 ? "+" : ""}${data.changes.shares}%`,
           changeType: data.changes.shares >= 0 ? "positive" : "negative",
           icon: Share2,
-          color: "from-orange-500 to-orange-600",
         },
         {
           title: "Engagement Rate",
@@ -168,7 +163,6 @@ export default function DashboardPage() {
           change: `${data.changes.engagement >= 0 ? "+" : ""}${data.changes.engagement}%`,
           changeType: data.changes.engagement >= 0 ? "positive" : "negative",
           icon: TrendingUp,
-          color: "from-purple-500 to-purple-600",
         },
       ]
     : [];
@@ -177,16 +171,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <div className="absolute inset-0 w-16 h-16 border-4 border-purple-100 rounded-full mx-auto animate-ping"></div>
-          </div>
-          <p className="text-slate-700 font-medium">Loading analytics...</p>
-          <p className="text-slate-500 text-sm mt-2">
-            Analyzing your performance...
-          </p>
+          <div className="w-12 h-12 border-3 border-gray-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-700 font-medium">Loading analytics...</p>
         </div>
       </div>
     );
@@ -194,42 +182,42 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
-        <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/60">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="h-8 w-8 text-red-600" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-xl shadow-sm border border-gray-200">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <BarChart3 className="h-8 w-8 text-gray-600" />
           </div>
-          <p className="text-lg font-semibold text-slate-900 mb-2">
+          <p className="text-lg font-semibold text-gray-900 mb-2">
             Erreur de chargement
           </p>
-          <p className="text-slate-600">{error}</p>
+          <p className="text-gray-600">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
-      {/* Modern Header */}
-      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-gray-900">
                 Analytics Dashboard
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 Track and analyze your social media performance
               </p>
             </div>
             <div className="flex items-center gap-3">
               {/* Time Range Filter */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-all duration-200">
-                <Calendar className="w-4 h-4 text-slate-500" />
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                <Calendar className="w-4 h-4 text-gray-500" />
                 <select
                   value={timeRange}
                   onChange={(e) => setTimeRange(e.target.value)}
-                  className="bg-transparent border-0 focus:ring-0 focus:outline-none text-sm text-slate-700 font-medium cursor-pointer"
+                  className="bg-transparent border-0 focus:ring-0 focus:outline-none text-sm text-gray-700 font-medium cursor-pointer"
                 >
                   <option value="7d">Last 7 days</option>
                   <option value="30d">Last 30 days</option>
@@ -239,12 +227,12 @@ export default function DashboardPage() {
               </div>
 
               {/* Platform Filter */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-all duration-200">
-                <Filter className="w-4 h-4 text-slate-500" />
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg">
+                <Filter className="w-4 h-4 text-gray-500" />
                 <select
                   value={selectedPlatform}
                   onChange={(e) => setSelectedPlatform(e.target.value)}
-                  className="bg-transparent border-0 focus:ring-0 focus:outline-none text-sm text-slate-700 font-medium cursor-pointer"
+                  className="bg-transparent border-0 focus:ring-0 focus:outline-none text-sm text-gray-700 font-medium cursor-pointer"
                 >
                   <option value="all">All Platforms</option>
                   <option value="linkedin">LinkedIn</option>
@@ -255,7 +243,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Export Button */}
-              <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105">
+              <button className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors">
                 <Download className="w-4 h-4" />
                 Export
               </button>
@@ -268,82 +256,82 @@ export default function DashboardPage() {
         {/* Posts by Status */}
         {data?.postsByStatus && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                     Published
                   </p>
-                  <p className="text-3xl font-bold text-slate-900">
+                  <p className="text-2xl font-bold text-gray-900">
                     {data.postsByStatus.published}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <Send className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Send className="w-5 h-5 text-purple-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                     Scheduled
                   </p>
-                  <p className="text-3xl font-bold text-slate-900">
+                  <p className="text-2xl font-bold text-gray-900">
                     {data.postsByStatus.scheduled}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <Calendar className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-gray-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                     Drafts
                   </p>
-                  <p className="text-3xl font-bold text-slate-900">
+                  <p className="text-2xl font-bold text-gray-900">
                     {data.postsByStatus.draft}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-slate-400 to-slate-500 rounded-xl flex items-center justify-center shadow-lg shadow-slate-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <FileEdit className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <FileEdit className="w-5 h-5 text-gray-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-yellow-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                     Queued
                   </p>
-                  <p className="text-3xl font-bold text-slate-900">
+                  <p className="text-2xl font-bold text-gray-900">
                     {data.postsByStatus.queued}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <Clock className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-gray-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-red-600 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                     Failed
                   </p>
-                  <p className="text-3xl font-bold text-slate-900">
+                  <p className="text-2xl font-bold text-gray-900">
                     {data.postsByStatus.failed}
                   </p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300">
-                  <X className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <X className="w-5 h-5 text-gray-600" />
                 </div>
               </div>
             </div>
@@ -351,41 +339,39 @@ export default function DashboardPage() {
         )}
 
         {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
             const isPositive = stat.changeType === "positive";
             return (
               <div
                 key={index}
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300 group"
+                className="bg-white rounded-lg p-6 border border-gray-200 hover:border-purple-300 transition-colors"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div
-                    className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <Icon className="w-7 h-7 text-white" />
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <Icon className="w-6 h-6 text-gray-600" />
                   </div>
                   <div
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${
                       isPositive
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
+                        ? "bg-purple-50 text-purple-700"
+                        : "bg-gray-100 text-gray-700"
                     }`}
                   >
                     {isPositive ? (
-                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      <ArrowUpRight className="w-3 h-3" />
                     ) : (
-                      <ArrowDownRight className="w-3.5 h-3.5" />
+                      <ArrowDownRight className="w-3 h-3" />
                     )}
                     {stat.change}
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-3xl font-bold text-slate-900 mb-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-1">
                     {stat.value}
                   </h3>
-                  <p className="text-sm text-slate-600 font-medium">
+                  <p className="text-sm text-gray-600">
                     {stat.title}
                   </p>
                 </div>
@@ -395,15 +381,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
           {/* Engagement Chart */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-              <h3 className="text-lg font-semibold text-slate-900">
-                Daily Engagement
-              </h3>
-            </div>
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 mb-6">
+              Daily Engagement
+            </h3>
             {loading ? (
               <div className="h-72 flex items-center justify-center">
                 <div className="text-center">
@@ -422,42 +405,42 @@ export default function DashboardPage() {
                       x2="0"
                       y2="1"
                     >
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#9333ea" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#9333ea" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis
                     dataKey="day"
-                    tick={{ fontSize: 12, fill: "#64748b" }}
-                    axisLine={{ stroke: "#e2e8f0" }}
+                    tick={{ fontSize: 12, fill:"#6b7280" }}
+                    axisLine={{ stroke: "#e5e7eb" }}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fontSize: 12, fill: "#64748b" }}
-                    axisLine={{ stroke: "#e2e8f0" }}
+                    tick={{ fontSize: 12, fill: "#6b7280" }}
+                    axisLine={{ stroke: "#e5e7eb" }}
                     tickLine={false}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Area
                     type="monotone"
                     dataKey="engagement"
-                    stroke="#8b5cf6"
+                    stroke="#9333ea"
                     fill="url(#colorEngagement)"
-                    strokeWidth={3}
+                    strokeWidth={2}
                   />
                 </AreaChart>
               </ChartContainer>
             ) : (
-              <div className="h-72 flex items-center justify-center bg-gradient-to-br from-slate-50 to-purple-50/30 rounded-xl">
+              <div className="h-72 flex items-center justify-center bg-gray-50 rounded-lg">
                 <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <TrendingUp className="h-8 w-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <TrendingUp className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-slate-700 font-medium mb-1">
+                  <p className="text-gray-700 font-medium mb-1">
                     No engagement data yet
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-gray-500">
                     Data will appear after your first posts
                   </p>
                 </div>
@@ -466,13 +449,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Platform Performance */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-              <h3 className="text-lg font-semibold text-slate-900">
-                Platform Performance
-              </h3>
-            </div>
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 mb-6">
+              Platform Performance
+            </h3>
             {loading ? (
               <div className="h-72 flex items-center justify-center">
                 <div className="text-center">
@@ -483,35 +463,35 @@ export default function DashboardPage() {
             ) : platformData.length > 0 ? (
               <ChartContainer config={chartConfig} className="h-72">
                 <BarChart data={platformData} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis
                     type="number"
-                    tick={{ fontSize: 12, fill: "#64748b" }}
-                    axisLine={{ stroke: "#e2e8f0" }}
+                    tick={{ fontSize: 12, fill: "#6b7280" }}
+                    axisLine={{ stroke: "#e5e7eb" }}
                     tickLine={false}
                   />
                   <YAxis
                     type="category"
                     dataKey="platform"
-                    tick={{ fontSize: 12, fill: "#64748b" }}
-                    axisLine={{ stroke: "#e2e8f0" }}
+                    tick={{ fontSize: 12, fill: "#6b7280" }}
+                    axisLine={{ stroke: "#e5e7eb" }}
                     tickLine={false}
                     width={80}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="posts" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
+                  <Bar dataKey="posts" fill="#9333ea" radius={[0, 8, 8, 0]} />
                 </BarChart>
               </ChartContainer>
             ) : (
-              <div className="h-72 flex items-center justify-center bg-gradient-to-br from-slate-50 to-purple-50/30 rounded-xl">
+              <div className="h-72 flex items-center justify-center bg-gray-50 rounded-lg">
                 <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <BarChart3 className="h-8 w-8 text-purple-600" />
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BarChart3 className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-slate-700 font-medium mb-1">
+                  <p className="text-gray-700 font-medium mb-1">
                     No platform data yet
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-gray-500">
                     Data will appear after your first posts
                   </p>
                 </div>
@@ -522,45 +502,42 @@ export default function DashboardPage() {
 
         {/* Upcoming Posts */}
         {data?.upcomingPosts && data.upcomingPosts.length > 0 && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300 mb-8">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-              <h3 className="text-lg font-semibold text-slate-900">
-                Upcoming Scheduled Posts
-              </h3>
-            </div>
+          <div className="bg-white rounded-lg p-6 border border-gray-200 mb-8">
+            <h3 className="text-base font-semibold text-gray-900 mb-6">
+              Upcoming Scheduled Posts
+            </h3>
             <div className="space-y-3">
               {data.upcomingPosts.map((post, index) => (
                 <div
                   key={post.id}
-                  className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-xl hover:shadow-md hover:border-purple-200 transition-all duration-200 group"
+                  className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-purple-300 transition-colors"
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
-                      <span className="text-white font-bold text-sm">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <span className="text-purple-700 font-semibold text-sm">
                         {index + 1}
                       </span>
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-slate-900 mb-1">
+                      <h4 className="font-medium text-gray-900 mb-1">
                         {post.title}
                       </h4>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                        <span className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded-md font-medium">
                           {post.platform}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-medium text-gray-900">
                       {new Date(post.scheduledAt).toLocaleDateString("fr-FR", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
                     </p>
-                    <p className="text-xs text-slate-500 flex items-center justify-end gap-1 mt-1">
+                    <p className="text-xs text-gray-500 flex items-center justify-end gap-1 mt-1">
                       <Clock className="w-3 h-3" />
                       {new Date(post.scheduledAt).toLocaleTimeString("fr-FR", {
                         hour: "2-digit",
@@ -576,38 +553,35 @@ export default function DashboardPage() {
 
         {/* Top Posts */}
         {topPosts && topPosts.length > 0 && (
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-              <h3 className="text-lg font-semibold text-slate-900">
-                Top Performing Posts
-              </h3>
-            </div>
+          <div className="bg-white rounded-lg p-6 border border-gray-200">
+            <h3 className="text-base font-semibold text-gray-900 mb-6">
+              Top Performing Posts
+            </h3>
             <div className="space-y-3">
               {topPosts.map((post, index) => (
                 <div
                   key={post.id}
-                  className="flex items-center justify-between p-5 bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-xl hover:shadow-md hover:border-purple-200 transition-all duration-200 group"
+                  className="flex items-center justify-between p-5 bg-gray-50 border border-gray-200 rounded-lg hover:border-purple-300 transition-colors"
                 >
                   <div className="flex items-center gap-4 flex-1">
                     <div className="relative">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-white font-bold text-lg">
+                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span className="text-purple-700 font-bold text-base">
                           {index + 1}
                         </span>
                       </div>
                       {index === 0 && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-md">
-                          <span className="text-xs">🏆</span>
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-purple-600 rounded-full flex items-center justify-center">
+                          <span className="text-[10px]">🏆</span>
                         </div>
                       )}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-slate-900 mb-1">
+                      <h4 className="font-medium text-gray-900 mb-1">
                         {post.title}
                       </h4>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+                        <span className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded-md font-medium">
                           {post.platform}
                         </span>
                       </div>
@@ -616,46 +590,46 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-6">
                     <div className="text-center">
                       <div className="flex items-center gap-1 justify-center">
-                        <Eye className="w-4 h-4 text-cyan-600" />
-                        <p className="font-bold text-slate-900">
+                        <Eye className="w-4 h-4 text-gray-500" />
+                        <p className="font-semibold text-gray-900">
                           {post.views.toLocaleString()}
                         </p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Views</p>
+                      <p className="text-xs text-gray-500 mt-1">Views</p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center gap-1 justify-center">
-                        <Heart className="w-4 h-4 text-pink-600" />
-                        <p className="font-bold text-slate-900">{post.likes}</p>
+                        <Heart className="w-4 h-4 text-gray-500" />
+                        <p className="font-semibold text-gray-900">{post.likes}</p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Likes</p>
+                      <p className="text-xs text-gray-500 mt-1">Likes</p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center gap-1 justify-center">
-                        <MessageCircle className="w-4 h-4 text-green-600" />
-                        <p className="font-bold text-slate-900">
+                        <MessageCircle className="w-4 h-4 text-gray-500" />
+                        <p className="font-semibold text-gray-900">
                           {post.comments}
                         </p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Comments</p>
+                      <p className="text-xs text-gray-500 mt-1">Comments</p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center gap-1 justify-center">
-                        <Share2 className="w-4 h-4 text-orange-600" />
-                        <p className="font-bold text-slate-900">
+                        <Share2 className="w-4 h-4 text-gray-500" />
+                        <p className="font-semibold text-gray-900">
                           {post.shares}
                         </p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Shares</p>
+                      <p className="text-xs text-gray-500 mt-1">Shares</p>
                     </div>
-                    <div className="text-center pl-6 border-l-2 border-slate-200">
+                    <div className="text-center pl-6 border-l border-gray-300">
                       <div className="flex items-center gap-1 justify-center">
                         <TrendingUp className="w-4 h-4 text-purple-600" />
-                        <p className="font-bold text-purple-600">
+                        <p className="font-semibold text-purple-600">
                           {post.engagement.toFixed(1)}%
                         </p>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Engagement</p>
+                      <p className="text-xs text-gray-500 mt-1">Engagement</p>
                     </div>
                   </div>
                 </div>

@@ -33,7 +33,7 @@ export function useWorkspaces() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, isAuthenticated, loading: authLoading = true } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
 
       const fetchWorkspaces = useCallback(async () => {
         if (!isAuthenticated || !user) {

@@ -1,12 +1,9 @@
 import LandingHeader from "@/components/landing/header";
 import HeroSection from "@/components/landing/hero-section";
-import CrossPostingSection from "@/components/landing/cross-posting-section";
-import ContentManagementSection from "@/components/landing/content-management-section";
+import FeaturesSection from "@/components/landing/features-section";
 import TestimonialsSection from "@/components/landing/testimonials-section";
 import PricingSection from "@/components/landing/pricing-section";
 import FAQSection from "@/components/landing/faq-section";
-import PlatformsSection from "@/components/landing/platforms-section";
-import CTASection from "@/components/landing/cta-section";
 import Footer from "@/components/landing/footer";
 
 export default function Home() {
@@ -14,13 +11,10 @@ export default function Home() {
     <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
       <LandingHeader />
       <HeroSection />
-      <CrossPostingSection />
-      <ContentManagementSection />
+      <FeaturesSection />
       <TestimonialsSection />
       <PricingSection />
       <FAQSection />
-      <PlatformsSection />
-      <CTASection />
       <Footer />
     </div>
   );

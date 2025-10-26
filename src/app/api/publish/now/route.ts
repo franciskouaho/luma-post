@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       inboxMode: false,
       directPostSuccess: false,
       requiresManualPublish: false,
-      privacyLevel: 'privacyLevel' in publishResult ? publishResult.privacyLevel : 'PUBLIC_TO_EVERYONE',
+      privacyLevel: ('privacyLevel' in publishResult) ? publishResult.privacyLevel : 'PUBLIC_TO_EVERYONE',
     };
 
     // Si le service signale explicitement le Direct Post lancé

@@ -4,26 +4,30 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebaseClient";
 import { GoogleSignInButton } from "@/components/auth/google-signin-button";
+import { useRouter } from "next/navigation";
+import LoadingScreen from "@/components/loading-screen";
 
 export default function AuthPage() {
   const [user, setUser] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
+
+      // Rediriger automatiquement vers le dashboard si l'utilisateur est connecté
+      if (user) {
+        router.push('/dashboard');
+      }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

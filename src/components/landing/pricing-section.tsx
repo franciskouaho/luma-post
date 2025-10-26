@@ -51,7 +51,7 @@ export default function PricingSection() {
   ];
 
   return (
-    <section className="py-20 relative bg-gradient-to-br from-gray-50 to-white">
+    <section id="pricing" className="py-20 relative bg-gradient-to-br from-gray-50 to-white">
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-purple-100 to-purple-200 rounded-full blur-3xl opacity-60"></div>
