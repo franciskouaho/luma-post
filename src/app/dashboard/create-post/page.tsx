@@ -43,7 +43,7 @@ export default function DashboardPage() {
         "Create a simple text-based post for your social media accounts",
       icon: Type,
       color: "from-blue-500 to-blue-600",
-      iconColor: "text-blue-600",
+      iconColor: "text-gray-500",
       bgGradient: "from-blue-50 to-blue-100/50",
       platforms: ["twitter", "linkedin", "instagram"],
       platformIcons: [
@@ -59,7 +59,7 @@ export default function DashboardPage() {
         "Upload and share images with captions across your platforms",
       icon: Image,
       color: "from-green-500 to-green-600",
-      iconColor: "text-green-600",
+      iconColor: "text-gray-500",
       bgGradient: "from-green-50 to-green-100/50",
       platforms: ["instagram", "twitter", "linkedin"],
       platformIcons: [
@@ -106,22 +106,22 @@ export default function DashboardPage() {
   const totalPostTypes = postTypes.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Modern Sticky Header */}
-      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-gray-900">
                 Create New Post
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 Choose your content type and publish across platforms
               </p>
             </div>
             <Link
               href="/dashboard/accounts"
-              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+              className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors"
             >
               <Plus className="w-4 h-4" />
               Connect Account
@@ -133,46 +133,46 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">
                   Available Types
                 </p>
-                <p className="text-3xl font-bold text-slate-900">
+                <p className="text-2xl font-bold text-gray-900">
                   {availablePostTypes}/{totalPostTypes}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
-                <CheckCircle2 className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 text-purple-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   Quick Create
                 </p>
-                <p className="text-2xl font-bold text-slate-900">Ready</p>
+                <p className="text-2xl font-bold text-gray-900">Ready</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-gray-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   Multi-Platform
                 </p>
-                <p className="text-2xl font-bold text-slate-900">Enabled</p>
+                <p className="text-2xl font-bold text-gray-900">Enabled</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300">
-                <ArrowRight className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <ArrowRight className="w-5 h-5 text-gray-600" />
               </div>
             </div>
           </div>
@@ -194,46 +194,40 @@ export default function DashboardPage() {
                 {isAvailable ? (
                   <Link href={`/dashboard/create-post/${postType.id}`}>
                     <div
-                      className={`bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 transition-all duration-300 cursor-pointer ${
+                      className={`bg-white rounded-lg overflow-hidden border border-gray-200 transition-colors cursor-pointer ${
                         hoveredCard === postType.id
-                          ? "shadow-xl scale-[1.02] border-purple-200"
-                          : "hover:shadow-lg"
+                          ? "border-purple-300"
+                          : "hover:border-purple-200"
                       }`}
                     >
-                      {/* Header coloré */}
-                      <div
-                        className={`relative p-6 bg-gradient-to-br ${postType.bgGradient} border-b border-slate-200/60`}
-                      >
+                      {/* Header */}
+                      <div className="relative p-6 bg-gray-50 border-b border-gray-200">
                         <div className="flex items-center justify-between mb-4">
-                          <div
-                            className={`w-12 h-12 bg-gradient-to-br ${postType.color} rounded-xl flex items-center justify-center shadow-lg shadow-${postType.iconColor}/30`}
-                          >
-                            <Icon className="w-6 h-6 text-white" />
+                          <div className={`w-10 h-10 ${postType.id === 'video' ? 'bg-purple-100' : 'bg-gray-100'} rounded-lg flex items-center justify-center`}>
+                            <Icon className={`w-5 h-5 ${postType.id === 'video' ? 'text-purple-600' : 'text-gray-600'}`} />
                           </div>
-                          <div
-                            className={`px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold ${postType.iconColor}`}
-                          >
+                          <div className="px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-600 border border-gray-200">
                             Available
                           </div>
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900">
+                        <h3 className="text-lg font-bold text-gray-900">
                           {postType.name}
                         </h3>
                       </div>
 
                       {/* Content */}
                       <div className="p-6">
-                        <p className="text-sm text-slate-600 mb-6 line-clamp-2 leading-relaxed">
+                        <p className="text-sm text-gray-600 mb-6 line-clamp-2 leading-relaxed">
                           {postType.description}
                         </p>
 
                         {/* Platforms */}
                         <div className="mb-4">
                           <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                               Platforms
                             </span>
-                            <span className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded-full font-medium">
+                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
                               {postType.platformIcons.length}
                             </span>
                           </div>
@@ -243,7 +237,7 @@ export default function DashboardPage() {
                               return (
                                 <div
                                   key={platform.name}
-                                  className="w-10 h-10 bg-white rounded-lg shadow-sm border border-slate-200 flex items-center justify-center hover:scale-110 transition-transform duration-200"
+                                  className="w-10 h-10 bg-white rounded-lg shadow-sm border border-gray-200 flex items-center justify-center hover:scale-110 transition-transform duration-200"
                                   title={platform.name}
                                 >
                                   <PlatformIcon
@@ -266,36 +260,36 @@ export default function DashboardPage() {
                     </div>
                   </Link>
                 ) : (
-                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 opacity-60 cursor-not-allowed">
-                    {/* Header grisé */}
-                    <div className="relative p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-b border-slate-200/60">
+                  <div className="bg-white rounded-lg overflow-hidden border border-gray-200 opacity-50 cursor-not-allowed">
+                    {/* Header */}
+                    <div className="relative p-6 bg-gray-50 border-b border-gray-200">
                       <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-slate-300 rounded-xl flex items-center justify-center">
-                          <Icon className="w-6 h-6 text-slate-500" />
+                        <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                          <Icon className="w-5 h-5 text-gray-400" />
                         </div>
-                        <div className="px-3 py-1 bg-slate-200 rounded-full text-xs font-semibold text-slate-500 flex items-center gap-1">
+                        <div className="px-3 py-1 bg-gray-200 rounded-full text-xs font-medium text-gray-500 flex items-center gap-1">
                           <Lock className="w-3 h-3" />
                           Locked
                         </div>
                       </div>
-                      <h3 className="text-lg font-bold text-slate-500">
+                      <h3 className="text-lg font-bold text-gray-400">
                         {postType.name}
                       </h3>
                     </div>
 
                     {/* Content */}
                     <div className="p-6">
-                      <p className="text-sm text-slate-400 mb-6 line-clamp-2 leading-relaxed">
+                      <p className="text-sm text-gray-400 mb-6 line-clamp-2 leading-relaxed">
                         {postType.description}
                       </p>
 
                       {/* Platforms */}
                       <div className="mb-4">
                         <div className="flex items-center justify-between mb-3">
-                          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                          <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
                             Platforms
                           </span>
-                          <span className="text-xs px-2 py-1 bg-slate-100 text-slate-400 rounded-full font-medium">
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-400 rounded-full font-medium">
                             {postType.platformIcons.length}
                           </span>
                         </div>
@@ -305,10 +299,10 @@ export default function DashboardPage() {
                             return (
                               <div
                                 key={platform.name}
-                                className="w-10 h-10 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center"
+                                className="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center"
                                 title={platform.name}
                               >
-                                <PlatformIcon className="h-5 w-5 text-slate-400" />
+                                <PlatformIcon className="h-5 w-5 text-gray-400" />
                               </div>
                             );
                           })}
@@ -318,7 +312,7 @@ export default function DashboardPage() {
                       {/* CTA disabled */}
                       <button
                         disabled
-                        className="w-full py-2.5 bg-slate-200 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full py-2.5 bg-gray-200 text-gray-400 text-sm font-medium rounded-lg cursor-not-allowed flex items-center justify-center gap-2"
                       >
                         <Lock className="w-4 h-4" />
                         Connect Account
@@ -332,17 +326,17 @@ export default function DashboardPage() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-12 bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 border border-purple-100 shadow-sm">
+        <div className="mt-12 bg-white rounded-lg p-8 border border-gray-200">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <Plus className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Plus className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-1">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">
                   Unlock More Post Types
                 </h3>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-gray-600">
                   Connect additional social media accounts to access all
                   features
                 </p>
@@ -350,7 +344,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/dashboard/accounts"
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105 whitespace-nowrap"
+              className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
             >
               Connect Accounts
               <ArrowRight className="w-4 h-4" />

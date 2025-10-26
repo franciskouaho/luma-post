@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -10,7 +9,6 @@ import {
   Play,
   Settings,
   X,
-  ChevronDown,
   Info,
   History,
   Wand2,
@@ -995,16 +993,16 @@ function CreateVideoPostPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Modern Header with Sticky Navigation */}
-      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-gray-900">
                 {editingScheduleData ? "Edit Schedule" : "Create Video Post"}
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 {editingScheduleData
                   ? "Modifiez votre planification"
                   : "Créez et planifiez vos vidéos"}
@@ -1016,7 +1014,7 @@ function CreateVideoPostPageContent() {
                 disabled={
                   isSavingDraft || !videoFile || selectedPlatforms.length === 0
                 }
-                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Save className="w-4 h-4" />
                 {isSavingDraft ? "Saving..." : "Save Draft"}
@@ -1024,7 +1022,7 @@ function CreateVideoPostPageContent() {
               <button
                 onClick={scheduleEnabled ? handleSchedule : handlePublishNow}
                 disabled={!videoFile || selectedPlatforms.length === 0}
-                className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {scheduleEnabled ? (
                   <>
@@ -1048,15 +1046,15 @@ function CreateVideoPostPageContent() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Platform Selection */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60">
-              <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
                 Select Platform
               </h3>
               {loading ? (
                 <div className="text-center py-8">
                   <div className="inline-block w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-                  <p className="text-sm text-slate-500 mt-3">
+                  <p className="text-sm text-gray-500 mt-3">
                     Loading accounts...
                   </p>
                 </div>
@@ -1067,12 +1065,12 @@ function CreateVideoPostPageContent() {
                       key={platform.id}
                       onClick={() => handlePlatformSelect(platform.id)}
                       disabled={!platform.connected}
-                      className={`relative group flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+                      className={`relative group flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition-all duration-200 ${
                         selectedPlatforms.includes(platform.id)
                           ? "border-purple-500 bg-purple-50 shadow-sm scale-105"
                           : platform.connected
-                            ? "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                            : "border-slate-100 opacity-50 cursor-not-allowed"
+                            ? "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                            : "border-gray-100 opacity-50 cursor-not-allowed"
                       }`}
                     >
                       <PlatformIcon
@@ -1081,13 +1079,14 @@ function CreateVideoPostPageContent() {
                         profileImageUrl={
                           platform.connected ? platform.avatar : undefined
                         }
+                        username={platform.connected ? platform.username : undefined}
                         className="w-10 h-10 rounded-full"
                       />
                       <div className="text-left">
-                        <div className="text-sm font-semibold text-slate-900">
+                        <div className="text-sm font-semibold text-gray-900">
                           {platform.name}
                         </div>
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs text-gray-500">
                           {platform.connected
                             ? platform.username
                             : "Not connected"}
@@ -1117,18 +1116,18 @@ function CreateVideoPostPageContent() {
             </div>
 
             {/* Video Upload */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60">
-              <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
                 Upload Video
               </h3>
 
               {!videoFile ? (
                 <div
-                  className={`relative border-2 border-dashed rounded-2xl p-12 transition-all duration-300 cursor-pointer group ${
+                  className={`relative border-2 border-dashed rounded-lg p-12 transition-all duration-300 cursor-pointer group ${
                     isDragging
                       ? "border-purple-500 bg-purple-50/50 scale-[0.99]"
-                      : "border-slate-300 hover:border-purple-400 hover:bg-slate-50/50"
+                      : "border-gray-300 hover:border-purple-400 hover:bg-gray-50/50"
                   }`}
                   onClick={() => fileInputRef.current?.click()}
                   onDrop={handleDrop}
@@ -1137,7 +1136,7 @@ function CreateVideoPostPageContent() {
                 >
                   <div className="flex flex-col items-center">
                     <div
-                      className={`w-20 h-20 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300 ${
+                      className={`w-20 h-20 rounded-lg flex items-center justify-center mb-4 transition-all duration-300 ${
                         isDragging
                           ? "bg-purple-500 scale-110 shadow-lg shadow-purple-500/30"
                           : "bg-gradient-to-br from-purple-500 to-purple-600 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-purple-500/30"
@@ -1145,12 +1144,12 @@ function CreateVideoPostPageContent() {
                     >
                       <Upload className="w-10 h-10 text-white" />
                     </div>
-                    <p className="text-lg font-semibold text-slate-900 mb-1">
+                    <p className="text-lg font-semibold text-gray-900 mb-1">
                       {isDragging
                         ? "Drop your video here"
                         : "Click or drag to upload"}
                     </p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-gray-500">
                       MP4, MOV, or WebM • Max 500MB
                     </p>
                   </div>
@@ -1164,7 +1163,7 @@ function CreateVideoPostPageContent() {
                 </div>
               ) : (
                 <div className="relative group">
-                  <div className="relative aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                  <div className="relative aspect-video bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg overflow-hidden shadow-lg">
                     {videoUrl && (
                       <video
                         src={videoUrl}
@@ -1186,16 +1185,16 @@ function CreateVideoPostPageContent() {
                       <X className="w-5 h-5 text-white" />
                     </button>
                   </div>
-                  <div className="mt-4 flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                  <div className="mt-4 flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
                         <Play className="w-5 h-5 text-purple-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-900">
+                        <p className="text-sm font-medium text-gray-900">
                           {videoFile.name}
                         </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-gray-500 mt-0.5">
                           Ready to publish
                         </p>
                       </div>
@@ -1212,7 +1211,7 @@ function CreateVideoPostPageContent() {
                       </button>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-4 py-2 text-xs font-medium text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-lg transition-all duration-200"
+                        className="px-4 py-2 text-xs font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-all duration-200"
                       >
                         Change
                       </button>
@@ -1223,8 +1222,8 @@ function CreateVideoPostPageContent() {
             </div>
 
             {/* Caption & Hashtags */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60">
-              <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
                 Caption & Hashtags
               </h3>
@@ -1234,11 +1233,11 @@ function CreateVideoPostPageContent() {
                   value={caption}
                   onChange={(e) => setCaption(e.target.value)}
                   placeholder="Write your caption here... (optional)"
-                  className="w-full h-32 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 resize-none text-sm text-slate-900 placeholder:text-slate-400 transition-all duration-200 bg-white"
+                  className="w-full h-32 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 resize-none text-sm text-gray-900 placeholder:text-gray-400 transition-all duration-200 bg-white"
                   maxLength={2200}
                 />
                 <div className="absolute bottom-3 right-3">
-                  <span className="text-xs text-slate-400 bg-white/90 px-2 py-1 rounded-md">
+                  <span className="text-xs text-gray-400 bg-white/90 px-2 py-1 rounded-md">
                     {caption.length}/2200
                   </span>
                 </div>
@@ -1247,7 +1246,7 @@ function CreateVideoPostPageContent() {
               {/* Hashtags */}
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold text-slate-900">
+                  <h4 className="text-sm font-semibold text-gray-900">
                     Hashtags
                   </h4>
                   <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
@@ -1282,19 +1281,19 @@ function CreateVideoPostPageContent() {
                     onFocus={() => setShowHashtagSuggestions(true)}
                     onKeyPress={handleHashtagInputKeyPress}
                     placeholder="Add hashtag and press Enter..."
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm text-slate-900 placeholder:text-slate-400 transition-all duration-200 bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm text-gray-900 placeholder:text-gray-400 transition-all duration-200 bg-white"
                   />
 
                   {showHashtagSuggestions && (
-                    <div className="hashtag-suggestions absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-80 overflow-y-auto">
+                    <div className="hashtag-suggestions absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-20 max-h-80 overflow-y-auto">
                       <div className="p-4">
-                        <h5 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">
+                        <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
                           Popular hashtags
                         </h5>
                         {Object.entries(popularHashtags).map(
                           ([category, hashtags]) => (
                             <div key={category} className="mb-4 last:mb-0">
-                              <h6 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-2">
+                              <h6 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-2">
                                 <div className="w-1 h-1 rounded-full bg-purple-400"></div>
                                 {category}
                               </h6>
@@ -1312,7 +1311,7 @@ function CreateVideoPostPageContent() {
                                       key={hashtag}
                                       onClick={() => addHashtag(hashtag)}
                                       disabled={selectedHashtags.length >= 5}
-                                      className="px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-purple-100 text-slate-700 hover:text-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                                      className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                                     >
                                       {hashtag}
                                     </button>
@@ -1329,33 +1328,33 @@ function CreateVideoPostPageContent() {
             </div>
 
             {/* Advanced Options */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60">
-              <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
                 Advanced Options
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
-                  <Sparkles className="w-4 h-4 text-slate-600 group-hover:text-purple-600 transition-colors" />
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-purple-700">
+                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
+                  <Sparkles className="w-4 h-4 text-gray-600 group-hover:text-purple-600 transition-colors" />
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700">
                     AI Caption
                   </span>
                 </button>
-                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
-                  <History className="w-4 h-4 text-slate-600 group-hover:text-purple-600 transition-colors" />
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-purple-700">
+                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
+                  <History className="w-4 h-4 text-gray-600 group-hover:text-purple-600 transition-colors" />
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700">
                     Past Captions
                   </span>
                 </button>
-                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
-                  <Wand2 className="w-4 h-4 text-slate-600 group-hover:text-purple-600 transition-colors" />
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-purple-700">
+                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
+                  <Wand2 className="w-4 h-4 text-gray-600 group-hover:text-purple-600 transition-colors" />
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700">
                     Processing
                   </span>
                 </button>
-                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
-                  <Settings className="w-4 h-4 text-slate-600 group-hover:text-purple-600 transition-colors" />
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-purple-700">
+                <button className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all duration-200 group">
+                  <Settings className="w-4 h-4 text-gray-600 group-hover:text-purple-600 transition-colors" />
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-purple-700">
                     TikTok Config
                   </span>
                 </button>
@@ -1371,8 +1370,8 @@ function CreateVideoPostPageContent() {
                 (id) =>
                   accounts.find((acc) => acc.id === id)?.platform === "tiktok",
               ) && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 sticky top-24">
-                  <h3 className="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 sticky top-24">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
                     TikTok Settings
                   </h3>
@@ -1385,9 +1384,9 @@ function CreateVideoPostPageContent() {
               )}
 
             {/* Schedule */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 sticky top-24">
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 sticky top-24">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
                   Schedule Post
                 </h3>
@@ -1396,7 +1395,7 @@ function CreateVideoPostPageContent() {
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300 ${
                     scheduleEnabled
                       ? "bg-gradient-to-r from-purple-600 to-purple-500 shadow-md shadow-purple-500/30"
-                      : "bg-slate-300"
+                      : "bg-gray-300"
                   }`}
                 >
                   <span
@@ -1410,7 +1409,7 @@ function CreateVideoPostPageContent() {
               {scheduleEnabled && (
                 <div className="space-y-4 mb-6">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-2">
                       <Calendar className="w-3.5 h-3.5 inline mr-1.5 mb-0.5" />
                       Date
                     </label>
@@ -1419,11 +1418,11 @@ function CreateVideoPostPageContent() {
                       value={scheduleDate}
                       onChange={(e) => setScheduleDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
-                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm text-slate-900 transition-all duration-200 bg-white"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm text-gray-900 transition-all duration-200 bg-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-2">
                       <Clock className="w-3.5 h-3.5 inline mr-1.5 mb-0.5" />
                       Time
                     </label>
@@ -1431,10 +1430,10 @@ function CreateVideoPostPageContent() {
                       type="time"
                       value={scheduleTime}
                       onChange={(e) => setScheduleTime(e.target.value)}
-                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm text-slate-900 transition-all duration-200 bg-white"
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 text-sm text-gray-900 transition-all duration-200 bg-white"
                     />
                   </div>
-                  <div className="flex items-start gap-2 p-3 bg-purple-50 rounded-xl border border-purple-100">
+                  <div className="flex items-start gap-2 p-3 bg-purple-50 rounded-lg border border-purple-100">
                     <Info className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
                     <p className="text-xs text-purple-700">
                       Your post will be published at {scheduleTime} (local time)
@@ -1446,10 +1445,10 @@ function CreateVideoPostPageContent() {
               {/* Media Preview */}
               {videoFile && videoUrl && (
                 <div className="mb-6">
-                  <h4 className="text-xs font-medium text-slate-700 mb-3">
+                  <h4 className="text-xs font-medium text-gray-700 mb-3">
                     Preview
                   </h4>
-                  <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl aspect-[9/16] max-w-[200px] mx-auto overflow-hidden shadow-lg group">
+                  <div className="relative bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg aspect-[9/16] max-w-[200px] mx-auto overflow-hidden shadow-lg group">
                     <video
                       src={videoUrl}
                       className="w-full h-full object-cover"
@@ -1469,7 +1468,7 @@ function CreateVideoPostPageContent() {
               {isSavingDraft && uploadProgress > 0 && (
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-slate-700">
+                    <span className="text-xs font-medium text-gray-700">
                       Uploading...
                     </span>
                     <span className="text-xs font-medium text-purple-600">
@@ -1487,31 +1486,31 @@ function CreateVideoPostPageContent() {
       {/* Cover Frame Selection Modal */}
       {showCoverModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-7xl max-h-[90vh] overflow-auto shadow-2xl">
+          <div className="bg-white rounded-lg p-6 w-full max-w-7xl max-h-[90vh] overflow-auto shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-slate-900">
+              <h2 className="text-xl font-bold text-gray-900">
                 Select Cover Frame
               </h2>
               <button
                 onClick={() => setShowCoverModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors duration-200"
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-200"
               >
-                <X className="h-5 w-5 text-slate-600" />
+                <X className="h-5 w-5 text-gray-600" />
               </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {/* New Cover Image */}
               <div>
-                <h3 className="text-sm font-semibold text-slate-900 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">
                   New cover image
                 </h3>
-                <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl aspect-[9/16] flex items-center justify-center max-w-[300px] mx-auto shadow-xl">
+                <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-lg aspect-[9/16] flex items-center justify-center max-w-[300px] mx-auto shadow-xl">
                   {coverFrames.length > 0 ? (
                     <img
                       src={coverFrames[selectedCoverFrame]}
                       alt="Selected cover frame"
-                      className="w-full h-full object-cover rounded-2xl"
+                      className="w-full h-full object-cover rounded-lg"
                     />
                   ) : (
                     <div className="text-white text-center p-4">
@@ -1524,13 +1523,13 @@ function CreateVideoPostPageContent() {
 
               {/* Current Cover */}
               <div>
-                <h3 className="text-sm font-semibold text-slate-900 mb-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">
                   Current cover
                 </h3>
-                <div className="bg-slate-100 rounded-2xl aspect-[9/16] flex items-center justify-center max-w-[300px] mx-auto">
+                <div className="bg-gray-100 rounded-lg aspect-[9/16] flex items-center justify-center max-w-[300px] mx-auto">
                   <div className="text-center">
-                    <Info className="h-8 w-8 text-slate-400 mx-auto mb-2" />
-                    <p className="text-sm text-slate-500">No cover selected</p>
+                    <Info className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">No cover selected</p>
                   </div>
                 </div>
               </div>
@@ -1541,7 +1540,7 @@ function CreateVideoPostPageContent() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Info className="h-4 w-4 text-purple-600" />
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-gray-600">
                     Use this bar to select your cover frame
                   </p>
                 </div>
@@ -1553,7 +1552,7 @@ function CreateVideoPostPageContent() {
                   onChange={(e) =>
                     handleCoverFrameSelect(parseInt(e.target.value))
                   }
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                   style={{
                     background: `linear-gradient(to right, rgb(147 51 234) 0%, rgb(147 51 234) ${(selectedCoverFrame / (coverFrames.length - 1)) * 100}%, rgb(226 232 240) ${(selectedCoverFrame / (coverFrames.length - 1)) * 100}%, rgb(226 232 240) 100%)`,
                   }}
@@ -1562,17 +1561,17 @@ function CreateVideoPostPageContent() {
             )}
 
             {/* Action Buttons */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 onClick={() => setShowCoverModal(false)}
-                className="px-6 py-2.5 text-sm font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200"
+                className="px-6 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSetCover}
                 disabled={coverFrames.length === 0}
-                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Set as Cover
               </button>
@@ -1588,10 +1587,10 @@ export default function CreateVideoPostPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-4"></div>
-            <p className="text-sm text-slate-600">Loading...</p>
+            <p className="text-sm text-gray-600">Loading...</p>
           </div>
         </div>
       }

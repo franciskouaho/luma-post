@@ -129,10 +129,10 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex items-center gap-3">
           <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
-          <span className="text-lg font-medium text-slate-700">Chargement des paramètres...</span>
+          <span className="text-lg font-medium text-gray-700">Chargement des paramètres...</span>
         </div>
       </div>
     );
@@ -140,11 +140,11 @@ export default function SettingsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">Erreur</h2>
-          <p className="text-slate-600 mb-4">{error}</p>
+          <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Erreur</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
           <Button onClick={() => window.location.reload()}>
             <RefreshCw className="w-4 h-4 mr-2" />
             Réessayer
@@ -156,34 +156,34 @@ export default function SettingsPage() {
 
   if (!settings || !user || !localSettings) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <User className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">Aucune donnée</h2>
-          <p className="text-slate-600">Impossible de charger les paramètres</p>
+          <User className="w-10 h-10 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Aucune donnée</h2>
+          <p className="text-gray-600">Impossible de charger les paramètres</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/20 to-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Modern Sticky Header */}
-      <div className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/90 backdrop-blur-xl shadow-sm">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-gray-900">
                 Paramètres
               </h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 Gérez vos préférences et paramètres de compte
               </p>
             </div>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saved ? (
                 <>
@@ -209,62 +209,62 @@ export default function SettingsPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
                   Profil
                 </p>
-                <p className="text-2xl font-bold text-slate-900">Actif</p>
+                <p className="text-2xl font-bold text-gray-900">Actif</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center shadow-lg shadow-slate-500/30 group-hover:scale-110 transition-transform duration-300">
-                <User className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shadow-lg shadow-slate-500/30 group-hover:scale-110 transition-transform duration-300">
+                <User className="w-5 h-5 text-gray-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   Notifications
                 </p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-2xl font-bold text-gray-900">
                   {localSettings ? Object.values(localSettings.notifications).filter(Boolean).length : 0}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
-                <Bell className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Bell className="w-5 h-5 text-gray-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
                   Sécurité
                 </p>
-                <p className="text-2xl font-bold text-slate-900">Élevée</p>
+                <p className="text-2xl font-bold text-gray-900">Élevée</p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 group-hover:scale-110 transition-transform duration-300">
-                <Shield className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                <Shield className="w-5 h-5 text-gray-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-300 group">
+          <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-purple-300 transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">
+                <p className="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">
                   Intégrations
                 </p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-2xl font-bold text-gray-900">
                   {localSettings ? Object.values(localSettings.integrations).filter(Boolean).length : 0}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform duration-300">
-                <Database className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Database className="w-5 h-5 text-gray-600" />
               </div>
             </div>
           </div>
@@ -272,15 +272,15 @@ export default function SettingsPage() {
 
         <div className="space-y-6">
           {/* Profile Settings */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="relative p-6 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+          <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div className="relative p-6 bg-gray-50 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-slate-500 to-slate-600 rounded-xl flex items-center justify-center shadow-md">
-                  <User className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shadow-md">
+                  <User className="w-5 h-5 text-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">Profil</h3>
-                  <p className="text-sm text-slate-600">
+                  <h3 className="text-lg font-bold text-gray-900">Profil</h3>
+                  <p className="text-sm text-gray-600">
                     Informations personnelles
                   </p>
                 </div>
@@ -289,8 +289,8 @@ export default function SettingsPage() {
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                    <User className="w-4 h-4 text-slate-500" />
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <User className="w-4 h-4 text-gray-500" />
                     Nom complet
                   </label>
                   <input
@@ -302,13 +302,13 @@ export default function SettingsPage() {
                         profile: { ...localSettings.profile, name: e.target.value },
                       })
                     }
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                    <Mail className="w-4 h-4 text-slate-500" />
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Mail className="w-4 h-4 text-gray-500" />
                     Email
                   </label>
                   <div className="relative">
@@ -316,21 +316,21 @@ export default function SettingsPage() {
                       type="email"
                       value={user.email || ''}
                       disabled
-                      className="w-full px-4 py-2.5 pr-10 border border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm"
+                      className="w-full px-4 py-2.5 pr-10 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <Lock className="h-4 w-4 text-slate-400" />
+                      <Lock className="h-4 w-4 text-gray-400" />
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 flex items-center gap-1">
+                  <p className="text-xs text-gray-500 flex items-center gap-1">
                     <Info className="h-3 w-3" />
                     L'email ne peut pas être modifié
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                    <ClockIcon className="w-4 h-4 text-slate-500" />
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <ClockIcon className="w-4 h-4 text-gray-500" />
                     Fuseau horaire
                   </label>
                   <select
@@ -344,7 +344,7 @@ export default function SettingsPage() {
                         },
                       })
                     }
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
                   >
                     <option value="Europe/Paris">Europe/Paris (UTC+1)</option>
                     <option value="Europe/London">Europe/London (UTC+0)</option>
@@ -358,8 +358,8 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                    <Languages className="w-4 h-4 text-slate-500" />
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <Languages className="w-4 h-4 text-gray-500" />
                     Langue
                   </label>
                   <select
@@ -373,7 +373,7 @@ export default function SettingsPage() {
                         },
                       })
                     }
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
                   >
                     <option value="fr">Français</option>
                     <option value="en">English</option>
@@ -385,17 +385,17 @@ export default function SettingsPage() {
           </div>
 
           {/* Notifications */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="relative p-6 bg-gradient-to-r from-blue-50 to-white border-b border-slate-200">
+          <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div className="relative p-6 bg-gray-50 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-                  <Bell className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shadow-md">
+                  <Bell className="w-5 h-5 text-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">
+                  <h3 className="text-lg font-bold text-gray-900">
                     Notifications
                   </h3>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-gray-600">
                     Configurez vos préférences
                   </p>
                 </div>
@@ -432,7 +432,7 @@ export default function SettingsPage() {
                 }
               />
 
-              <div className="ml-6 space-y-3 pt-2 border-l-2 border-slate-100 pl-4">
+              <div className="ml-6 space-y-3 pt-2 border-l-2 border-gray-100 pl-4">
                 <SmallToggle
                   label="Publication réussie"
                   checked={localSettings.notifications.publishSuccess}
@@ -493,17 +493,17 @@ export default function SettingsPage() {
           </div>
 
           {/* Privacy & Security */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="relative p-6 bg-gradient-to-r from-green-50 to-white border-b border-slate-200">
+          <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div className="relative p-6 bg-gray-50 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
-                  <Shield className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shadow-md">
+                  <Shield className="w-5 h-5 text-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">
+                  <h3 className="text-lg font-bold text-gray-900">
                     Confidentialité
                   </h3>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-gray-600">
                     Gérez vos données personnelles
                   </p>
                 </div>
@@ -512,7 +512,7 @@ export default function SettingsPage() {
             <div className="p-6 space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-gray-700">
                     Rétention des données
                   </label>
                   <select
@@ -526,7 +526,7 @@ export default function SettingsPage() {
                         },
                       })
                     }
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
                   >
                     <option value="6">6 mois</option>
                     <option value="12">12 mois</option>
@@ -536,7 +536,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700">
+                  <label className="text-sm font-medium text-gray-700">
                     Visibilité du profil
                   </label>
                   <select
@@ -550,7 +550,7 @@ export default function SettingsPage() {
                         },
                       })
                     }
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 bg-white transition-all duration-200 text-sm"
                   >
                     <option value="private">Privé</option>
                     <option value="public">Public</option>
@@ -573,17 +573,17 @@ export default function SettingsPage() {
           </div>
 
           {/* API & Integrations */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="relative p-6 bg-gradient-to-r from-purple-50 to-white border-b border-slate-200">
+          <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div className="relative p-6 bg-gray-50 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                  <Database className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center shadow-md">
+                  <Database className="w-5 h-5 text-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">
+                  <h3 className="text-lg font-bold text-gray-900">
                     Intégrations
                   </h3>
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-gray-600">
                     API et synchronisation
                   </p>
                 </div>
@@ -623,7 +623,7 @@ export default function SettingsPage() {
               <div className="pt-2">
                 <div className="flex items-center gap-2 mb-3">
                   <Key className="h-4 w-4 text-purple-600" />
-                  <h4 className="font-semibold text-slate-900 text-sm">
+                  <h4 className="font-semibold text-gray-900 text-sm">
                     Clé API
                   </h4>
                 </div>
@@ -632,27 +632,27 @@ export default function SettingsPage() {
                     type={showApiKey ? "text" : "password"}
                     value={apiKey || "sk_live_..."}
                     readOnly
-                    className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 font-mono text-sm text-slate-600"
+                    className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 font-mono text-sm text-gray-600"
                   />
                   <button
                     onClick={() => setShowApiKey(!showApiKey)}
-                    className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200"
+                    className="w-10 h-10 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200"
                   >
                     {showApiKey ? (
-                      <EyeOff className="h-4 w-4 text-slate-600" />
+                      <EyeOff className="h-4 w-4 text-gray-600" />
                     ) : (
-                      <Eye className="h-4 w-4 text-slate-600" />
+                      <Eye className="h-4 w-4 text-gray-600" />
                     )}
                   </button>
                   <button 
                     onClick={handleGenerateApiKey}
-                    className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200"
+                    className="w-10 h-10 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200"
                     title="Générer une nouvelle clé API"
                   >
-                    <RefreshCw className="h-4 w-4 text-slate-600" />
+                    <RefreshCw className="h-4 w-4 text-gray-600" />
                   </button>
                 </div>
-                <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+                <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                   <Info className="h-3 w-3" />
                   Utilisez cette clé pour accéder à l'API
                 </p>
@@ -661,22 +661,22 @@ export default function SettingsPage() {
           </div>
 
           {/* Data Management */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 hover:shadow-xl transition-all duration-300">
-            <div className="relative p-6 bg-gradient-to-r from-amber-50 to-white border-b border-slate-200">
+          <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition-all duration-300">
+            <div className="relative p-6 bg-gray-50 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-md">
-                  <Globe className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shadow-md">
+                  <Globe className="w-5 h-5 text-gray-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">Données</h3>
-                  <p className="text-sm text-slate-600">
+                  <h3 className="text-lg font-bold text-gray-900">Données</h3>
+                  <p className="text-sm text-gray-600">
                     Export et suppression
                   </p>
                 </div>
               </div>
             </div>
             <div className="p-6 space-y-3">
-              <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-100 rounded-xl hover:bg-blue-100 transition-colors group">
+              <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 transition-colors group">
                 <div>
                   <h4 className="font-semibold text-blue-900 text-sm mb-0.5">
                     Exporter mes données
@@ -694,7 +694,7 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 transition-colors group">
+              <div className="flex items-center justify-between p-4 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 transition-colors group">
                 <div>
                   <h4 className="font-semibold text-red-900 text-sm mb-0.5 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4" />
@@ -717,7 +717,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between pt-4">
             <button
               onClick={() => window.location.reload()}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
             >
               <RefreshCw className="w-4 h-4" />
               Réinitialiser
@@ -725,7 +725,7 @@ export default function SettingsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-8 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saved ? (
                 <>
@@ -759,10 +759,10 @@ function ToggleOption({ title, description, checked, onChange }: {
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors">
+    <div className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors">
       <div>
-        <h4 className="font-medium text-slate-900 text-sm">{title}</h4>
-        <p className="text-xs text-slate-600 mt-0.5">{description}</p>
+        <h4 className="font-medium text-gray-900 text-sm">{title}</h4>
+        <p className="text-xs text-gray-600 mt-0.5">{description}</p>
       </div>
       <label className="relative inline-flex items-center cursor-pointer">
         <input
@@ -771,7 +771,7 @@ function ToggleOption({ title, description, checked, onChange }: {
           onChange={(e) => onChange(e.target.checked)}
           className="sr-only peer"
         />
-        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-600 peer-checked:to-purple-500 shadow-inner"></div>
+        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-600 peer-checked:to-purple-500 shadow-inner"></div>
       </label>
     </div>
   );
@@ -785,7 +785,7 @@ function SmallToggle({ label, checked, onChange }: {
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-slate-700">{label}</span>
+      <span className="text-sm text-gray-700">{label}</span>
       <label className="relative inline-flex items-center cursor-pointer">
         <input
           type="checkbox"
@@ -793,7 +793,7 @@ function SmallToggle({ label, checked, onChange }: {
           onChange={(e) => onChange(e.target.checked)}
           className="sr-only peer"
         />
-        <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-600 peer-checked:to-purple-500"></div>
+        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-purple-600 peer-checked:to-purple-500"></div>
       </label>
     </div>
   );
